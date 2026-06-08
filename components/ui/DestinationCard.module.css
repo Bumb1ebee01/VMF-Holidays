@@ -1,0 +1,60 @@
+.card {
+  display: block;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+  text-decoration: none;
+  background: var(--white);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+.imageWrap {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform var(--dur-slow) var(--ease);
+}
+
+.card:hover .image {
+  transform: scale(1.06);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 50%, transparent 100%);
+}
+
+.badge {
+  position: absolute;
+  top: var(--sp-3);
+  right: var(--sp-3);
+}
+
+.body {
+  padding: var(--sp-4) var(--sp-4) var(--sp-5);
+}
+
+.name {
+  font-size: var(--text-xl);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  margin-bottom: var(--sp-1);
+}
+
+.from {
+  font-size: var(--text-sm);
+  color: var(--orange);
+  font-weight: var(--fw-bold);
+  margin: 0;
+  line-height: 1;
+}

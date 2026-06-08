@@ -1,0 +1,33 @@
+.header {
+  margin-bottom: var(--sp-12);
+}
+
+.centered {
+  text-align: center;
+}
+
+.centered .section-sub,
+.centered :global(.section-sub) {
+  margin: 0 auto;
+}
+
+.centered :global(.divider) {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.light :global(.eyebrow) {
+  color: var(--orange-lt);
+}
+
+.titleLight {
+  color: var(--white) !important;
+}
+
+.light :global(.section-sub) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.light :global(.divider) {
+  background: var(--orange);
+}

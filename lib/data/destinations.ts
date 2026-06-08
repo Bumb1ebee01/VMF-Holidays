@@ -1,0 +1,88 @@
+import type { Destination } from "@/lib/types";
+
+export const destinations: Destination[] = [
+  {
+    slug: "kerala",
+    name: "Kerala",
+    country: "India",
+    region: "domestic",
+    heroImage: "/images/destinations/kerala.jpg",
+    fromPrice: 12999,
+    blurb: "Glide through emerald backwaters, spice-scented forests and pristine beaches on India's southwest coast.",
+    tags: ["Backwaters", "Ayurveda", "Beaches", "Wildlife"],
+  },
+  {
+    slug: "rajasthan",
+    name: "Rajasthan",
+    country: "India",
+    region: "domestic",
+    heroImage: "/images/destinations/rajasthan.jpg",
+    fromPrice: 14999,
+    blurb: "Majestic forts, golden deserts and vibrant bazaars — the Land of Kings never stops dazzling.",
+    tags: ["Heritage", "Desert", "Palaces", "Culture"],
+  },
+  {
+    slug: "goa",
+    name: "Goa",
+    country: "India",
+    region: "domestic",
+    heroImage: "/images/destinations/goa.jpg",
+    fromPrice: 8999,
+    blurb: "Sun-soaked beaches, laid-back beach shacks, Portuguese churches and buzzing nightlife all in one.",
+    tags: ["Beaches", "Nightlife", "Heritage", "Water Sports"],
+  },
+  {
+    slug: "manali",
+    name: "Manali",
+    country: "India",
+    region: "domestic",
+    heroImage: "/images/destinations/manali.jpg",
+    fromPrice: 11999,
+    blurb: "Snow-capped peaks, pine forests and adrenaline-pumping adventure sports in the Himalayan highlands.",
+    tags: ["Mountains", "Adventure", "Snow", "Trekking"],
+  },
+  {
+    slug: "maldives",
+    name: "Maldives",
+    country: "Maldives",
+    region: "international",
+    heroImage: "/images/destinations/maldives.jpg",
+    fromPrice: 39999,
+    blurb: "Overwater bungalows, crystal lagoons and world-class diving in the ultimate island paradise.",
+    tags: ["Luxury", "Beaches", "Diving", "Honeymoon"],
+  },
+  {
+    slug: "dubai",
+    name: "Dubai",
+    country: "UAE",
+    region: "international",
+    heroImage: "/images/destinations/dubai.jpg",
+    fromPrice: 28999,
+    blurb: "Futuristic skyline, desert safaris, world-record attractions and unmatched shopping experiences.",
+    tags: ["Luxury", "Shopping", "Desert", "City Break"],
+  },
+  {
+    slug: "thailand",
+    name: "Thailand",
+    country: "Thailand",
+    region: "international",
+    heroImage: "/images/destinations/thailand.jpg",
+    fromPrice: 22999,
+    blurb: "Ornate temples, street food heaven, tropical islands and warm Thai hospitality at every turn.",
+    tags: ["Culture", "Beaches", "Street Food", "Islands"],
+  },
+  {
+    slug: "bali",
+    name: "Bali",
+    country: "Indonesia",
+    region: "international",
+    heroImage: "/images/destinations/bali.jpg",
+    fromPrice: 24999,
+    blurb: "Terraced rice fields, ancient temples, surf breaks and spiritual retreats on the Island of the Gods.",
+    tags: ["Culture", "Wellness", "Beaches", "Surfing"],
+  },
+];
+
+export function getDestinationBySlug(slug: string) {
+  return destinations.find((d) => d.slug === slug);
+}

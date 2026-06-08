@@ -1,0 +1,14 @@
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.filled {
+  color: #F59E0B;
+  font-size: var(--text-base);
+}
+
+.empty {
+  color: var(--border);
+  font-size: var(--text-base);
+}
