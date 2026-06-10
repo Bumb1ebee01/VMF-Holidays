@@ -1,0 +1,60 @@
+import Image from "next/image";
+import Link from "next/link";
+import PackageCard from "@/components/ui/PackageCard";
+import { getPackagesByCategory } from "@/lib/data/packages";
+import { getCategoryBySlug } from "@/lib/data/categories";
+import type { TripCategorySlug } from "@/lib/types";
+import styles from "./CategoryLanding.module.css";
+
+export default function CategoryLanding({ slug }: { slug: TripCategorySlug }) {
+  const category = getCategoryBySlug(slug);
+  if (!category) return null;
+  const pkgs = getPackagesByCategory(slug);
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.hero}>
+        <Image src={category.image} alt={category.label} fill priority sizes="100vw" className={styles.heroImg} />
+        <div className={styles.heroOverlay} />
+        <div className={`container ${styles.heroContent}`}>
+          <span className={styles.heroIcon}>{category.icon}</span>
+          <h1 className={styles.heroTitle}>{category.label}</h1>
+          <p className={styles.heroBlurb}>{category.blurb}</p>
+        </div>
+      </div>
+
+      <div className="container">
+        <section className="section">
+          <h2 className={styles.sectionTitle}>
+            {pkgs.length} Package{pkgs.length !== 1 ? "s" : ""} Available
+          </h2>
+          {pkgs.length > 0 ? (
+            <div className="grid-3">
+              {pkgs.map((pkg) => (
+                <PackageCard key={pkg.slug} pkg={pkg} />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.empty}>
+              <p>No packages listed yet — but we can craft one just for you!</p>
+              <Link href="/contact" className="btn btn-primary btn--lg">Enquire Now</Link>
+            </div>
+          )}
+        </section>
+      </div>
+
+      <div className={styles.cta}>
+        <div className="container">
+          <h2 className={styles.ctaTitle}>Can&apos;t find what you&apos;re looking for?</h2>
+          <p className={styles.ctaSub}>We build custom itineraries. Tell us your dream trip and we&apos;ll plan it.</p>
+          <div className={styles.ctaActions}>
+            <Link href="/trip-builder" className="btn btn-primary btn--lg">Build My Trip</Link>
+            <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer" className="btn btn-ghost-white btn--lg">
+              WhatsApp Us
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
