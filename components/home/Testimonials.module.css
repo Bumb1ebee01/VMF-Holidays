@@ -1,0 +1,7 @@
+.section {
+  background: var(--off-white);
+}
+
+.grid {
+  margin-top: var(--sp-12);
+}
