@@ -6,13 +6,14 @@
   z-index: 100;
   height: var(--nav-h);
   background: transparent;
-  transition: background var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease);
 }
 
 .scrolled {
-  background: rgba(0, 36, 100, 0.97);
-  backdrop-filter: blur(12px);
-  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.25);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 4px 20px rgba(0,36,100,.07);
 }
 
 .inner {
@@ -40,8 +41,10 @@
   letter-spacing: -0.5px;
 }
 
-.logoVmf  { color: var(--white); }
+.logoVmf  { color: var(--white); transition: color 0.4s var(--ease); }
 .logoHols { color: var(--orange); }
+
+.scrolled .logoVmf  { color: var(--navy); }
 
 /* Nav links */
 .links {
@@ -61,6 +64,10 @@
   position: relative;
 }
 
+.scrolled .links a {
+  color: var(--text);
+}
+
 .links a::after {
   content: "";
   position: absolute;
@@ -76,7 +83,11 @@
 }
 
 .links a:hover {
-  color: var(--white);
+  color: var(--orange-lt);
+}
+
+.scrolled .links a:hover {
+  color: var(--orange);
 }
 
 .links a:hover::after {
@@ -106,7 +117,11 @@
   height: 2px;
   background: var(--white);
   border-radius: var(--radius-full);
-  transition: transform var(--dur-base) var(--ease);
+  transition: background var(--dur-base) var(--ease);
+}
+
+.scrolled .hamburger span {
+  background: var(--navy);
 }
 
 /* Mobile menu */
@@ -114,14 +129,15 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
-  background: var(--navy);
+  background: var(--white);
   padding: var(--sp-4) var(--sp-4) var(--sp-6);
-  border-top: 1px solid rgba(255,255,255,0.08);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgba(0,36,100,.1);
 }
 
 .mobileMenu a {
   padding: 12px var(--sp-4);
-  color: rgba(255,255,255,0.85);
+  color: var(--text);
   font-size: var(--text-base);
   font-weight: var(--fw-medium);
   border-radius: var(--radius-sm);
@@ -129,8 +145,8 @@
 }
 
 .mobileMenu a:hover {
-  background: rgba(255,255,255,0.08);
-  color: var(--white);
+  background: var(--navy-subtle);
+  color: var(--navy);
 }
 
 .mobileMenu .btn {

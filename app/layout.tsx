@@ -3,6 +3,8 @@ import { Roboto } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
+import PageLoader from "@/components/ui/PageLoader";
+import ScrollRevealInit from "@/components/ui/ScrollRevealInit";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -54,6 +56,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body>
+          <PageLoader />
+          <ScrollRevealInit />
           <Navbar />
           {children}
           <Footer />

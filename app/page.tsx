@@ -1,4 +1,5 @@
 import Hero from "@/components/home/Hero";
+import Stats from "@/components/home/Stats";
 import PopularDestinations from "@/components/home/PopularDestinations";
 import FeaturedPackages from "@/components/home/FeaturedPackages";
 import WhyChooseVMF from "@/components/home/WhyChooseVMF";
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <main>
       <Hero />
+      <Stats />
       <PopularDestinations />
       <FeaturedPackages />
       <WhyChooseVMF />
