@@ -144,7 +144,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sp-1);
-  background: var(--white);
+  background: var(--bg);
   padding: var(--sp-4) var(--sp-4) var(--sp-6);
   border-top: 1px solid var(--border);
   box-shadow: 0 8px 24px rgba(0,36,100,.1);

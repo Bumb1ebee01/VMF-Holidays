@@ -64,7 +64,7 @@
   font-size: var(--text-xs);
   font-weight: var(--fw-medium);
   border: 1.5px solid var(--border);
-  background: var(--white);
+  background: var(--card-bg);
   color: var(--text-light);
   cursor: pointer;
   transition: all var(--dur-fast) var(--ease);

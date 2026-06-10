@@ -53,7 +53,7 @@
 }
 
 .detailCard {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   padding: var(--sp-8);

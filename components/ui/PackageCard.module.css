@@ -1,5 +1,5 @@
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;

@@ -73,7 +73,7 @@
 
 /* Card */
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   padding: var(--sp-10);
@@ -110,7 +110,7 @@
   padding: 10px 20px;
   border-radius: var(--radius-full);
   border: 1.5px solid var(--border);
-  background: var(--white);
+  background: var(--card-bg);
   color: var(--text);
   font-size: var(--text-sm);
   font-weight: var(--fw-medium);
@@ -183,7 +183,7 @@
   align-items: center;
   text-align: center;
   gap: var(--sp-5);
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   padding: var(--sp-16) var(--sp-10);

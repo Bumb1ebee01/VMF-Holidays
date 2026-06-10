@@ -82,7 +82,7 @@
 }
 
 .valueCard {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-lg);
   padding: var(--sp-8);
   box-shadow: var(--shadow-card);

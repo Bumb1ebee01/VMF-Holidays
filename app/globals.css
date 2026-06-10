@@ -96,8 +96,10 @@
   --dur-base:  250ms;
   --dur-slow:  400ms;
 
-  /* Surfaces */
-  --cream: #FAF8F4;
+  /* Surfaces (use --bg / --card-bg for backgrounds that invert in dark mode) */
+  --cream:    #FAF8F4;
+  --bg:       #FFFFFF;
+  --card-bg:  #FFFFFF;
 
   /* Layout */
   --container: 1280px;
@@ -131,7 +133,7 @@ body {
   font-weight: var(--fw-regular);
   line-height: var(--leading-normal);
   color: var(--text);
-  background: var(--white);
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100%;
@@ -361,7 +363,7 @@ p {
    ============================================================ */
 
 .card {
-  background: var(--white);
+  background: var(--card-bg);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
@@ -400,7 +402,7 @@ p {
   border-radius: var(--radius-sm);
   font-size: var(--text-base);
   color: var(--text);
-  background: var(--white);
+  background: var(--card-bg);
   transition: border-color var(--dur-fast) var(--ease), box-shadow var(--dur-fast) var(--ease);
   outline: none;
 }
@@ -458,13 +460,14 @@ p {
    ============================================================ */
 
 [data-theme="dark"] {
-  /* Surfaces */
-  --white:        #0f1117;
+  /* Page/card backgrounds (--white intentionally NOT overridden — it's used as text on dark sections) */
+  --bg:           #0f1117;
+  --card-bg:      #161c2a;
   --off-white:    #14192a;
   --surface:      #1a2035;
   --cream:        #111622;
   --border:       #1e2840;
-  --border-light: #19213a;
+  --border-light: #192338;
 
   /* Text */
   --text:         #e2e8f4;
@@ -473,8 +476,8 @@ p {
   --muted:        #6b7a99;
 
   /* Subtle overlays */
-  --navy-subtle:  rgba(148, 181, 255, 0.06);
-  --orange-subtle:rgba(254, 92, 16, 0.10);
+  --navy-subtle:   rgba(148, 181, 255, 0.06);
+  --orange-subtle: rgba(254, 92, 16, 0.10);
 
   /* Shadows (deeper on dark) */
   --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.4);
