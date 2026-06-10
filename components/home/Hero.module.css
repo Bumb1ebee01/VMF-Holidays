@@ -257,6 +257,23 @@
   to   { transform: translateX(-50%); }
 }
 
+/* Dark mode overrides */
+:global([data-theme="dark"]) .searchBar {
+  background: rgba(20, 28, 50, 0.97);
+}
+
+:global([data-theme="dark"]) .fieldInput {
+  color: var(--text);
+}
+
+:global([data-theme="dark"]) .fieldLabel {
+  color: var(--text-lighter);
+}
+
+:global([data-theme="dark"]) .sep {
+  background: var(--border);
+}
+
 /* Mobile */
 @media (max-width: 640px) {
   .content {

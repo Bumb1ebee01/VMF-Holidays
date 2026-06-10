@@ -46,7 +46,7 @@
   height: 100%;
   width: 0%;
   background: linear-gradient(to right, var(--orange), var(--orange-lt));
-  animation: loaderBar 1.7s 0.5s var(--ease) forwards;
+  animation: loaderBar 1.3s 0.4s var(--ease) forwards;
 }
 
 .tagline {

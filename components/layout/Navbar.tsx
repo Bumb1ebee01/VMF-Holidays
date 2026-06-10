@@ -2,22 +2,33 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ui/ThemeToggle";
 import styles from "./Navbar.module.css";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  const [scrolled, setScrolled] = useState(!isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    if (!isHome) {
+      setScrolled(true);
+      return;
+    }
     const onScroll = () => setScrolled(window.scrollY > 60);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isHome]);
+
+  const isLight = scrolled;
 
   return (
     <header className={`${styles.nav} ${scrolled ? styles.scrolled : ""}`}>
       <div className={`container ${styles.inner}`}>
-        {/* Logo */}
         <Link href="/" className={styles.logo}>
           <span className={styles.logoText}>
             <span className={styles.logoVmf}>VMF</span>
@@ -25,7 +36,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
         <nav className={styles.links}>
           <Link href="/packages">Packages</Link>
           <Link href="/destinations">Destinations</Link>
@@ -34,8 +44,8 @@ export default function Navbar() {
           <Link href="/contact">Contact</Link>
         </nav>
 
-        {/* CTAs */}
         <div className={styles.actions}>
+          <ThemeToggle onLight={isLight} />
           <Link href="/trip-builder" className="btn btn-primary btn--sm">
             Plan My Trip
           </Link>
@@ -51,7 +61,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu */}
       {mobileOpen && (
         <div className={styles.mobileMenu}>
           <Link href="/packages" onClick={() => setMobileOpen(false)}>Packages</Link>
