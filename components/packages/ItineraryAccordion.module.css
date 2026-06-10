@@ -1,0 +1,96 @@
+.accordion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.item {
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--dur-fast) var(--ease);
+}
+
+.itemOpen {
+  border-color: var(--navy);
+}
+
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
+  background: var(--white);
+  cursor: pointer;
+  border: none;
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.itemOpen .trigger {
+  background: var(--navy-subtle);
+}
+
+.trigger:hover {
+  background: var(--surface);
+}
+
+.itemOpen .trigger:hover {
+  background: var(--navy-subtle);
+}
+
+.triggerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  min-width: 0;
+}
+
+.dayBadge {
+  font-size: 10px;
+  font-weight: var(--fw-bold);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--navy);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.itemOpen .dayBadge {
+  background: var(--orange);
+}
+
+.dayTitle {
+  font-size: var(--text-base);
+  font-weight: var(--fw-medium);
+  color: var(--text);
+}
+
+.chevron {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+  color: var(--navy);
+}
+
+.panel {
+  overflow: hidden;
+  transition: max-height var(--dur-slow) var(--ease);
+}
+
+.desc {
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  font-size: var(--text-sm);
+  color: var(--text-light);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+  border-top: 1px solid var(--border-light);
+}
