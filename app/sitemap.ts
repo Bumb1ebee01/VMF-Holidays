@@ -1,10 +1,14 @@
 import type { MetadataRoute } from "next";
-import { packages } from "@/lib/data/packages";
-import { destinations } from "@/lib/data/destinations";
+import { getAllPackages, getAllDestinations } from "@/lib/queries";
 
 const BASE = "https://vmfholidays.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [packages, destinations] = await Promise.all([
+    getAllPackages(),
+    getAllDestinations(),
+  ]);
+
   const staticPages = [
     { url: BASE, priority: 1.0 },
     { url: `${BASE}/packages`, priority: 0.9 },

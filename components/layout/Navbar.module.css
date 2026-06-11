@@ -6,19 +6,25 @@
   z-index: 100;
   height: var(--nav-h);
   background: transparent;
-  transition: background 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  border-bottom: 1px solid transparent;
+  transition:
+    background 0.45s var(--ease),
+    border-color 0.45s var(--ease),
+    box-shadow 0.45s var(--ease);
 }
 
 .scrolled {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 4px 20px rgba(0,36,100,.07);
+  background: rgba(251, 249, 244, 0.82);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom-color: var(--hairline-soft);
+  box-shadow: 0 4px 24px rgba(0, 36, 100, 0.05);
 }
 
 :global([data-theme="dark"]) .scrolled {
-  background: rgba(15, 17, 23, 0.92);
-  box-shadow: 0 1px 0 rgba(0,0,0,.3), 0 4px 20px rgba(0,0,0,.25);
+  background: rgba(14, 17, 25, 0.82);
+  border-bottom-color: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
 .inner {
@@ -28,7 +34,7 @@
   gap: var(--sp-8);
 }
 
-/* Logo */
+/* Logo — tracked editorial wordmark */
 .logo {
   display: flex;
   align-items: center;
@@ -40,33 +46,45 @@
 .logoText {
   display: flex;
   align-items: baseline;
-  gap: 4px;
-  font-size: var(--text-xl);
-  font-weight: var(--fw-black);
-  letter-spacing: -0.5px;
+  gap: 7px;
+  font-size: var(--text-lg);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.logoVmf  { color: var(--white); transition: color 0.4s var(--ease); }
-.logoHols { color: var(--orange); }
+.logoVmf {
+  color: var(--white);
+  font-weight: var(--fw-bold);
+  transition: color 0.4s var(--ease);
+}
+
+.logoHols {
+  color: var(--orange);
+  font-weight: var(--fw-light);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
 
 .scrolled .logoVmf  { color: var(--navy); }
 
 :global([data-theme="dark"]) .scrolled .logoVmf { color: var(--white); }
 
-/* Nav links */
+/* Nav links — tracked small caps */
 .links {
   display: flex;
   align-items: center;
-  gap: var(--sp-6);
+  gap: var(--sp-8);
   margin-left: auto;
 }
 
 .links a {
-  font-size: var(--text-sm);
+  font-size: 11px;
   font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  letter-spacing: 0.2px;
   transition: color var(--dur-fast) var(--ease);
   position: relative;
 }
@@ -82,12 +100,11 @@
 .links a::after {
   content: "";
   position: absolute;
-  bottom: -4px;
+  bottom: -6px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 1px;
   background: var(--orange);
-  border-radius: var(--radius-full);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform var(--dur-base) var(--ease);
@@ -125,9 +142,8 @@
 .hamburger span {
   display: block;
   width: 22px;
-  height: 2px;
+  height: 1px;
   background: var(--white);
-  border-radius: var(--radius-full);
   transition: background var(--dur-base) var(--ease);
 }
 
@@ -143,30 +159,32 @@
 .mobileMenu {
   display: flex;
   flex-direction: column;
-  gap: var(--sp-1);
   background: var(--bg);
   padding: var(--sp-4) var(--sp-4) var(--sp-6);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 8px 24px rgba(0,36,100,.1);
+  border-top: 1px solid var(--border-light);
+  box-shadow: 0 16px 40px rgba(0, 36, 100, 0.10);
 }
 
 .mobileMenu a {
-  padding: 12px var(--sp-4);
+  padding: 15px var(--sp-2);
   color: var(--text);
-  font-size: var(--text-base);
+  font-size: 12px;
   font-weight: var(--fw-medium);
-  border-radius: var(--radius-sm);
-  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--hairline-soft);
+  transition: color var(--dur-fast) var(--ease), padding-left var(--dur-base) var(--ease);
 }
 
 .mobileMenu a:hover {
-  background: var(--navy-subtle);
-  color: var(--navy);
+  color: var(--orange);
+  padding-left: var(--sp-3);
 }
 
 .mobileMenu .btn {
-  margin-top: var(--sp-3);
+  margin-top: var(--sp-5);
   width: 100%;
+  border-bottom: none;
 }
 
 @media (max-width: 900px) {

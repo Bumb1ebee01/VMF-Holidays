@@ -1,9 +1,10 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import TestimonialCard from "@/components/ui/TestimonialCard";
-import { testimonials } from "@/lib/data/testimonials";
+import { getPublishedTestimonials } from "@/lib/queries";
 import styles from "./Testimonials.module.css";
 
-export default function Testimonials() {
+export default async function Testimonials() {
+  const testimonials = await getPublishedTestimonials();
   const shown = testimonials.slice(0, 3);
 
   return (

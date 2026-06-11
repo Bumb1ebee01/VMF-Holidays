@@ -1,15 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import PackageCard from "@/components/ui/PackageCard";
-import { getPackagesByCategory } from "@/lib/data/packages";
+import { getPackagesByCategory } from "@/lib/queries";
 import { getCategoryBySlug } from "@/lib/data/categories";
 import type { TripCategorySlug } from "@/lib/types";
 import styles from "./CategoryLanding.module.css";
 
-export default function CategoryLanding({ slug }: { slug: TripCategorySlug }) {
+export default async function CategoryLanding({ slug }: { slug: TripCategorySlug }) {
   const category = getCategoryBySlug(slug);
   if (!category) return null;
-  const pkgs = getPackagesByCategory(slug);
+  const pkgs = await getPackagesByCategory(slug);
 
   return (
     <div className={styles.page}>

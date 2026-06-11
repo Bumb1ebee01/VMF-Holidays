@@ -1,7 +1,7 @@
 .hero {
   position: relative;
   height: 100svh;
-  min-height: 680px;
+  min-height: 720px;
   display: flex;
   align-items: center;
   overflow: hidden;
@@ -12,8 +12,8 @@
   position: absolute;
   inset: 0;
   background: url('/images/destinations/kerala.jpg') center / cover no-repeat;
-  transform: scale(1.06);
-  transition: transform 14s ease-out;
+  transform: scale(1.08);
+  transition: transform 16s ease-out;
   will-change: transform;
 }
 
@@ -24,162 +24,185 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    115deg,
-    rgba(0, 36, 100, 0.92) 0%,
-    rgba(0, 36, 100, 0.72) 55%,
-    rgba(0, 48, 128, 0.45) 100%
-  );
+  background:
+    linear-gradient(to bottom, rgba(0, 26, 74, 0.55) 0%, rgba(0, 36, 100, 0.38) 45%, rgba(0, 26, 74, 0.78) 100%),
+    radial-gradient(ellipse at center 40%, rgba(0, 36, 100, 0.10) 0%, rgba(0, 26, 74, 0.55) 100%);
+}
+
+/* Hairline frame — the magazine-cover border */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  pointer-events: none;
+  z-index: 2;
 }
 
 .content {
   position: relative;
-  z-index: 2;
-  padding-top: calc(var(--nav-h) + var(--sp-12));
+  z-index: 3;
+  padding-top: calc(var(--nav-h) + var(--sp-10));
   padding-bottom: var(--sp-20);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  text-align: center;
   gap: var(--sp-6);
 }
 
-/* Trust badge */
-.badge {
+/* Tracked-out overline between rules */
+.overline {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-2);
-  background: rgba(254, 92, 16, 0.12);
-  border: 1px solid rgba(254, 92, 16, 0.28);
+  gap: var(--sp-4);
   color: var(--orange-lt);
-  font-size: 10px;
-  font-weight: var(--fw-bold);
-  letter-spacing: 3px;
+  font-size: 10.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--track-wider);
   text-transform: uppercase;
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
 }
 
-/* Headline */
+.overlineRule {
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: rgba(254, 92, 16, 0.55);
+}
+
+/* Headline — light, enormous, italic accent */
 .headline {
-  font-size: clamp(2.8rem, 7vw, 5.2rem);
-  font-weight: var(--fw-black);
+  font-size: clamp(3rem, 8.5vw, 6.5rem);
+  font-weight: var(--fw-light);
   color: var(--white);
-  line-height: 1.05;
-  letter-spacing: -2px;
-  max-width: 760px;
+  line-height: 1.04;
+  letter-spacing: var(--track-tight);
+  max-width: 1000px;
   margin: 0;
 }
 
 .headline em {
-  font-style: normal;
+  font-style: italic;
   color: var(--orange);
+  font-weight: var(--fw-light);
 }
 
-/* Sub */
 .sub {
   font-size: clamp(var(--text-base), 2vw, var(--text-lg));
-  color: rgba(255, 255, 255, 0.65);
-  max-width: 500px;
+  color: rgba(255, 255, 255, 0.66);
+  max-width: 520px;
   line-height: var(--leading-relaxed);
   margin: 0;
   font-weight: var(--fw-light);
 }
 
-/* Search bar */
+/* Glass search bar */
 .searchBar {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.96);
-  border-radius: 14px;
-  padding: 7px 7px 7px 22px;
-  max-width: 560px;
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-xs);
+  padding: 8px 8px 8px 24px;
+  max-width: 600px;
   width: 100%;
   gap: var(--sp-2);
-  box-shadow: 0 16px 56px rgba(0,0,0,.35), 0 2px 8px rgba(0,0,0,.2);
+  box-shadow: 0 24px 70px rgba(0, 16, 48, 0.35);
+  margin-top: var(--sp-2);
 }
 
 .field {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   min-width: 0;
 }
 
 .fieldLabel {
-  font-size: 10px;
-  font-weight: var(--fw-bold);
-  letter-spacing: 1.5px;
+  font-size: 9.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 3px;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 4px;
 }
 
 .fieldInput {
   border: none;
   outline: none;
   font-size: var(--text-sm);
-  font-weight: var(--fw-medium);
-  color: var(--text);
+  font-weight: var(--fw-regular);
+  color: var(--white);
   background: transparent;
   padding: 0;
   cursor: pointer;
   width: 100%;
 }
 
+.fieldInput option {
+  color: var(--navy);
+  background: var(--white);
+}
+
 .sep {
   width: 1px;
-  height: 40px;
-  background: var(--border);
+  height: 42px;
+  background: rgba(255, 255, 255, 0.18);
   flex-shrink: 0;
   margin: 0 var(--sp-2);
 }
 
 .searchBtn {
-  background: var(--navy);
+  background: var(--orange);
   color: var(--white);
-  font-size: var(--text-sm);
-  font-weight: var(--fw-bold);
-  padding: 13px 22px;
-  border-radius: 10px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--track-wide);
+  text-transform: uppercase;
+  padding: 15px 28px;
+  border-radius: var(--radius-xs);
   white-space: nowrap;
-  letter-spacing: 0.3px;
   cursor: pointer;
   border: none;
   font-family: inherit;
-  transition: background var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+  transition: background var(--dur-base) var(--ease);
   flex-shrink: 0;
 }
 
 .searchBtn:hover {
-  background: var(--navy-mid);
-  transform: translateY(-1px);
+  background: var(--navy);
 }
 
-/* Category filter pills */
+/* Category pills — hairline ghost links */
 .pills {
   display: flex;
   gap: var(--sp-2);
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  color: rgba(255, 255, 255, 0.75);
-  font-size: var(--text-xs);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
   font-weight: var(--fw-medium);
-  padding: 7px 18px;
-  border-radius: var(--radius-full);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: var(--radius-xs);
   transition: all var(--dur-base) var(--ease);
-  letter-spacing: 0.3px;
 }
 
 .pill:hover {
-  background: rgba(254, 92, 16, 0.2);
-  border-color: rgba(254, 92, 16, 0.45);
+  border-color: var(--orange);
   color: var(--orange-lt);
+  background: rgba(254, 92, 16, 0.08);
 }
 
 /* CTAs */
@@ -187,25 +210,35 @@
   display: flex;
   gap: var(--sp-4);
   flex-wrap: wrap;
+  justify-content: center;
+  margin-top: var(--sp-2);
 }
 
-/* Scroll indicator */
+/* Scroll indicator — editorial side rail */
 .scrollIndicator {
   position: absolute;
-  bottom: 40px;
+  bottom: 44px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  z-index: 2;
+  gap: 10px;
+  z-index: 3;
+}
+
+.scrollLabel {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .scrollLine {
   width: 1px;
   height: 44px;
-  background: linear-gradient(to bottom, rgba(254, 92, 16, 0.6), transparent);
-  animation: scrollLine 2.2s ease-in-out infinite;
+  background: linear-gradient(to bottom, rgba(254, 92, 16, 0.7), transparent);
+  animation: scrollLine 2.4s ease-in-out infinite;
   transform-origin: top;
 }
 
@@ -214,20 +247,42 @@
   50%       { transform: scaleY(1); opacity: 1; }
 }
 
-/* Marquee strip */
+/* Corner folio — issue-style metadata */
+.heroFolio {
+  position: absolute;
+  bottom: 44px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 9.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  z-index: 3;
+}
+
+.folioRule {
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Marquee strip — ruled editorial ticker */
 .marqueeStrip {
-  background: var(--navy-mid);
+  background: var(--cream);
   overflow: hidden;
-  border-top: 1px solid rgba(255,255,255,.05);
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  border-top: 1px solid var(--hairline-soft);
+  border-bottom: 1px solid var(--hairline-soft);
 }
 
 .marqueeTrack {
   display: flex;
   align-items: center;
-  animation: marqueeScroll 30s linear infinite;
+  animation: marqueeScroll 36s linear infinite;
   width: max-content;
-  padding: 14px 0;
+  padding: 17px 0;
 }
 
 .marqueeStrip:hover .marqueeTrack {
@@ -237,19 +292,19 @@
 .marqueeItem {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
-  font-size: 11px;
-  font-weight: var(--fw-bold);
-  letter-spacing: 3px;
+  gap: 16px;
+  font-size: 10.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.26em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.35);
+  color: var(--text-lighter);
   white-space: nowrap;
-  padding: 0 24px;
+  padding: 0 28px;
 }
 
 .marqueeItem span {
   color: var(--orange);
-  font-size: 14px;
+  font-size: 12px;
 }
 
 @keyframes marqueeScroll {
@@ -257,37 +312,18 @@
   to   { transform: translateX(-50%); }
 }
 
-/* Dark mode overrides */
-:global([data-theme="dark"]) .searchBar {
-  background: rgba(20, 28, 50, 0.97);
-}
-
-:global([data-theme="dark"]) .fieldInput {
-  color: var(--text);
-}
-
-:global([data-theme="dark"]) .fieldLabel {
-  color: var(--text-lighter);
-}
-
-:global([data-theme="dark"]) .sep {
-  background: var(--border);
-}
-
 /* Mobile */
 @media (max-width: 640px) {
-  .content {
-    align-items: center;
-    text-align: center;
-  }
+  .hero::after { inset: 10px; }
 
   .searchBar {
     flex-direction: column;
-    border-radius: var(--radius-xl);
     padding: var(--sp-5);
     gap: var(--sp-4);
     align-items: stretch;
   }
+
+  .field { align-items: stretch; }
 
   .sep {
     width: 100%;
@@ -297,21 +333,11 @@
 
   .searchBtn {
     width: 100%;
-    padding: 14px;
+    padding: 15px;
   }
 
-  .pills,
-  .ctas {
-    justify-content: center;
-  }
-
-  .ctas {
-    flex-direction: column;
-    width: 100%;
-    max-width: 320px;
-  }
-
-  .scrollIndicator {
+  .scrollIndicator,
+  .heroFolio {
     display: none;
   }
 }

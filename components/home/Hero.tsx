@@ -60,20 +60,22 @@ export default function Hero() {
         <div className={styles.heroOverlay} />
 
         <div className={`container ${styles.content}`}>
-          <div className={`${styles.badge} reveal`}>
-            ✦ Goa&apos;s Most Trusted Travel Company
+          <div className={`${styles.overline} reveal`}>
+            <span className={styles.overlineRule} />
+            Goa&apos;s Most Trusted Travel Company
+            <span className={styles.overlineRule} />
           </div>
 
-          <h1 className={`${styles.headline} reveal`}>
+          <h1 className={`${styles.headline} reveal reveal-d1`}>
             Discover Your World,<br /><em>Your Way</em>
           </h1>
 
-          <p className={`${styles.sub} reveal`}>
+          <p className={`${styles.sub} reveal reveal-d2`}>
             Expertly crafted domestic &amp; international holidays from Goa.
             Transparent pricing, full itineraries, personal service.
           </p>
 
-          <form className={`${styles.searchBar} reveal`} onSubmit={handleSearch}>
+          <form className={`${styles.searchBar} reveal reveal-d3`} onSubmit={handleSearch}>
             <div className={styles.field}>
               <label className={styles.fieldLabel}>Where to?</label>
               <select
@@ -108,7 +110,7 @@ export default function Hero() {
             </button>
           </form>
 
-          <div className={`${styles.pills} reveal`}>
+          <div className={`${styles.pills} reveal reveal-d4`}>
             {PILLS.map((p) => (
               <Link key={p.href} href={p.href} className={styles.pill}>
                 {p.label}
@@ -116,7 +118,7 @@ export default function Hero() {
             ))}
           </div>
 
-          <div className={`${styles.ctas} reveal`}>
+          <div className={`${styles.ctas} reveal reveal-d5`}>
             <Link href="/packages" className="btn btn-primary btn--lg">
               Explore Packages
             </Link>
@@ -132,7 +134,14 @@ export default function Hero() {
         </div>
 
         <div className={styles.scrollIndicator}>
+          <span className={styles.scrollLabel}>Scroll</span>
           <div className={styles.scrollLine} />
+        </div>
+
+        <div className={styles.heroFolio}>
+          <span>Est. 2016</span>
+          <span className={styles.folioRule} />
+          <span>Nagoa · Bardez · Goa</span>
         </div>
       </section>
 

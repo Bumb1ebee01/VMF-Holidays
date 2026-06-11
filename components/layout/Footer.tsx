@@ -68,7 +68,7 @@ export default function Footer() {
             <ul className={styles.contact}>
               <li>
                 <span className={styles.contactIcon}>📍</span>
-                <span>H.No 128/3/A Mendes Waddo, Nagoa, Bardez, Goa 403516</span>
+                <span>Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516</span>
               </li>
               <li>
                 <span className={styles.contactIcon}>📞</span>

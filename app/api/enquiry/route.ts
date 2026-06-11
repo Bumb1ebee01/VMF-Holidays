@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { db } from "@/lib/db";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -15,6 +16,33 @@ export async function POST(request: Request) {
   const { name, phone, email } = body as { name?: string; phone?: string; email?: string };
   if (!name || !phone || !email) {
     return Response.json({ error: "name, phone and email are required" }, { status: 400 });
+  }
+
+  // CRM: persist the lead before anything else so it's never lost
+  const source = body.packageTitle
+    ? "PACKAGE_PAGE"
+    : body.interests || body.budget
+      ? "TRIP_WIZARD"
+      : "CONTACT_FORM";
+
+  try {
+    await db.lead.create({
+      data: {
+        name: String(name),
+        phone: String(phone),
+        email: String(email),
+        source,
+        destination: body.destination ? String(body.destination) : null,
+        dates: body.dates ? String(body.dates) : null,
+        travelers: body.travelers ? String(body.travelers) : null,
+        budget: body.budget ? String(body.budget) : null,
+        interests: Array.isArray(body.interests) ? (body.interests as string[]).map(String) : [],
+        message: body.message ? String(body.message) : null,
+        packageTitle: body.packageTitle ? String(body.packageTitle) : null,
+      },
+    });
+  } catch (err) {
+    console.error("[enquiry] Failed to save lead:", err);
   }
 
   const subject = body.packageTitle
@@ -36,7 +64,7 @@ export async function POST(request: Request) {
       ${body.message ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px;vertical-align:top">Message</td><td style="padding:8px 0;font-size:14px">${body.message}</td></tr>` : ""}
     </table>
     <hr style="border:none;border-top:1px solid #E2E6EF;margin:24px 0"/>
-    <p style="font-size:12px;color:#7B8298">VMF Holidays Pvt. Ltd. — Nagoa, Bardez, Goa 403516</p>
+    <p style="font-size:12px;color:#7B8298">VMF Holidays Pvt. Ltd. — Mendes Vaddo, Calangute, Nagva, Goa 403516</p>
   `;
 
   if (!resend) {

@@ -1,0 +1,109 @@
+.page {
+  padding-top: var(--nav-h);
+  min-height: 100vh;
+}
+
+.pageHero {
+  background: var(--navy);
+  padding: var(--sp-20) 0 var(--sp-16);
+  position: relative;
+  overflow: hidden;
+}
+
+.pageHero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 92, 16, 0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.pageHero::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.pageHero :global(.eyebrow) {
+  color: var(--orange-lt);
+}
+
+.heroTitle {
+  font-size: clamp(var(--text-4xl), 5vw, var(--text-6xl));
+  font-weight: var(--fw-light);
+  letter-spacing: var(--track-tight);
+  color: var(--white);
+  margin: var(--sp-2) 0 var(--sp-3);
+  line-height: var(--leading-tight);
+  position: relative;
+  z-index: 1;
+}
+
+.heroSub {
+  font-size: var(--text-sm);
+  font-weight: var(--fw-light);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.layout {
+  display: flex;
+  gap: var(--sp-10);
+  padding-top: var(--sp-12);
+  padding-bottom: var(--sp-24);
+  align-items: flex-start;
+}
+
+.results {
+  flex: 1;
+  min-width: 0;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--sp-4);
+  padding: var(--sp-20) 0;
+  border: 1px dashed var(--hairline);
+  border-radius: var(--radius-sm);
+}
+
+.emptyIcon {
+  font-size: 3rem;
+}
+
+.empty h3 {
+  font-size: var(--text-xl);
+  font-weight: var(--fw-regular);
+  color: var(--navy);
+}
+
+.empty p {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 1024px) {
+  .layout {
+    flex-direction: column;
+    gap: var(--sp-6);
+  }
+}
+
+@media (max-width: 640px) {
+  .pageHero::after { inset: 8px; }
+}
+
+:global([data-theme="dark"]) .empty h3 { color: var(--text); }

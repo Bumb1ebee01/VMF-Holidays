@@ -103,3 +103,5 @@
     grid-template-columns: 1fr;
   }
 }
+
+:global([data-theme="dark"]) .success h3 { color: var(--text); }

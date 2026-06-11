@@ -1,0 +1,89 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.panelTitle {
+  font-size: 12px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: var(--sp-5);
+}
+
+:global([data-theme="dark"]) .panelTitle { color: var(--text); }
+
+.createForm {
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 1.2fr auto auto;
+  gap: var(--sp-3);
+  align-items: center;
+  margin-bottom: var(--sp-3);
+}
+
+.createForm input,
+.createForm select {
+  font-size: var(--text-sm);
+  padding: 10px 12px;
+}
+
+.inactiveRow {
+  opacity: 0.55;
+}
+
+.you {
+  color: var(--muted);
+  font-size: var(--text-xs);
+}
+
+.roleSelect {
+  font-size: var(--text-xs);
+  padding: 6px 10px;
+  width: auto;
+}
+
+.dateCell {
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+.rowActions {
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.smallBtn {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.smallBtn:hover {
+  border-color: var(--navy);
+  color: var(--navy);
+}
+
+:global([data-theme="dark"]) .smallBtn:hover { border-color: var(--orange); color: var(--orange-lt); }
+
+.deactivate:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+@media (max-width: 900px) {
+  .createForm {
+    grid-template-columns: 1fr 1fr;
+  }
+}

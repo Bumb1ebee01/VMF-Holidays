@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { destinations } from "@/lib/data/destinations";
+import type { Destination } from "@/lib/types";
 import styles from "./PopularDestinations.module.css";
 
 const FILTERS = ["all", "domestic", "international"] as const;
 type Filter = typeof FILTERS[number];
 const LABELS: Record<Filter, string> = { all: "All", domestic: "India", international: "International" };
 
-export default function PopularDestinations() {
+export default function PopularDestinations({ destinations }: { destinations: Destination[] }) {
   const [filter, setFilter] = useState<Filter>("all");
 
   const visible =
@@ -20,10 +20,14 @@ export default function PopularDestinations() {
   return (
     <section className={styles.section}>
       <div className="container">
+        <span className={styles.sectionFolio} aria-hidden="true">01</span>
+
         <div className={styles.header}>
           <div>
             <p className={`${styles.eyebrow} reveal`}>Top Destinations</p>
-            <h2 className={`${styles.title} reveal`}>Where Will You Go Next?</h2>
+            <h2 className={`${styles.title} reveal`}>
+              Where Will You Go <em>Next?</em>
+            </h2>
           </div>
           <div className={`${styles.filterTabs} reveal`}>
             {FILTERS.map((f) => (
@@ -43,13 +47,16 @@ export default function PopularDestinations() {
             <Link
               key={dest.slug}
               href={`/packages?destination=${dest.slug}`}
-              className={`${styles.card} ${i === 0 && filter === "all" ? styles.cardFeat : ""} reveal`}
+              className={`${styles.card} ${i === 0 && filter === "all" ? styles.cardFeat : ""} reveal-clip reveal-d${Math.min(i + 1, 5)}`}
             >
               <div
                 className={styles.cardImg}
                 style={{ backgroundImage: `url(${dest.heroImage})` }}
               />
               <div className={styles.cardOverlay} />
+              <span className={styles.cardIndex}>
+                {String(i + 1).padStart(2, "0")}
+              </span>
               <div className={styles.cardContent}>
                 <span className={styles.destBadge}>
                   {dest.region === "domestic" ? "India" : "International"}

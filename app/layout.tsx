@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
-import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
-import PageLoader from "@/components/ui/PageLoader";
-import ScrollRevealInit from "@/components/ui/ScrollRevealInit";
 import "./globals.css";
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "700", "900"],
+  weight: ["100", "300", "400", "500", "700", "900"],
   variable: "--font-roboto",
   display: "swap",
 });
@@ -55,14 +50,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
-      <body>
-          <PageLoader />
-          <ScrollRevealInit />
-          <Navbar />
-          {children}
-          <Footer />
-          <WhatsAppFloat />
-        </body>
+      <body>{children}</body>
     </html>
   );
 }

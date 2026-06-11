@@ -16,7 +16,7 @@ See `PLAN.md` for the full phased build plan.
 | Phone 1 | +91 7499322412 |
 | Phone 2 | +91 8788324054 |
 | Email | info@vmfholidays.com |
-| Address | H.No 128/3/A Mendes Waddo, Nagoa, Bardez, Goa 403516 |
+| Address | Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516, India |
 | WhatsApp | https://wa.me/917499322412 |
 
 ## What's Already Built (Phase 1 ✅)

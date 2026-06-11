@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUOTED
+  WON
+  LOST
+}
+
+enum LeadSource {
+  CONTACT_FORM
+  TRIP_WIZARD
+  PACKAGE_PAGE
+  OTHER
+}
+
+enum Region {
+  domestic
+  international
+}
+
+enum TripCategory {
+  honeymoon
+  family
+  adventure
+  corporate
+  pilgrimage
+  college
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String
+  passwordHash String
+  role         Role       @default(MEMBER)
+  active       Boolean    @default(true)
+  leads        Lead[]     @relation("AssignedLeads")
+  notes        LeadNote[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Lead {
+  id           String     @id @default(cuid())
+  name         String
+  phone        String
+  email        String
+  source       LeadSource @default(OTHER)
+  status       LeadStatus @default(NEW)
+  destination  String?
+  dates        String?
+  travelers    String?
+  budget       String?
+  interests    String[]
+  message      String?
+  packageTitle String?
+  assignedTo   User?      @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
+  assignedToId String?
+  notes        LeadNote[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  body      String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId  String?
+  createdAt DateTime @default(now())
+}
+
+model Destination {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  country   String
+  region    Region
+  heroImage String
+  fromPrice Int
+  blurb     String
+  tags      String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Package {
+  id              String       @id @default(cuid())
+  slug            String       @unique
+  title           String
+  destination     String
+  destinationSlug String
+  category        TripCategory
+  duration        String
+  nights          Int
+  heroImage       String
+  gallery         String[]
+  fromPrice       Int
+  highlights      String[]
+  inclusions      String[]
+  exclusions      String[]
+  itinerary       Json         @default("[]")
+  featured        Boolean      @default(false)
+  badge           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([destinationSlug])
+  @@index([category])
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  location  String
+  trip      String
+  rating    Int      @default(5)
+  quote     String
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

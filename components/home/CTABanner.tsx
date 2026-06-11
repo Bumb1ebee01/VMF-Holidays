@@ -6,7 +6,10 @@ export default function CTABanner() {
     <section className={styles.section}>
       <div className={`container ${styles.content}`}>
         <div className={styles.text}>
-          <h2 className={styles.headline}>Ready to Start Your Journey?</h2>
+          <p className={styles.kicker}>Begin the Conversation</p>
+          <h2 className={styles.headline}>
+            Ready to Start Your <em>Journey?</em>
+          </h2>
           <p className={styles.sub}>
             Talk to our travel experts today — no commitment, just good advice.
           </p>

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import SectionHeader from "@/components/ui/SectionHeader";
 import PackageCard from "@/components/ui/PackageCard";
-import { getFeaturedPackages } from "@/lib/data/packages";
+import { getFeaturedPackages } from "@/lib/queries";
 import styles from "./FeaturedPackages.module.css";
 
-export default function FeaturedPackages() {
-  const featured = getFeaturedPackages();
+export default async function FeaturedPackages() {
+  const featured = await getFeaturedPackages();
 
   return (
     <section className={`section ${styles.section}`}>

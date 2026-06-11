@@ -5,14 +5,14 @@
 }
 
 .item {
-  border: 1.5px solid var(--border-light);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
   overflow: hidden;
   transition: border-color var(--dur-fast) var(--ease);
 }
 
 .itemOpen {
-  border-color: var(--navy);
+  border-color: var(--orange);
 }
 
 .trigger {
@@ -49,14 +49,14 @@
 }
 
 .dayBadge {
-  font-size: 10px;
-  font-weight: var(--fw-bold);
-  letter-spacing: 1px;
+  font-size: 9.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--white);
   background: var(--navy);
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
+  padding: 4px 12px;
+  border-radius: var(--radius-xs);
   flex-shrink: 0;
 }
 
@@ -80,6 +80,8 @@
   transform: rotate(180deg);
   color: var(--navy);
 }
+
+:global([data-theme="dark"]) .chevronOpen { color: var(--orange-lt); }
 
 .panel {
   overflow: hidden;

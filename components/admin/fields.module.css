@@ -1,0 +1,135 @@
+.imageField {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.imagePreview {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border-light);
+}
+
+.imageEmpty {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-xs);
+  color: var(--muted);
+  font-size: var(--text-xs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.imageControls {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: center;
+}
+
+.imageUrlInput {
+  flex: 1;
+  font-size: var(--text-xs);
+  padding: 9px 12px;
+}
+
+.fieldError {
+  color: #dc2626;
+  font-size: var(--text-xs);
+  margin: var(--sp-1) 0 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.listRow {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: center;
+}
+
+.listRow input {
+  font-size: var(--text-sm);
+}
+
+.removeBtn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 11px;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.removeBtn:hover {
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.addBtn {
+  align-self: flex-start;
+  padding: 8px 16px;
+  font-size: 10.5px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.addBtn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.dayCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xs);
+  background: var(--off-white);
+}
+
+.dayCard input,
+.dayCard textarea {
+  font-size: var(--text-sm);
+  background: var(--card-bg);
+}
+
+.dayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dayNum {
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+}
