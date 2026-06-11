@@ -4,12 +4,21 @@ color 0B
 
 echo.
 echo  ==========================================
-echo   VMF Holidays — Starting services...
+echo   VMF Holidays -- Starting services...
 echo  ==========================================
 echo.
 
+:: Check if Windows Terminal is available
+where wt >nul 2>&1
+if %errorlevel% == 0 (
+    echo  Opening in Windows Terminal...
+    wt --title "VMF Holidays" new-tab --title "Database" powershell -NoExit -Command "npx prisma dev" ; new-tab --title "Dev Server" powershell -NoExit -Command "Write-Host 'Waiting for database...' -ForegroundColor Cyan; while (-not (Test-NetConnection -ComputerName 127.0.0.1 -Port 51214 -InformationLevel Quiet -WarningAction SilentlyContinue)) { Start-Sleep 1 }; Write-Host 'Database ready!' -ForegroundColor Green; npm run dev"
+    goto done
+)
+
+:: Fallback: separate PowerShell windows
 echo  [1/2] Starting Prisma database...
-start "VMF — Database (keep open)" cmd /k "npx prisma dev"
+start "VMF -- Database (keep open)" powershell -NoExit -Command "npx prisma dev"
 
 echo  Waiting for database on port 51214...
 :wait
@@ -20,10 +29,10 @@ if errorlevel 1 (
 )
 
 echo  Database ready.
-echo.
 echo  [2/2] Starting Next.js dev server...
-start "VMF — Dev Server (keep open)" cmd /k "npm run dev"
+start "VMF -- Dev Server (keep open)" powershell -NoExit -Command "npm run dev"
 
+:done
 echo.
 echo  ==========================================
 echo   All services running:
