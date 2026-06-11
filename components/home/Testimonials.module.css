@@ -1,7 +1,147 @@
 .section {
-  background: var(--off-white);
+  padding: 112px 0;
+  background: #FAF8F4;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 28px; height: 1px;
+  background: var(--orange);
+}
+
+.title {
+  font-size: clamp(1.875rem, 4vw, 2.875rem);
+  font-weight: 800;
+  color: var(--navy);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-bottom: 16px;
+}
+
+.sub {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.75;
+  font-weight: 300;
 }
 
 .grid {
-  margin-top: var(--sp-12);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: 20px;
+  padding: 40px 36px 36px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 36, 100, 0.06);
+  border: 1px solid rgba(0, 36, 100, 0.06);
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 40px rgba(0, 36, 100, 0.10);
+}
+
+/* Large decorative quote mark */
+.qMark {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-size: 100px;
+  line-height: 1;
+  font-weight: 900;
+  font-family: Georgia, serif;
+  color: rgba(254, 92, 16, 0.10);
+  pointer-events: none;
+  letter-spacing: -4px;
+}
+
+.stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 20px;
+}
+
+.quote {
+  font-size: 14px;
+  color: #3a3a4e;
+  line-height: 1.8;
+  font-weight: 300;
+  font-style: italic;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.author {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--navy), #003d9e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+.authorName {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.authorDest {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.authorDest svg {
+  color: var(--orange);
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; max-width: 520px; margin: 0 auto; }
+}
+
+@media (max-width: 640px) {
+  .section { padding: 80px 0; }
+  .card { padding: 28px 24px; }
 }

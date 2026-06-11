@@ -63,42 +63,43 @@
   color: var(--orange);
 }
 
-/* Text tabs with underline — editorial filter */
+/* Pill filter tabs */
 .filterTabs {
   display: flex;
-  gap: var(--sp-6);
+  gap: 6px;
   flex-wrap: wrap;
   flex-shrink: 0;
-  border-bottom: 1px solid var(--hairline-soft);
 }
 
 .filterTab {
-  font-size: 11px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 10px 2px 14px;
-  border: none;
-  border-bottom: 1px solid transparent;
-  margin-bottom: -1px;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 100px;
+  border: 1.5px solid #E8E2D6;
   color: var(--muted);
-  background: transparent;
-  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+  background: var(--white);
+  transition: all 0.25s ease;
   cursor: pointer;
   font-family: inherit;
+  letter-spacing: 0.3px;
 }
 
 .filterTab:hover {
-  color: var(--navy);
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
 }
 
 .filterActive {
-  color: var(--orange);
-  border-bottom-color: var(--orange);
+  background: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
 }
 
 .filterActive:hover {
-  color: var(--orange);
+  background: var(--navy);
+  color: var(--white);
 }
 
 /* Base grid */
@@ -211,31 +212,29 @@
 
 .destBadge {
   display: inline-block;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: rgba(255, 255, 255, 0.85);
+  background: rgba(254, 92, 16, 0.18);
+  border: 1px solid rgba(254, 92, 16, 0.35);
+  color: var(--orange);
   font-size: 9px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.2em;
+  font-weight: 700;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  padding: 5px 12px;
-  border-radius: var(--radius-xs);
-  margin-bottom: 12px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  margin-bottom: 10px;
 }
 
 .destName {
-  font-weight: var(--fw-light);
-  font-size: 26px;
+  font-weight: 800;
+  font-size: 22px;
   color: var(--white);
   line-height: 1.1;
   margin-bottom: 6px;
-  letter-spacing: var(--track-tight);
+  letter-spacing: -0.3px;
 }
 
 .cardFeat .destName {
-  font-size: 38px;
+  font-size: 30px;
 }
 
 .destMeta {

@@ -1,19 +1,18 @@
 .hero {
   position: relative;
-  height: 100svh;
-  min-height: 720px;
+  height: 100vh;
+  min-height: 680px;
   display: flex;
   align-items: center;
   overflow: hidden;
 }
 
-/* Ken Burns background */
 .heroBg {
   position: absolute;
   inset: 0;
   background: url('/images/destinations/kerala.jpg') center / cover no-repeat;
-  transform: scale(1.08);
-  transition: transform 16s ease-out;
+  transform: scale(1.04);
+  transition: transform 12s ease-out;
   will-change: transform;
 }
 
@@ -24,265 +23,238 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(to bottom, rgba(0, 26, 74, 0.55) 0%, rgba(0, 36, 100, 0.38) 45%, rgba(0, 26, 74, 0.78) 100%),
-    radial-gradient(ellipse at center 40%, rgba(0, 36, 100, 0.10) 0%, rgba(0, 26, 74, 0.55) 100%);
-}
-
-/* Hairline frame — the magazine-cover border */
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  pointer-events: none;
-  z-index: 2;
+  background: linear-gradient(115deg, rgba(0, 36, 100, 0.92) 0%, rgba(0, 36, 100, 0.72) 55%, rgba(0, 48, 128, 0.45) 100%);
 }
 
 .content {
   position: relative;
-  z-index: 3;
-  padding-top: calc(var(--nav-h) + var(--sp-10));
-  padding-bottom: var(--sp-20);
+  z-index: 2;
+  padding-top: calc(var(--nav-h) + 32px);
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--sp-6);
+  align-items: flex-start;
+  gap: 24px;
 }
 
-/* Tracked-out overline between rules */
-.overline {
+/* Trust badge */
+.heroBadge {
   display: inline-flex;
   align-items: center;
-  gap: var(--sp-4);
-  color: var(--orange-lt);
-  font-size: 10.5px;
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--track-wider);
+  gap: 8px;
+  background: rgba(254, 92, 16, 0.12);
+  border: 1px solid rgba(254, 92, 16, 0.25);
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 100px;
 }
 
-.overlineRule {
-  display: block;
-  width: 48px;
-  height: 1px;
-  background: rgba(254, 92, 16, 0.55);
-}
-
-/* Headline — light, enormous, italic accent */
+/* Headline — heavy, large */
 .headline {
-  font-size: clamp(3rem, 8.5vw, 6.5rem);
-  font-weight: var(--fw-light);
+  font-size: clamp(2.75rem, 6.5vw, 5rem);
+  font-weight: 900;
   color: var(--white);
-  line-height: 1.04;
-  letter-spacing: var(--track-tight);
-  max-width: 1000px;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  max-width: 700px;
   margin: 0;
 }
 
 .headline em {
-  font-style: italic;
+  font-style: normal;
   color: var(--orange);
-  font-weight: var(--fw-light);
 }
 
 .sub {
-  font-size: clamp(var(--text-base), 2vw, var(--text-lg));
-  color: rgba(255, 255, 255, 0.66);
-  max-width: 520px;
-  line-height: var(--leading-relaxed);
+  font-size: clamp(0.9375rem, 1.8vw, 1.0625rem);
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 500px;
+  line-height: 1.75;
   margin: 0;
-  font-weight: var(--fw-light);
+  font-weight: 300;
+  letter-spacing: 0.2px;
 }
 
-/* Glass search bar */
+/* White solid search bar */
 .searchBar {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.09);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: var(--radius-xs);
-  padding: 8px 8px 8px 24px;
-  max-width: 600px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 14px;
+  padding: 7px 7px 7px 22px;
+  max-width: 560px;
   width: 100%;
-  gap: var(--sp-2);
-  box-shadow: 0 24px 70px rgba(0, 16, 48, 0.35);
-  margin-top: var(--sp-2);
+  gap: 10px;
+  box-shadow: 0 16px 56px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.field {
+.searchIcon {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.searchInput {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: transparent;
   min-width: 0;
 }
 
-.fieldLabel {
-  font-size: 9.5px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-  margin-bottom: 4px;
-}
-
-.fieldInput {
-  border: none;
-  outline: none;
-  font-size: var(--text-sm);
-  font-weight: var(--fw-regular);
-  color: var(--white);
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  width: 100%;
-}
-
-.fieldInput option {
-  color: var(--navy);
-  background: var(--white);
-}
-
-.sep {
-  width: 1px;
-  height: 42px;
-  background: rgba(255, 255, 255, 0.18);
-  flex-shrink: 0;
-  margin: 0 var(--sp-2);
+.searchInput::placeholder {
+  color: #aab0bb;
 }
 
 .searchBtn {
-  background: var(--orange);
+  background: var(--navy);
   color: var(--white);
-  font-size: 11px;
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--track-wide);
-  text-transform: uppercase;
-  padding: 15px 28px;
-  border-radius: var(--radius-xs);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 10px;
   white-space: nowrap;
-  cursor: pointer;
+  letter-spacing: 0.3px;
   border: none;
   font-family: inherit;
-  transition: background var(--dur-base) var(--ease);
+  cursor: pointer;
+  transition: background 0.25s ease;
   flex-shrink: 0;
 }
 
 .searchBtn:hover {
-  background: var(--navy);
+  background: #003d9e;
 }
 
-/* Category pills — hairline ghost links */
+/* Filter pills — ghost rounded */
 .pills {
   display: flex;
-  gap: var(--sp-2);
+  gap: 10px;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .pill {
   display: inline-flex;
   align-items: center;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 10px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  padding: 8px 20px;
-  border-radius: var(--radius-xs);
-  transition: all var(--dur-base) var(--ease);
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 16px;
+  border-radius: 100px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  letter-spacing: 0.2px;
 }
 
 .pill:hover {
-  border-color: var(--orange);
-  color: var(--orange-lt);
-  background: rgba(254, 92, 16, 0.08);
+  background: rgba(254, 92, 16, 0.2);
+  border-color: rgba(254, 92, 16, 0.4);
+  color: var(--orange);
 }
 
 /* CTAs */
 .ctas {
   display: flex;
-  gap: var(--sp-4);
+  gap: 14px;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-top: var(--sp-2);
 }
 
-/* Scroll indicator — editorial side rail */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 13.5px;
+  font-weight: 700;
+  padding: 15px 30px;
+  border-radius: 10px;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btnPrimary:hover {
+  background: #FF7A3A;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(254, 92, 16, 0.35);
+}
+
+.btnOutline {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 13.5px;
+  font-weight: 500;
+  padding: 15px 30px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease;
+  text-decoration: none;
+}
+
+.btnOutline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Scroll indicator */
 .scrollIndicator {
   position: absolute;
-  bottom: 44px;
+  bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  z-index: 3;
+  gap: 8px;
+  z-index: 2;
 }
 
 .scrollLabel {
   font-size: 9px;
-  letter-spacing: 0.3em;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .scrollLine {
   width: 1px;
   height: 44px;
-  background: linear-gradient(to bottom, rgba(254, 92, 16, 0.7), transparent);
-  animation: scrollLine 2.4s ease-in-out infinite;
-  transform-origin: top;
+  background: linear-gradient(to bottom, rgba(254, 92, 16, 0.6), transparent);
+  animation: scrollLine 2.2s ease-in-out infinite;
 }
 
 @keyframes scrollLine {
-  0%, 100% { transform: scaleY(0); opacity: 0; }
-  50%       { transform: scaleY(1); opacity: 1; }
+  0%, 100% { transform: scaleY(0) translateY(-50%); opacity: 0; }
+  50%       { transform: scaleY(1) translateY(0);    opacity: 1; }
 }
 
-/* Corner folio — issue-style metadata */
-.heroFolio {
-  position: absolute;
-  bottom: 44px;
-  right: 48px;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-3);
-  font-size: 9.5px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
-  z-index: 3;
-}
-
-.folioRule {
-  display: block;
-  width: 28px;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.25);
-}
-
-/* Marquee strip — ruled editorial ticker */
+/* Marquee strip — navy */
 .marqueeStrip {
-  background: var(--cream);
+  background: #003080;
   overflow: hidden;
-  border-top: 1px solid var(--hairline-soft);
-  border-bottom: 1px solid var(--hairline-soft);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .marqueeTrack {
   display: flex;
   align-items: center;
-  animation: marqueeScroll 36s linear infinite;
+  animation: marqueeScroll 30s linear infinite;
   width: max-content;
-  padding: 17px 0;
+  padding: 16px 0;
 }
 
 .marqueeStrip:hover .marqueeTrack {
@@ -292,19 +264,20 @@
 .marqueeItem {
   display: inline-flex;
   align-items: center;
-  gap: 16px;
-  font-size: 10.5px;
-  font-weight: var(--fw-medium);
-  letter-spacing: 0.26em;
+  gap: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--text-lighter);
+  color: rgba(255, 255, 255, 0.35);
   white-space: nowrap;
-  padding: 0 28px;
+  padding: 0 24px;
 }
 
 .marqueeItem span {
   color: var(--orange);
-  font-size: 12px;
+  font-size: 16px;
+  line-height: 1;
 }
 
 @keyframes marqueeScroll {
@@ -314,30 +287,21 @@
 
 /* Mobile */
 @media (max-width: 640px) {
-  .hero::after { inset: 10px; }
+  .content {
+    padding-top: calc(var(--nav-h) + 16px);
+  }
 
   .searchBar {
     flex-direction: column;
-    padding: var(--sp-5);
-    gap: var(--sp-4);
+    padding: 16px;
+    gap: 12px;
     align-items: stretch;
-  }
-
-  .field { align-items: stretch; }
-
-  .sep {
-    width: 100%;
-    height: 1px;
-    margin: 0;
   }
 
   .searchBtn {
     width: 100%;
-    padding: 15px;
+    padding: 14px;
   }
 
-  .scrollIndicator,
-  .heroFolio {
-    display: none;
-  }
+  .scrollIndicator { display: none; }
 }

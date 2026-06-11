@@ -5,39 +5,23 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./Hero.module.css";
 
-const DESTINATIONS = [
-  { label: "Kerala", value: "kerala" },
-  { label: "Rajasthan", value: "rajasthan" },
-  { label: "Goa", value: "goa" },
-  { label: "Manali", value: "manali" },
-  { label: "Maldives", value: "maldives" },
-  { label: "Dubai", value: "dubai" },
-  { label: "Thailand", value: "thailand" },
-  { label: "Bali", value: "bali" },
-];
-
-const PILLS = [
+const FILTER_PILLS = [
+  { label: "Beach Escapes", href: "/adventure" },
   { label: "Honeymoon", href: "/honeymoon" },
-  { label: "Family", href: "/family" },
   { label: "Adventure", href: "/adventure" },
-  { label: "Corporate", href: "/corporate" },
+  { label: "Family Trips", href: "/family" },
+  { label: "Heritage Tours", href: "/pilgrimage" },
 ];
 
-const MARQUEE_ITEMS = [
-  "500+ Happy Travellers",
-  "Transparent Pricing",
-  "24/7 Support",
-  "Personalised Itineraries",
-  "Goa's Most Trusted",
-  "8+ Years of Excellence",
-  "50+ Destinations",
-  "100% Satisfaction",
+const MARQUEE = [
+  "Goa", "Kerala", "Rajasthan", "Maldives", "Dubai",
+  "Thailand", "Ladakh", "Singapore", "Bali", "Andaman",
+  "Shimla", "Manali", "Kashmir", "Coorg", "Ooty",
 ];
 
 export default function Hero() {
   const router = useRouter();
-  const [destination, setDestination] = useState("");
-  const [travelers, setTravelers] = useState("2");
+  const [query, setQuery] = useState("");
   const [bgLoaded, setBgLoaded] = useState(false);
 
   useEffect(() => {
@@ -47,10 +31,8 @@ export default function Hero() {
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    const params = new URLSearchParams();
-    if (destination) params.set("destination", destination);
-    if (travelers) params.set("travelers", travelers);
-    router.push(`/packages?${params.toString()}`);
+    if (query.trim()) router.push(`/packages?q=${encodeURIComponent(query.trim())}`);
+    else router.push("/packages");
   }
 
   return (
@@ -60,97 +42,78 @@ export default function Hero() {
         <div className={styles.heroOverlay} />
 
         <div className={`container ${styles.content}`}>
-          <div className={`${styles.overline} reveal`}>
-            <span className={styles.overlineRule} />
-            Goa&apos;s Most Trusted Travel Company
-            <span className={styles.overlineRule} />
+          <div className={styles.heroBadge}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            India&apos;s Trust-First Travel Company
           </div>
 
-          <h1 className={`${styles.headline} reveal reveal-d1`}>
-            Discover Your World,<br /><em>Your Way</em>
+          <h1 className={styles.headline}>
+            Discover Your World,<br /><em>Your Way.</em>
           </h1>
 
-          <p className={`${styles.sub} reveal reveal-d2`}>
-            Expertly crafted domestic &amp; international holidays from Goa.
-            Transparent pricing, full itineraries, personal service.
+          <p className={styles.sub}>
+            We don&apos;t just plan trips — we craft journeys for those who want more than a destination.
+            Trusted by 500+ travellers across India.
           </p>
 
-          <form className={`${styles.searchBar} reveal reveal-d3`} onSubmit={handleSearch}>
-            <div className={styles.field}>
-              <label className={styles.fieldLabel}>Where to?</label>
-              <select
-                className={styles.fieldInput}
-                value={destination}
-                onChange={(e) => setDestination(e.target.value)}
-              >
-                <option value="">Any Destination</option>
-                {DESTINATIONS.map((d) => (
-                  <option key={d.value} value={d.value}>{d.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className={styles.sep} />
-            <div className={styles.field}>
-              <label className={styles.fieldLabel}>Travelers</label>
-              <select
-                className={styles.fieldInput}
-                value={travelers}
-                onChange={(e) => setTravelers(e.target.value)}
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                  <option key={n} value={String(n)}>
-                    {n} {n === 1 ? "Traveler" : "Travelers"}
-                  </option>
-                ))}
-                <option value="10+">10+ Travelers</option>
-              </select>
-            </div>
-            <button type="submit" className={styles.searchBtn}>
-              Search
-            </button>
+          <form className={styles.searchBar} onSubmit={handleSearch}>
+            <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+            </svg>
+            <input
+              type="text"
+              className={styles.searchInput}
+              placeholder="Where do you want to go? e.g. Goa, Maldives, Dubai…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <button type="submit" className={styles.searchBtn}>Search Packages</button>
           </form>
 
-          <div className={`${styles.pills} reveal reveal-d4`}>
-            {PILLS.map((p) => (
-              <Link key={p.href} href={p.href} className={styles.pill}>
+          <div className={styles.pills}>
+            {FILTER_PILLS.map((p) => (
+              <Link key={p.href + p.label} href={p.href} className={styles.pill}>
                 {p.label}
               </Link>
             ))}
           </div>
 
-          <div className={`${styles.ctas} reveal reveal-d5`}>
-            <Link href="/packages" className="btn btn-primary btn--lg">
-              Explore Packages
+          <div className={styles.ctas}>
+            <Link href="/packages" className={styles.btnPrimary}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+              Browse Packages
             </Link>
             <a
-              href="https://wa.me/917499322412"
+              href="https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20to%20plan%20a%20trip."
               target="_blank"
               rel="noopener noreferrer"
-              className="btn btn-ghost-white btn--lg"
+              className={styles.btnOutline}
             >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
               Talk to an Expert
             </a>
           </div>
         </div>
 
         <div className={styles.scrollIndicator}>
-          <span className={styles.scrollLabel}>Scroll</span>
           <div className={styles.scrollLine} />
-        </div>
-
-        <div className={styles.heroFolio}>
-          <span>Est. 2016</span>
-          <span className={styles.folioRule} />
-          <span>Nagoa · Bardez · Goa</span>
+          <span className={styles.scrollLabel}>Explore</span>
         </div>
       </section>
 
+      {/* Marquee strip */}
       <div className={styles.marqueeStrip}>
         <div className={styles.marqueeTrack}>
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+          {[...MARQUEE, ...MARQUEE].map((item, i) => (
             <div key={i} className={styles.marqueeItem}>
-              <span>✦</span>
               {item}
+              <span>·</span>
             </div>
           ))}
         </div>

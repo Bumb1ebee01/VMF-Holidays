@@ -1,123 +1,250 @@
 .section {
+  padding: 112px 0;
+  background: #F5F3EF;
+}
+
+.inner {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 24px 72px rgba(0, 36, 100, 0.16), 0 0 0 1px rgba(0, 36, 100, 0.08);
+}
+
+/* Left — navy form side */
+.formSide {
   background: var(--navy);
-  padding: var(--sp-24) 0;
+  padding: 64px 52px;
   position: relative;
   overflow: hidden;
 }
 
-/* Hairline frame echoing the hero cover */
-.section::after {
+.formSide::before {
   content: '';
   position: absolute;
-  inset: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  inset: 0;
   pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(254, 92, 16, 0.25) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
-.section::before {
-  content: '';
-  position: absolute;
-  top: -45%;
-  right: -8%;
-  width: 560px;
-  height: 560px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(254, 92, 16, 0.16) 0%, transparent 70%);
-  pointer-events: none;
-}
-
-.content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-10);
+.formSide > * {
   position: relative;
   z-index: 1;
 }
 
-.text {
-  max-width: 560px;
-}
-
-.kicker {
+.eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  font-size: 10.5px;
-  font-weight: var(--fw-medium);
-  letter-spacing: var(--track-wider);
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color: var(--orange-lt);
-  margin-bottom: var(--sp-4);
+  color: var(--orange);
+  margin-bottom: 16px;
 }
 
-.kicker::before {
+.eyebrow::before {
   content: '';
   display: block;
-  width: 36px;
-  height: 1px;
-  background: rgba(254, 92, 16, 0.55);
+  width: 28px; height: 1px;
+  background: var(--orange);
 }
 
-.headline {
-  font-size: clamp(var(--text-3xl), 4.5vw, var(--text-6xl));
-  font-weight: var(--fw-light);
-  letter-spacing: var(--track-tight);
+.title {
+  font-size: 32px;
+  font-weight: 800;
   color: var(--white);
-  margin-bottom: var(--sp-4);
-  line-height: var(--leading-tight);
-}
-
-.headline em {
-  font-style: italic;
-  color: var(--orange);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 12px;
 }
 
 .sub {
-  font-size: var(--text-lg);
-  font-weight: var(--fw-light);
-  color: rgba(255, 255, 255, 0.6);
-  line-height: var(--leading-relaxed);
-  margin: 0;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 36px;
 }
 
-.actions {
+.form {
   display: flex;
-  gap: var(--sp-4);
-  flex-shrink: 0;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 0;
 }
 
-.waBtn {
-  background: #25D366;
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 9px;
+}
+
+.input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 13.5px;
   color: var(--white);
-  border: 1px solid #25D366;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.25s, background 0.25s;
+  appearance: none;
 }
 
-.waBtn:hover {
-  background: var(--white);
-  border-color: var(--white);
-  color: #128C4B;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+.input:focus {
+  border-color: rgba(254, 92, 16, 0.5);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.input option {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.submitBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--orange);
+  color: var(--navy);
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 16px;
+  border-radius: 10px;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  margin-top: 4px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  background: #FF7A3A;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 32px rgba(254, 92, 16, 0.35);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.responseNote {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 16px;
+  text-align: center;
+}
+
+.successMsg {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 48px 0;
+  color: var(--white);
+}
+
+.successMsg strong {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.successMsg p {
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 14px;
+}
+
+.errorMsg {
+  color: #ff9999;
+  font-size: 12.5px;
+  margin-bottom: 8px;
+}
+
+/* Right — photo side */
+.imgSide {
+  position: relative;
+  overflow: hidden;
+  min-height: 420px;
+  background: url('/images/destinations/maldives.jpg') center / cover no-repeat;
+}
+
+.imgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0, 36, 100, 0.65) 0%, rgba(0, 36, 100, 0.2) 100%);
+}
+
+.trustList {
+  position: absolute;
+  bottom: 48px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 1;
+}
+
+.trustItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.trustItem svg {
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 @media (max-width: 1024px) {
-  .content {
-    flex-direction: column;
-    text-align: center;
+  .inner {
+    grid-template-columns: 1fr;
   }
-
-  .kicker::before { display: none; }
-
-  .text {
-    max-width: none;
-  }
-
-  .actions {
-    justify-content: center;
-  }
+  .imgSide { min-height: 300px; }
+  .formSide { padding: 48px 36px; }
+  .formRow { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-  .section::after { inset: 10px; }
+  .section { padding: 80px 0; }
+  .formSide { padding: 36px 24px; }
+  .title { font-size: 26px; }
 }
