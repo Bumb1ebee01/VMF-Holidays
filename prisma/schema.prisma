@@ -113,6 +113,8 @@ model Package {
   nights          Int
   heroImage       String
   gallery         String[]
+  hotel           String?
+  hotelImage      String?
   fromPrice       Int
   highlights      String[]
   inclusions      String[]

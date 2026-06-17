@@ -30,6 +30,21 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
             {pkg.destination}
           </p>
           {overview && <p className={styles.overview}>{overview}</p>}
+          {pkg.hotel && (
+            <div className={styles.hotelRow}>
+              {pkg.hotelImage && (
+                <div className={styles.hotelThumb}>
+                  <Image src={pkg.hotelImage} alt={pkg.hotel} fill sizes="48px" className={styles.hotelThumbImg} />
+                </div>
+              )}
+              <span className={styles.hotelName}>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+                {pkg.hotel}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 

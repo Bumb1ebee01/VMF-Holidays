@@ -12,12 +12,20 @@ export default function ThemeToggle({ onLight = false }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const saved = localStorage.getItem("vmf-theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const isDark = saved ? saved === "dark" : prefersDark;
+    const isDark = saved ? saved === "dark" : mq.matches;
     setDark(isDark);
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
     setMounted(true);
+
+    function onOsChange(e: MediaQueryListEvent) {
+      if (localStorage.getItem("vmf-theme")) return;
+      setDark(e.matches);
+      document.documentElement.setAttribute("data-theme", e.matches ? "dark" : "light");
+    }
+    mq.addEventListener("change", onOsChange);
+    return () => mq.removeEventListener("change", onOsChange);
   }, []);
 
   function toggle() {

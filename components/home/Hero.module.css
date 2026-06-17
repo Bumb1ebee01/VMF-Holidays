@@ -150,6 +150,13 @@
   letter-spacing: 0.15px;
 }
 
+/* Search wrapper — positions the dropdown */
+.searchWrap {
+  position: relative;
+  max-width: 580px;
+  width: 100%;
+}
+
 /* Search bar — frosted glass */
 .searchBar {
   display: flex;
@@ -157,7 +164,6 @@
   background: rgba(255, 255, 255, 0.97);
   border-radius: 14px;
   padding: 7px 7px 7px 20px;
-  max-width: 580px;
   width: 100%;
   gap: 10px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.12);
@@ -166,6 +172,64 @@
 
 .searchBar:focus-within {
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(254, 92, 16, 0.5);
+}
+
+/* Autocomplete dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  z-index: 50;
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: background 0.15s ease;
+  color: var(--text);
+}
+
+.dropdownItem:hover {
+  background: rgba(0, 36, 100, 0.05);
+}
+
+.dropdownItem svg {
+  color: #b0b8c4;
+  flex-shrink: 0;
+}
+
+.dropdownTitle {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownDest {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .searchIcon {

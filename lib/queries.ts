@@ -13,6 +13,8 @@ function toPackage(row: DbPackage): Package {
     nights: row.nights,
     heroImage: row.heroImage,
     gallery: row.gallery,
+    hotel: row.hotel ?? undefined,
+    hotelImage: row.hotelImage ?? undefined,
     fromPrice: row.fromPrice,
     highlights: row.highlights,
     inclusions: row.inclusions,

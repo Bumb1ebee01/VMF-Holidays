@@ -25,6 +25,8 @@ export interface Package {
   nights: number;
   heroImage: string;
   gallery: string[];
+  hotel?: string;
+  hotelImage?: string;
   fromPrice: number;
   highlights: string[];
   inclusions: string[];

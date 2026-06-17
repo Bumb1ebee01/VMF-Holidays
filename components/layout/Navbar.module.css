@@ -27,6 +27,14 @@
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
 }
 
+/* In dark mode, the scrolled navbar is dark — show white logo, hide blue logo */
+:global([data-theme="dark"]) .scrolled .logoBlue {
+  opacity: 0;
+}
+:global([data-theme="dark"]) .scrolled .logoOut {
+  opacity: 1;
+}
+
 .inner {
   height: 100%;
   display: flex;

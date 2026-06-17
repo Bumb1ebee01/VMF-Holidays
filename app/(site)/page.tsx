@@ -7,18 +7,27 @@ import TripCategories from "@/components/home/TripCategories";
 import Testimonials from "@/components/home/Testimonials";
 import HowItWorks from "@/components/home/HowItWorks";
 import CTABanner from "@/components/home/CTABanner";
-import { getAllDestinations } from "@/lib/queries";
+import { getAllDestinations, getAllPackages } from "@/lib/queries";
 
 export default async function HomePage() {
-  const destinations = await getAllDestinations();
+  const [destinations, packages] = await Promise.all([
+    getAllDestinations(),
+    getAllPackages(),
+  ]);
+
+  const suggestions = packages.map((p) => ({
+    title: p.title,
+    slug: p.slug,
+    destination: p.destination,
+  }));
 
   return (
     <main>
-      <Hero />
+      <Hero suggestions={suggestions} />
       <Stats />
+      <WhyChooseVMF />
       <PopularDestinations destinations={destinations} />
       <FeaturedPackages />
-      <WhyChooseVMF />
       <TripCategories />
       <Testimonials />
       <HowItWorks />

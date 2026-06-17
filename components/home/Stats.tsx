@@ -5,9 +5,7 @@ import styles from "./Stats.module.css";
 
 const STATS = [
   { target: 200, suffix: "+", label: "Happy Travellers" },
-  { target: 8,   suffix: "+", label: "Years of Excellence" },
   { target: 50,  suffix: "+", label: "Destinations" },
-  { target: 100, suffix: "%", label: "Satisfaction Rate" },
 ];
 
 function StatItem({ stat, active }: { stat: typeof STATS[0]; active: boolean }) {

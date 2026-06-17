@@ -51,6 +51,8 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
   const [fromPrice, setFromPrice] = useState(initial?.fromPrice ?? 0);
   const [heroImage, setHeroImage] = useState(initial?.heroImage ?? "");
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
+  const [hotel, setHotel] = useState(initial?.hotel ?? "");
+  const [hotelImage, setHotelImage] = useState(initial?.hotelImage ?? "");
   const [highlights, setHighlights] = useState<string[]>(initial?.highlights ?? []);
   const [inclusions, setInclusions] = useState<string[]>(initial?.inclusions ?? []);
   const [exclusions, setExclusions] = useState<string[]>(initial?.exclusions ?? []);
@@ -73,6 +75,8 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
       fromPrice: Number(fromPrice),
       heroImage,
       gallery,
+      hotel,
+      hotelImage,
       highlights,
       inclusions,
       exclusions,
@@ -214,10 +218,23 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
           onChange={setGallery}
           placeholder="/uploads/… or /images/…"
         />
+        <div className={styles.spacer} />
+        <div className={shared.fieldGroup}>
+          <label className={shared.label}>Hotel name</label>
+          <input
+            className={shared.input}
+            value={hotel}
+            onChange={(e) => setHotel(e.target.value)}
+            placeholder="e.g. Taj Backwater Resort"
+          />
+        </div>
+        <div className={styles.spacer} />
+        <ImageUpload label="Hotel image" value={hotelImage} onChange={setHotelImage} />
       </div>
 
       <div className={`${shared.panel} ${shared.panelPad}`}>
         <div className={styles.stack}>
+          <ItineraryEditor values={itinerary} onChange={setItinerary} />
           <StringListEditor
             label="Highlights"
             values={highlights}
@@ -236,7 +253,6 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
             onChange={setExclusions}
             placeholder="e.g. Airfare"
           />
-          <ItineraryEditor values={itinerary} onChange={setItinerary} />
         </div>
       </div>
 

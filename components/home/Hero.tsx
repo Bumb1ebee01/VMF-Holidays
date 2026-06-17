@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import styles from "./Hero.module.css";
+
+interface Suggestion {
+  title: string;
+  slug: string;
+  destination: string;
+}
 
 const FILTER_PILLS = [
   { label: "Beach Escapes", href: "/adventure" },
@@ -32,20 +38,46 @@ const ITEM = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } },
 };
 
-export default function Hero() {
+export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [bgLoaded, setBgLoaded] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setBgLoaded(true), 80);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  const filtered = query.trim().length > 0
+    ? suggestions.filter((s) =>
+        s.title.toLowerCase().includes(query.toLowerCase()) ||
+        s.destination.toLowerCase().includes(query.toLowerCase())
+      )
+    : [];
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
+    setShowDropdown(false);
     if (query.trim()) router.push(`/packages?q=${encodeURIComponent(query.trim())}`);
     else router.push("/packages");
+  }
+
+  function pickSuggestion(s: Suggestion) {
+    setQuery(s.title);
+    setShowDropdown(false);
+    router.push(`/packages/${s.slug}`);
   }
 
   return (
@@ -83,19 +115,38 @@ export default function Hero() {
               Trusted by 200+ travellers across India.
             </motion.p>
 
-            <motion.form variants={ITEM} className={styles.searchBar} onSubmit={handleSearch}>
-              <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-              </svg>
-              <input
-                type="text"
-                className={styles.searchInput}
-                placeholder="Where do you want to go? e.g. Goa, Maldives, Dubai…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button type="submit" className={styles.searchBtn}>Search Packages</button>
-            </motion.form>
+            <motion.div variants={ITEM} className={styles.searchWrap} ref={searchRef}>
+              <form className={styles.searchBar} onSubmit={handleSearch}>
+                <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                </svg>
+                <input
+                  type="text"
+                  className={styles.searchInput}
+                  placeholder="Where do you want to go? e.g. Goa, Maldives, Dubai…"
+                  value={query}
+                  onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); }}
+                  onFocus={() => { if (query.trim()) setShowDropdown(true); }}
+                  autoComplete="off"
+                />
+                <button type="submit" className={styles.searchBtn}>Search Packages</button>
+              </form>
+              {showDropdown && filtered.length > 0 && (
+                <ul className={styles.dropdown}>
+                  {filtered.map((s) => (
+                    <li key={s.slug}>
+                      <button type="button" className={styles.dropdownItem} onClick={() => pickSuggestion(s)}>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
+                        </svg>
+                        <span className={styles.dropdownTitle}>{s.title}</span>
+                        <span className={styles.dropdownDest}>{s.destination}</span>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
 
             <motion.div variants={ITEM} className={styles.pills}>
               {FILTER_PILLS.map((p) => (

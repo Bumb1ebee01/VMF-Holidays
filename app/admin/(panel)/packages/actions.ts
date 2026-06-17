@@ -21,6 +21,8 @@ export interface PackagePayload {
   fromPrice: number;
   heroImage: string;
   gallery: string[];
+  hotel: string;
+  hotelImage: string;
   highlights: string[];
   inclusions: string[];
   exclusions: string[];
@@ -59,6 +61,8 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
     fromPrice: Math.floor(payload.fromPrice),
     heroImage: payload.heroImage.trim(),
     gallery: payload.gallery.map((g) => g.trim()).filter(Boolean),
+    hotel: payload.hotel.trim() || null,
+    hotelImage: payload.hotelImage.trim() || null,
     highlights: payload.highlights.map((h) => h.trim()).filter(Boolean),
     inclusions: payload.inclusions.map((i) => i.trim()).filter(Boolean),
     exclusions: payload.exclusions.map((e) => e.trim()).filter(Boolean),
