@@ -1,31 +1,86 @@
 import type { Package } from "@/lib/types";
 
 export const packages: Package[] = [
+  // ── DOMESTIC ────────────────────────────────────────────────────────────────
+
   {
-    slug: "kerala-backwaters-escape",
-    title: "Kerala Backwaters Escape",
+    slug: "short-escape-to-goa",
+    title: "Short Escape to Goa",
+    destination: "Goa",
+    destinationSlug: "goa",
+    category: "family",
+    duration: "2N / 3D",
+    nights: 2,
+    heroImage: "/images/destinations/goa.jpg",
+    gallery: ["/images/destinations/goa.jpg"],
+    fromPrice: 10500,
+    badge: "Weekend Getaway",
+    featured: false,
+    highlights: [
+      "North Goa beach tour — Baga, Calangute & Anjuna",
+      "Fort Aguada & Chapora Fort sightseeing",
+      "Old Goa heritage churches walk",
+      "Water sports at Candolim Beach",
+    ],
+    inclusions: [
+      "2 nights beach resort stay",
+      "Daily breakfast",
+      "Airport / station transfers",
+      "Half-day sightseeing by AC vehicle",
+    ],
+    exclusions: [
+      "Flights (land package)",
+      "Lunch & dinner",
+      "Water sports charges",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive & Settle In",
+        description:
+          "Check into your beach resort in Calangute. Spend the evening exploring Baga Beach and the lively Tito's Lane market strip.",
+      },
+      {
+        day: 2,
+        title: "North Goa Sightseeing",
+        description:
+          "Fort Aguada lighthouse views, Chapora Fort panorama, Anjuna flea market. Afternoon water sports at Candolim — jet ski, parasailing, banana boat.",
+      },
+      {
+        day: 3,
+        title: "South Goa & Departure",
+        description:
+          "Morning visit to Old Goa's Basilica of Bom Jesus and Se Cathedral. Leisurely checkout and transfer to airport or railway station.",
+      },
+    ],
+  },
+
+  {
+    slug: "wonders-of-kerala",
+    title: "Wonders of Kerala",
     destination: "Kerala",
     destinationSlug: "kerala",
     category: "honeymoon",
-    duration: "5N / 6D",
-    nights: 5,
-    heroImage: "/images/packages/kerala-backwaters.jpg",
-    gallery: [
-      "/images/packages/kerala-backwaters.jpg",
-      "/images/destinations/kerala.jpg",
-    ],
-    fromPrice: 18999,
+    duration: "7N / 8D",
+    nights: 7,
+    heroImage: "/images/destinations/kerala.jpg",
+    gallery: ["/images/destinations/kerala.jpg"],
+    fromPrice: 32000,
+    badge: "Bestseller",
+    featured: true,
     highlights: [
-      "Houseboat stay on Alleppey backwaters",
+      "Houseboat cruise on Alleppey backwaters",
       "Kathakali cultural show in Kochi",
-      "Spice plantation tour in Munnar",
-      "Ayurvedic massage session",
+      "Tea estate & spice plantation, Munnar",
+      "Wildlife safari, Thekkady",
+      "Sunset at Kovalam beach",
     ],
     inclusions: [
       "Return flights from Goa",
-      "5 nights accommodation (houseboat + hotel)",
+      "7 nights accommodation (hotel + houseboat)",
       "Daily breakfast & dinner",
-      "AC vehicle transfers",
+      "AC vehicle throughout",
       "English-speaking guide",
     ],
     exclusions: [
@@ -34,267 +89,773 @@ export const packages: Package[] = [
       "Tips & gratuities",
     ],
     itinerary: [
-      { day: 1, title: "Arrive Kochi", description: "Airport pickup, check-in, evening Kathakali show at Kerala Kalamandalam." },
-      { day: 2, title: "Kochi Sightseeing", description: "Fort Kochi, Chinese fishing nets, Mattancherry Palace, Jew Town spice markets." },
-      { day: 3, title: "Munnar Hill Station", description: "Drive to Munnar, tea estate tour, Mattupetty Dam, echo point sunset." },
-      { day: 4, title: "Munnar to Alleppey", description: "Morning spice plantation walk, drive to Alleppey, board your private houseboat." },
-      { day: 5, title: "Backwaters at Leisure", description: "Full day cruising the emerald backwaters, village walks, sunset on the deck." },
-      { day: 6, title: "Departure", description: "Transfer to Kochi airport for your return flight to Goa." },
+      {
+        day: 1,
+        title: "Arrive Kochi",
+        description:
+          "Airport pickup, check-in. Evening Kathakali performance at Kerala Kalamandalam.",
+      },
+      {
+        day: 2,
+        title: "Kochi Sightseeing",
+        description:
+          "Fort Kochi, Chinese fishing nets, Mattancherry Palace, Jew Town spice market, Santa Cruz Basilica.",
+      },
+      {
+        day: 3,
+        title: "Munnar Hill Station",
+        description:
+          "Scenic drive up to Munnar, tea estate tour, Mattupetty Dam, Echo Point, Top Station viewpoint.",
+      },
+      {
+        day: 4,
+        title: "Munnar to Thekkady",
+        description:
+          "Spice plantation walk, drive to Thekkady. Evening Periyar wildlife boat safari.",
+      },
+      {
+        day: 5,
+        title: "Thekkady to Alleppey",
+        description:
+          "Morning spice market visit. Drive to Alleppey. Board your private luxury houseboat.",
+      },
+      {
+        day: 6,
+        title: "Backwaters at Leisure",
+        description:
+          "Full day cruising the emerald backwaters. Village walks, sunset on the deck, fresh seafood dinner aboard.",
+      },
+      {
+        day: 7,
+        title: "Alleppey to Kovalam",
+        description:
+          "Disembark houseboat, drive to Kovalam. Beach relaxation, lighthouse viewpoint, Ayurvedic massage.",
+      },
+      {
+        day: 8,
+        title: "Departure",
+        description:
+          "Transfer to Trivandrum airport for return flight.",
+      },
     ],
-    featured: true,
-    badge: "Bestseller",
   },
+
   {
-    slug: "rajasthan-royal-circuit",
-    title: "Rajasthan Royal Circuit",
-    destination: "Rajasthan",
-    destinationSlug: "rajasthan",
-    category: "family",
-    duration: "7N / 8D",
-    nights: 7,
-    heroImage: "/images/packages/rajasthan-royal.jpg",
-    gallery: ["/images/packages/rajasthan-royal.jpg", "/images/destinations/rajasthan.jpg"],
-    fromPrice: 24999,
+    slug: "kashmir-valley-tour",
+    title: "Kashmir Valley Tour",
+    destination: "Kashmir",
+    destinationSlug: "kashmir",
+    category: "adventure",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/kashmir.jpg",
+    gallery: ["/images/destinations/kashmir.jpg"],
+    fromPrice: 39000,
+    badge: "Most Popular",
+    featured: true,
     highlights: [
-      "Amber Fort elephant ride, Jaipur",
-      "Sunset camel safari in Jaisalmer",
-      "City Palace & Lake Pichola boat ride, Udaipur",
-      "Mehrangarh Fort panorama, Jodhpur",
+      "Shikara ride on Dal Lake, Srinagar",
+      "Meadows of Pahalgam & Betaab Valley",
+      "Gulmarg Gondola — Asia's highest cable car",
+      "Mughal Gardens — Shalimar, Nishat, Chashme Shahi",
     ],
     inclusions: [
       "Return flights from Goa",
-      "7 nights in heritage hotels",
-      "Daily breakfast",
-      "AC vehicle with driver throughout",
-      "Entry tickets to monuments",
+      "5 nights (houseboat on Dal Lake + hotel)",
+      "Daily breakfast & dinner",
+      "AC vehicle with driver",
+      "Shikara ride included",
     ],
-    exclusions: ["Lunch & dinner", "Travel insurance", "Personal shopping"],
+    exclusions: [
+      "Gondola cable car charges",
+      "Pony rides",
+      "Lunch & personal expenses",
+      "Travel insurance",
+    ],
     itinerary: [
-      { day: 1, title: "Arrive Jaipur", description: "Pink City welcome, check-in, evening at Chokhi Dhani folk village." },
-      { day: 2, title: "Jaipur Sightseeing", description: "Amber Fort, Hawa Mahal, Jantar Mantar, Johri Bazaar shopping." },
-      { day: 3, title: "Jaipur to Jodhpur", description: "Drive via Ajmer Sharif dargah, arrive Blue City, evening Mehrangarh." },
-      { day: 4, title: "Jodhpur to Jaisalmer", description: "Jaswant Thada, drive to Jaisalmer, Patwon ki Haveli tour." },
-      { day: 5, title: "Jaisalmer Desert", description: "Jaisalmer Fort, afternoon dune safari, sunset camel ride, folk dinner." },
-      { day: 6, title: "Jaisalmer to Udaipur", description: "Fly or drive to Udaipur, City of Lakes, evening boat ride." },
-      { day: 7, title: "Udaipur Sightseeing", description: "City Palace, Jagdish Temple, Saheliyon ki Bari, farewell dinner." },
-      { day: 8, title: "Departure", description: "Transfer to Udaipur airport, fly back to Goa." },
+      {
+        day: 1,
+        title: "Arrive Srinagar",
+        description:
+          "Airport pickup, check-in to houseboat on Dal Lake. Evening shikara ride through the floating market.",
+      },
+      {
+        day: 2,
+        title: "Srinagar Sightseeing",
+        description:
+          "Mughal Gardens — Shalimar Bagh, Nishat Bagh, Chashme Shahi. Old City bazaars and Jama Masjid.",
+      },
+      {
+        day: 3,
+        title: "Pahalgam",
+        description:
+          "Drive to the 'Valley of Shepherds'. Betaab Valley, Aru Valley, Chandanwari meadows. Horse riding optional.",
+      },
+      {
+        day: 4,
+        title: "Gulmarg",
+        description:
+          "Drive to Gulmarg. Gondola Phase I & II to Apharwat Peak (seasonal). Snow activities, golf course, meadow walks.",
+      },
+      {
+        day: 5,
+        title: "Sonamarg",
+        description:
+          "Day excursion to the 'Meadow of Gold'. Thajiwas Glacier, Sindh River, mountain views.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Morning free for local shopping — saffron, Pashmina shawls, Kashmiri dry fruits. Transfer to airport.",
+      },
     ],
-    featured: true,
-    badge: "Most Popular",
   },
+
+  // ── INTERNATIONAL ────────────────────────────────────────────────────────────
+
   {
-    slug: "dubai-explorer",
-    title: "Dubai Explorer",
+    slug: "escape-to-da-nang-hoi-an",
+    title: "Escape to Da Nang & Hoi An",
+    destination: "Vietnam",
+    destinationSlug: "vietnam",
+    category: "family",
+    duration: "3N / 4D",
+    nights: 3,
+    heroImage: "/images/destinations/vietnam.jpg",
+    gallery: ["/images/destinations/vietnam.jpg"],
+    fromPrice: 24500,
+    badge: "Budget Pick",
+    featured: false,
+    highlights: [
+      "Marble Mountains cave temples, Da Nang",
+      "Lantern-lit Ancient Town of Hoi An",
+      "My Son Sanctuary — Cham ruins UNESCO site",
+      "Cooking class with local chef, Hoi An",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "3 nights hotel",
+      "Daily breakfast",
+      "Airport transfers",
+      "Hoi An Ancient Town boat ride",
+    ],
+    exclusions: [
+      "Vietnam e-visa (₹1,500 approx)",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Optional cooking class",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Da Nang",
+        description:
+          "Flight arrival, hotel check-in. Evening stroll along My Khe Beach — one of the most beautiful beaches in Southeast Asia.",
+      },
+      {
+        day: 2,
+        title: "Da Nang to Hoi An",
+        description:
+          "Marble Mountains cave pagodas, Lady Buddha at Linh Ung Pagoda. Afternoon in Hoi An — Ancient Town, Japanese Covered Bridge, colourful lantern market.",
+      },
+      {
+        day: 3,
+        title: "My Son Sanctuary & Hoi An",
+        description:
+          "Morning at My Son Cham ruins (UNESCO). Afternoon cooking class or bicycle through rice fields. Boat lantern release on Thu Bon River at night.",
+      },
+      {
+        day: 4,
+        title: "Departure",
+        description:
+          "Leisurely breakfast, beach time or local café, transfer to Da Nang airport.",
+      },
+    ],
+  },
+
+  {
+    slug: "explore-phu-quoc",
+    title: "Explore Phu Quoc",
+    destination: "Vietnam",
+    destinationSlug: "vietnam",
+    category: "honeymoon",
+    duration: "4N / 5D",
+    nights: 4,
+    heroImage: "/images/destinations/vietnam.jpg",
+    gallery: ["/images/destinations/vietnam.jpg"],
+    fromPrice: 36500,
+    badge: "Island Escape",
+    featured: false,
+    highlights: [
+      "Pristine beaches — Bai Sao & Long Beach",
+      "Sunset at Phu Quoc Night Market",
+      "Snorkelling in An Thoi Archipelago",
+      "Pepper farm & fish sauce factory tour",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "4 nights beach resort",
+      "Daily breakfast",
+      "Airport & island transfers",
+      "Snorkelling day trip",
+    ],
+    exclusions: [
+      "Vietnam e-visa",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Personal expenses",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Phu Quoc",
+        description:
+          "Flight arrival, resort check-in. Sunset drinks at Long Beach. Phu Quoc Night Market for fresh seafood dinner.",
+      },
+      {
+        day: 2,
+        title: "Island Exploration",
+        description:
+          "Pepper plantation, fish sauce factory, Dinh Cau Rock Shrine. Afternoon at Bai Sao — one of Vietnam's top-rated beaches.",
+      },
+      {
+        day: 3,
+        title: "Snorkelling Day Trip",
+        description:
+          "Full-day boat to An Thoi Islands — snorkelling, fishing, coral reef swim. Fresh seafood lunch on the boat.",
+      },
+      {
+        day: 4,
+        title: "Leisure & Spa",
+        description:
+          "Morning kayaking or beach walk. Afternoon couples spa. Farewell dinner at a beachfront restaurant.",
+      },
+      {
+        day: 5,
+        title: "Departure",
+        description:
+          "Breakfast, last beach swim, transfer to Phu Quoc International Airport.",
+      },
+    ],
+  },
+
+  {
+    slug: "enchanting-georgia-escape",
+    title: "Enchanting Georgia Escape",
+    destination: "Georgia",
+    destinationSlug: "georgia",
+    category: "adventure",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/georgia.jpg",
+    gallery: ["/images/destinations/georgia.jpg"],
+    fromPrice: 38000,
+    badge: "Trending",
+    featured: false,
+    highlights: [
+      "Old Tbilisi — sulphur baths, Narikala Fortress",
+      "Gudauri skiing & snowboarding",
+      "Kazbegi — Gergeti Trinity Church at 2,170m",
+      "Wine tasting in Kakheti wine region",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "5 nights hotel",
+      "Daily breakfast",
+      "AC vehicle with English-speaking driver",
+      "Tbilisi city tour",
+    ],
+    exclusions: [
+      "Ski equipment & lift passes",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Georgia e-visa (free for Indians)",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Tbilisi",
+        description:
+          "Airport pickup, check-in. Evening walk through Old Tbilisi — colourful balconied houses, Abanotubani sulphur bath district.",
+      },
+      {
+        day: 2,
+        title: "Tbilisi Sightseeing",
+        description:
+          "Narikala Fortress cable car, Jvari Monastery, Mtskheta (UNESCO), Svetitskhoveli Cathedral, Georgian National Museum.",
+      },
+      {
+        day: 3,
+        title: "Gudauri Ski Resort",
+        description:
+          "Drive to Gudauri at 2,196m. Skiing, snowboarding or sledging. Panoramic views of the Greater Caucasus Range.",
+      },
+      {
+        day: 4,
+        title: "Kazbegi",
+        description:
+          "Dramatic drive through Dariali Gorge and the Georgian Military Highway. 4x4 to Gergeti Trinity Church overlooking Mt. Kazbek.",
+      },
+      {
+        day: 5,
+        title: "Kakheti Wine Region",
+        description:
+          "Day trip to Sighnaghi — 'City of Love'. Winery tour with wine and chacha tasting. Traditional Georgian dinner (supra).",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Morning free in Tbilisi — Rustaveli Avenue, souvenir shopping. Transfer to airport.",
+      },
+    ],
+  },
+
+  {
+    slug: "thailand-phuket",
+    title: "Thailand — Phuket",
+    destination: "Thailand",
+    destinationSlug: "thailand",
+    category: "family",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/thailand.jpg",
+    gallery: ["/images/destinations/thailand.jpg"],
+    fromPrice: 42500,
+    badge: "Most Popular",
+    featured: true,
+    highlights: [
+      "Phi Phi Island speedboat day trip & Maya Bay",
+      "James Bond Island — Phang Nga Bay sea canoe",
+      "Big Buddha & Wat Chalong Temple, Phuket",
+      "Patong Beach nightlife & street food",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "5 nights 4-star hotel in Phuket",
+      "Daily breakfast",
+      "Airport transfers",
+      "Phi Phi Island tour",
+    ],
+    exclusions: [
+      "Visa on arrival (₹3,500 approx)",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Optional activities",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Phuket",
+        description:
+          "Airport transfer to hotel. Evening at Patong Beach and Bangla Road night market.",
+      },
+      {
+        day: 2,
+        title: "Phi Phi Islands",
+        description:
+          "Full-day speedboat — Phi Phi Don, Phi Phi Leh, Maya Bay, Viking Cave, monkey beach, snorkelling at coral reefs.",
+      },
+      {
+        day: 3,
+        title: "James Bond Island",
+        description:
+          "Phang Nga Bay by longtail boat — James Bond Island, sea kayaking through limestone caves, floating Muslim village.",
+      },
+      {
+        day: 4,
+        title: "Phuket Highlights",
+        description:
+          "Big Buddha viewpoint, Wat Chalong, Phuket Old Town Sino-Portuguese streets, Promthep Cape sunset.",
+      },
+      {
+        day: 5,
+        title: "Beach & Leisure",
+        description:
+          "Kata Noi beach morning. Elephant sanctuary ethical visit. Evening Tiger Kingdom or cooking class.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Breakfast, last minute shopping at Jungceylon mall, transfer to Phuket International Airport.",
+      },
+    ],
+  },
+
+  {
+    slug: "hanoi-sapa-tour",
+    title: "The Best of Hanoi & Sapa",
+    destination: "Vietnam",
+    destinationSlug: "vietnam",
+    category: "adventure",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/vietnam.jpg",
+    gallery: ["/images/destinations/vietnam.jpg"],
+    fromPrice: 53500,
+    badge: "Cultural Journey",
+    featured: false,
+    highlights: [
+      "Hoan Kiem Lake & Ngoc Son Temple, Hanoi",
+      "Fansipan Peak — 'Roof of Indochina' (3,143m)",
+      "Trek through Muong Hoa Valley rice terraces",
+      "Homestay with Hmong village family",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "5 nights (Hanoi hotel + Sapa resort)",
+      "Daily breakfast",
+      "Overnight train Hanoi–Lao Cai (AC sleeper)",
+      "English-speaking guide",
+    ],
+    exclusions: [
+      "Vietnam e-visa",
+      "Fansipan cable car (optional)",
+      "Lunch & dinner",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Hanoi",
+        description:
+          "Airport pickup, hotel check-in. Evening walk around Hoan Kiem Lake, Ngoc Son Temple, Hanoi Old Quarter street food tour.",
+      },
+      {
+        day: 2,
+        title: "Hanoi City Tour",
+        description:
+          "Ho Chi Minh Mausoleum, One Pillar Pagoda, Temple of Literature, Vietnam Museum of Ethnology. Evening water puppet show.",
+      },
+      {
+        day: 3,
+        title: "Overnight Train to Sapa",
+        description:
+          "Free morning in Hanoi. Board the overnight AC sleeper train to Lao Cai. Transfer to Sapa.",
+      },
+      {
+        day: 4,
+        title: "Sapa Trekking",
+        description:
+          "Trek through Muong Hoa Valley — terraced rice fields, Black Hmong and Red Dao villages. Fansipan cable car optional.",
+      },
+      {
+        day: 5,
+        title: "Sapa to Hanoi",
+        description:
+          "Bac Ha market (if Sunday). Afternoon return to Hanoi. Evening at leisure — bia hoi corner, local pho.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Transfer to Noi Bai International Airport for return flight.",
+      },
+    ],
+  },
+
+  {
+    slug: "dubai-prestige",
+    title: "Dubai Prestige Package",
     destination: "Dubai",
     destinationSlug: "dubai",
     category: "family",
-    duration: "4N / 5D",
-    nights: 4,
-    heroImage: "/images/packages/dubai-explorer.jpg",
-    gallery: ["/images/packages/dubai-explorer.jpg", "/images/destinations/dubai.jpg"],
-    fromPrice: 32999,
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/dubai.jpg",
+    gallery: ["/images/destinations/dubai.jpg"],
+    fromPrice: 57000,
+    badge: "International",
+    featured: false,
     highlights: [
-      "Burj Khalifa observation deck (124th floor)",
-      "Desert safari with BBQ dinner",
-      "Dubai Frame & Gold Souk",
+      "Burj Khalifa observation deck (124th & 148th floor)",
+      "Desert safari with BBQ dinner under the stars",
+      "Dubai Frame, Gold Souk & Miracle Garden",
       "Dhow cruise on Dubai Creek",
     ],
     inclusions: [
       "Return flights from Goa",
-      "4 nights 4-star hotel",
+      "5 nights 4-star hotel",
       "Daily breakfast",
-      "Airport + attraction transfers",
-      "Visa assistance",
+      "Airport & attraction transfers",
+      "Desert safari with BBQ dinner",
+      "UAE tourist visa",
     ],
-    exclusions: ["Lunch & dinner (except BBQ)", "Travel insurance", "Personal expenses"],
+    exclusions: [
+      "Lunch & dinner (except safari BBQ)",
+      "Travel insurance",
+      "Theme park tickets",
+    ],
     itinerary: [
-      { day: 1, title: "Arrive Dubai", description: "Airport pickup, hotel check-in, evening Dhow cruise on Dubai Creek." },
-      { day: 2, title: "Modern Dubai", description: "Burj Khalifa, Dubai Mall, Dubai Fountain show, JBR walk." },
-      { day: 3, title: "Desert Safari", description: "Morning free, afternoon dune bashing, camel ride, BBQ dinner under the stars." },
-      { day: 4, title: "Old Dubai", description: "Dubai Frame, Gold Souk, Spice Souk, Miracle Garden (seasonal), Global Village." },
-      { day: 5, title: "Departure", description: "Shopping at Dubai Mall, transfer to airport." },
+      {
+        day: 1,
+        title: "Arrive Dubai",
+        description:
+          "Airport pickup, hotel check-in. Evening Dhow Cruise on Dubai Creek with dinner.",
+      },
+      {
+        day: 2,
+        title: "Modern Dubai",
+        description:
+          "Burj Khalifa (At the Top), Dubai Mall, Dubai Fountain show, JBR Walk at dusk.",
+      },
+      {
+        day: 3,
+        title: "Desert Safari",
+        description:
+          "Morning free. Afternoon dune bashing in a 4x4, camel ride, sandboarding, henna, BBQ dinner with belly dance show.",
+      },
+      {
+        day: 4,
+        title: "Old Dubai & Miracle Garden",
+        description:
+          "Dubai Frame, Gold Souk, Spice Souk, Al Fahidi historical neighbourhood, Miracle Garden (Oct–Apr).",
+      },
+      {
+        day: 5,
+        title: "Leisure & Shopping",
+        description:
+          "Global Village or IMG Worlds of Adventure. Evening Mall of Emirates — Ski Dubai.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Breakfast, last-minute duty-free shopping, transfer to Dubai International Airport.",
+      },
     ],
-    featured: true,
-    badge: "International",
   },
+
   {
-    slug: "maldives-honeymoon",
-    title: "Maldives Honeymoon Retreat",
-    destination: "Maldives",
-    destinationSlug: "maldives",
-    category: "honeymoon",
-    duration: "5N / 6D",
-    nights: 5,
-    heroImage: "/images/destinations/maldives.jpg",
-    gallery: ["/images/destinations/maldives.jpg"],
-    fromPrice: 54999,
-    highlights: [
-      "Overwater villa with private pool",
-      "Couples spa with ocean view",
-      "Snorkelling with manta rays",
-      "Sunset dolphin cruise",
-    ],
-    inclusions: ["Return flights", "5 nights overwater villa", "All meals (full board)", "Speedboat transfers", "Snorkelling gear"],
-    exclusions: ["Scuba diving", "Alcohol", "Travel insurance"],
-    itinerary: [
-      { day: 1, title: "Fly to Paradise", description: "Fly to Malé, speedboat transfer to your resort, welcome cocktails." },
-      { day: 2, title: "Settle In", description: "Leisurely breakfast, house reef snorkelling, sunset cocktails." },
-      { day: 3, title: "Dolphin Cruise", description: "Morning spa treatment, afternoon dolphin-watching sunset cruise." },
-      { day: 4, title: "Excursion Day", description: "Visit a local island, sandbank picnic, manta ray snorkelling." },
-      { day: 5, title: "Relax & Dine", description: "Beach breakfast, couples massage, romantic candlelit beach dinner." },
-      { day: 6, title: "Departure", description: "Last sunrise dip, speedboat to Malé airport, fly home." },
-    ],
-    featured: false,
-  },
-  {
-    slug: "manali-adventure",
-    title: "Manali Adventure Escape",
-    destination: "Manali",
-    destinationSlug: "manali",
-    category: "adventure",
-    duration: "5N / 6D",
-    nights: 5,
-    heroImage: "/images/destinations/manali.jpg",
-    gallery: ["/images/destinations/manali.jpg"],
-    fromPrice: 15999,
-    highlights: [
-      "River rafting on Beas",
-      "Rohtang Pass snow experience",
-      "Paragliding over Solang Valley",
-      "Himalayan trekking trail",
-    ],
-    inclusions: ["Return flights from Goa", "5 nights boutique hotel", "Daily breakfast & dinner", "AC vehicle", "Adventure activities"],
-    exclusions: ["Lunch", "Personal gear", "Travel insurance"],
-    itinerary: [
-      { day: 1, title: "Arrive Manali", description: "Fly to Bhuntar, drive to Manali, check-in, Mall Road evening." },
-      { day: 2, title: "Rohtang Pass", description: "Early start for Rohtang (permit required), snow play, Solang Valley return." },
-      { day: 3, title: "River Rafting", description: "Grade 3–4 rafting on Beas River, Old Manali cafes, evening bonfire." },
-      { day: 4, title: "Paragliding", description: "Paragliding at Solang Valley, Hadimba Temple, Vashisht hot springs." },
-      { day: 5, title: "Trek Day", description: "Jogini waterfall trek, Himalayan views, local craft shopping." },
-      { day: 6, title: "Departure", description: "Drive to Bhuntar airport, fly back to Goa." },
-    ],
-    featured: false,
-  },
-  {
-    slug: "thailand-island-hopper",
-    title: "Thailand Island Hopper",
-    destination: "Thailand",
-    destinationSlug: "thailand",
+    slug: "vietnam-exploration-tour",
+    title: "Vietnam Exploration Tour",
+    destination: "Vietnam",
+    destinationSlug: "vietnam",
     category: "adventure",
     duration: "6N / 7D",
     nights: 6,
-    heroImage: "/images/destinations/thailand.jpg",
-    gallery: ["/images/destinations/thailand.jpg"],
-    fromPrice: 29999,
-    highlights: [
-      "Phi Phi Island speedboat day trip",
-      "Temple tour in Bangkok",
-      "Thai cooking class, Phuket",
-      "James Bond Island excursion",
-    ],
-    inclusions: ["Return flights from Goa", "6 nights hotel (Bangkok + Phuket)", "Daily breakfast", "Inter-city ferry", "Visa on arrival support"],
-    exclusions: ["Lunch & dinner", "Personal shopping", "Travel insurance"],
-    itinerary: [
-      { day: 1, title: "Arrive Bangkok", description: "Airport transfer, check-in, Khao San Road evening." },
-      { day: 2, title: "Bangkok Temples", description: "Wat Phra Kaew, Wat Pho, Wat Arun, Chao Phraya river cruise." },
-      { day: 3, title: "Bangkok to Phuket", description: "Fly to Phuket, Patong beach, Thai cooking class." },
-      { day: 4, title: "Phi Phi Islands", description: "Full-day speedboat to Phi Phi and Maya Bay, snorkelling." },
-      { day: 5, title: "James Bond Island", description: "Phang Nga Bay, James Bond Island, sea canoe, floating village." },
-      { day: 6, title: "Phuket Leisure", description: "Elephant sanctuary visit, Kata beach sunset, night market." },
-      { day: 7, title: "Departure", description: "Transfer to Phuket airport, fly home via Bangkok." },
-    ],
+    heroImage: "/images/destinations/vietnam.jpg",
+    gallery: ["/images/destinations/vietnam.jpg"],
+    fromPrice: 62000,
+    badge: "Full Country",
     featured: false,
-  },
-  {
-    slug: "bali-spiritual-escape",
-    title: "Bali Spiritual Escape",
-    destination: "Bali",
-    destinationSlug: "bali",
-    category: "honeymoon",
-    duration: "6N / 7D",
-    nights: 6,
-    heroImage: "/images/destinations/bali.jpg",
-    gallery: ["/images/destinations/bali.jpg"],
-    fromPrice: 31999,
     highlights: [
-      "Sunrise trek on Mount Batur",
-      "Tegallalang rice terrace walk",
-      "Traditional Kecak fire dance",
-      "Ubud healing & wellness retreat",
+      "Ha Long Bay overnight cruise — UNESCO World Heritage",
+      "Hoi An Ancient Town by bicycle",
+      "Cu Chi Tunnels, Ho Chi Minh City",
+      "Street food tour of Hanoi Old Quarter",
     ],
-    inclusions: ["Return flights from Goa", "6 nights villa hotel", "Daily breakfast", "Private driver", "Bali visa on arrival"],
-    exclusions: ["Lunch & dinner", "Personal shopping", "Travel insurance"],
+    inclusions: [
+      "Return flights from Goa",
+      "6 nights accommodation (hotels + Ha Long cruise)",
+      "Daily breakfast",
+      "Domestic flights (Hanoi–Da Nang–Ho Chi Minh)",
+      "Ha Long Bay 2D/1N cruise",
+      "English-speaking guide",
+    ],
+    exclusions: [
+      "Vietnam e-visa",
+      "Lunch & dinner (except cruise meals)",
+      "Travel insurance",
+    ],
     itinerary: [
-      { day: 1, title: "Arrive Bali", description: "Ngurai Rai airport pickup, check-in Ubud, Monkey Forest." },
-      { day: 2, title: "Mount Batur Sunrise", description: "2am wake-up, sunrise volcano trek, natural hot springs soak." },
-      { day: 3, title: "Ubud Culture", description: "Tegallalang rice terraces, Tirta Empul holy water temple, art market." },
-      { day: 4, title: "South Bali", description: "Tanah Lot sea temple, Seminyak beach, Kecak fire dance at Uluwatu." },
-      { day: 5, title: "Wellness Day", description: "Traditional Balinese spa, cooking class, sunset at Jimbaran bay dinner." },
-      { day: 6, title: "Nusa Penida", description: "Speedboat to Nusa Penida, Kelingking Beach, Angel's Billabong." },
-      { day: 7, title: "Departure", description: "Last Ubud market visit, airport transfer, fly home." },
+      {
+        day: 1,
+        title: "Arrive Hanoi",
+        description:
+          "Airport pickup, hotel check-in. Evening Old Quarter walk, bia hoi junction, street food.",
+      },
+      {
+        day: 2,
+        title: "Ha Long Bay",
+        description:
+          "Drive to Ha Long, board luxury junk boat. Cruise through limestone karsts, kayak into Luon Cave, cooking demo.",
+      },
+      {
+        day: 3,
+        title: "Ha Long Bay to Hanoi",
+        description:
+          "Morning kayak, Tai Chi on deck. Return to Hanoi. Fly to Da Nang evening.",
+      },
+      {
+        day: 4,
+        title: "Hoi An",
+        description:
+          "Explore the Ancient Town by bicycle — Japanese Bridge, tailor shops, lantern market. My Son Cham ruins.",
+      },
+      {
+        day: 5,
+        title: "Da Nang to Ho Chi Minh",
+        description:
+          "Marble Mountains morning. Fly to Ho Chi Minh City. Ben Thanh Market, Pham Ngu Lao street.",
+      },
+      {
+        day: 6,
+        title: "Ho Chi Minh City",
+        description:
+          "Cu Chi Tunnels, War Remnants Museum, Reunification Palace, Saigon street food evening.",
+      },
+      {
+        day: 7,
+        title: "Departure",
+        description:
+          "Mekong Delta morning day trip optional. Transfer to Tan Son Nhat Airport.",
+      },
     ],
-    featured: false,
   },
+
   {
-    slug: "goa-family-fun",
-    title: "Goa Family Fun",
-    destination: "Goa",
-    destinationSlug: "goa",
+    slug: "glitters-of-singapore",
+    title: "Glitters of Singapore",
+    destination: "Singapore",
+    destinationSlug: "singapore",
     category: "family",
-    duration: "3N / 4D",
-    nights: 3,
-    heroImage: "/images/destinations/goa.jpg",
-    gallery: ["/images/destinations/goa.jpg"],
-    fromPrice: 10999,
-    highlights: [
-      "North Goa beach tour (Baga, Calangute)",
-      "Dudhsagar waterfall jeep safari",
-      "Old Goa heritage churches",
-      "Water sports at Candolim",
-    ],
-    inclusions: ["3 nights beach resort", "Daily breakfast", "Airport & sightseeing transfers", "Dudhsagar jeep permit"],
-    exclusions: ["Flights (Goa package — land only)", "Lunch & dinner", "Water sports charges"],
-    itinerary: [
-      { day: 1, title: "Arrive & Relax", description: "Check-in beach resort, Calangute Beach, evening Baga market." },
-      { day: 2, title: "North Goa Tour", description: "Anjuna flea market, Fort Aguada, Chapora Fort, Vagator sunset." },
-      { day: 3, title: "Dudhsagar & South", description: "Dudhsagar waterfall jeep safari, Old Goa churches, Margao market." },
-      { day: 4, title: "Departure", description: "Water sports morning, checkout, transfer to airport/station." },
-    ],
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "/images/destinations/singapore.jpg",
+    gallery: ["/images/destinations/singapore.jpg"],
+    fromPrice: 83500,
+    badge: "Premium",
     featured: false,
+    highlights: [
+      "Gardens by the Bay — Supertree Grove & Cloud Forest",
+      "Universal Studios Singapore, Sentosa",
+      "Night Safari — world's first nocturnal zoo",
+      "Merlion Park & Marina Bay Sands SkyPark",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "5 nights 4-star hotel",
+      "Daily breakfast",
+      "Airport transfers",
+      "Singapore tourist visa",
+      "Gardens by the Bay entry",
+    ],
+    exclusions: [
+      "Universal Studios tickets",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Optional cruise or cable car",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Singapore",
+        description:
+          "Changi Airport (voted world's best), hotel check-in. Evening at Clarke Quay — riverside bars and dinner.",
+      },
+      {
+        day: 2,
+        title: "Marina Bay & Garden City",
+        description:
+          "Merlion Park, Marina Bay Sands SkyPark, Gardens by the Bay — Cloud Forest, Flower Dome, Supertree light show at night.",
+      },
+      {
+        day: 3,
+        title: "Sentosa Island",
+        description:
+          "Full day at Sentosa — Universal Studios Singapore, S.E.A. Aquarium, Siloso Beach, Wings of Time show.",
+      },
+      {
+        day: 4,
+        title: "Cultural Quarters",
+        description:
+          "Chinatown, Little India, Arab Street (Kampong Glam), Sri Mariamman Temple, Bugis Street shopping.",
+      },
+      {
+        day: 5,
+        title: "Night Safari & Orchard",
+        description:
+          "Orchard Road shopping by day. Evening — Singapore Night Safari, tram ride through nocturnal wildlife zones.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Changi Jewel (indoor waterfall & gardens), duty-free, transfer to airport.",
+      },
+    ],
   },
+
   {
-    slug: "char-dham-pilgrimage",
-    title: "Char Dham Yatra",
-    destination: "Uttarakhand",
-    destinationSlug: "rajasthan",
-    category: "pilgrimage",
-    duration: "10N / 11D",
-    nights: 10,
-    heroImage: "/images/destinations/manali.jpg",
-    gallery: ["/images/destinations/manali.jpg"],
-    fromPrice: 22999,
-    highlights: [
-      "Yamunotri & Gangotri darshan",
-      "Kedarnath helicopter option",
-      "Badrinath temple & Mana village",
-      "Haridwar Ganga aarti",
-    ],
-    inclusions: ["Return flights to Haridwar/Dehradun", "10 nights (dharamshalas + hotels)", "All meals", "AC tempo traveller", "Priest arrangements"],
-    exclusions: ["Helicopter charges", "Personal puja materials", "Travel insurance"],
-    itinerary: [
-      { day: 1, title: "Arrive Haridwar", description: "Arrive, Har ki Pauri Ganga aarti, overnight." },
-      { day: 2, title: "Haridwar to Barkot", description: "Drive via Rishikesh, Barkot base for Yamunotri." },
-      { day: 3, title: "Yamunotri", description: "Trek or pony to Yamunotri temple, holy dip, return to Barkot." },
-      { day: 4, title: "Barkot to Uttarkashi", description: "Drive, Gangotri temple darshan, overnight Uttarkashi." },
-      { day: 5, title: "Gangotri", description: "Gangotri Glacier viewpoint, temple prayers, drive to Guptkashi." },
-      { day: 6, title: "Kedarnath", description: "Helicopter or trek to Kedarnath, darshan, overnight." },
-      { day: 7, title: "Kedarnath to Badrinath", description: "Return, drive to Badrinath via Joshimath." },
-      { day: 8, title: "Badrinath", description: "Early Badrinath darshan, Tapt Kund, Mana village (last Indian village)." },
-      { day: 9, title: "Return to Rishikesh", description: "Long drive back, evening at Triveni Ghat." },
-      { day: 10, title: "Rishikesh", description: "Ram Jhula, Laxman Jhula, yoga class, ashram visit." },
-      { day: 11, title: "Departure", description: "Transfer to Dehradun airport, fly home." },
-    ],
+    slug: "dubai-abu-dhabi-elite",
+    title: "Dubai & Abu Dhabi Elite Experience",
+    destination: "Dubai",
+    destinationSlug: "dubai",
+    category: "family",
+    duration: "6N / 7D",
+    nights: 6,
+    heroImage: "/images/destinations/dubai.jpg",
+    gallery: ["/images/destinations/dubai.jpg"],
+    fromPrice: 89000,
+    badge: "Luxury",
     featured: false,
+    highlights: [
+      "Sheikh Zayed Grand Mosque, Abu Dhabi",
+      "Ferrari World — fastest roller coaster on Earth",
+      "Burj Khalifa + desert safari combo",
+      "Louvre Abu Dhabi & Yas Island",
+    ],
+    inclusions: [
+      "Return flights from Goa",
+      "6 nights 5-star hotel (Dubai + Abu Dhabi)",
+      "Daily breakfast",
+      "All transfers including Dubai–Abu Dhabi",
+      "Desert safari with dinner",
+      "UAE tourist visa",
+    ],
+    exclusions: [
+      "Ferrari World & theme park tickets",
+      "Lunch & dinner",
+      "Travel insurance",
+      "Personal shopping",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Dubai",
+        description:
+          "Airport pickup, 5-star hotel check-in. Evening Dubai Marina Walk and dinner cruise.",
+      },
+      {
+        day: 2,
+        title: "Modern Dubai",
+        description:
+          "Burj Khalifa (148th floor Sky Views), Dubai Mall, Dubai Fountain. Afternoon Palm Jumeirah & Atlantis viewpoint.",
+      },
+      {
+        day: 3,
+        title: "Desert Safari",
+        description:
+          "Morning at leisure. Afternoon desert dune bashing, camel trek, falconry demo, BBQ dinner with live entertainment.",
+      },
+      {
+        day: 4,
+        title: "Abu Dhabi — Grand Mosque",
+        description:
+          "Drive to Abu Dhabi. Sheikh Zayed Grand Mosque (one of the world's largest), Emirates Palace, Corniche waterfront.",
+      },
+      {
+        day: 5,
+        title: "Yas Island",
+        description:
+          "Ferrari World Abu Dhabi, Yas Marina Circuit, Warner Bros. World. Louvre Abu Dhabi art gallery.",
+      },
+      {
+        day: 6,
+        title: "Old Dubai & Shopping",
+        description:
+          "Gold Souk, Spice Souk, Al Fahidi Fort, Dubai Frame. Afternoon Global Village or Ibn Battuta Mall.",
+      },
+      {
+        day: 7,
+        title: "Departure",
+        description:
+          "Breakfast, last-minute duty-free, transfer to Dubai International Airport.",
+      },
+    ],
   },
 ];
 

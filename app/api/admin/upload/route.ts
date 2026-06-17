@@ -1,15 +1,13 @@
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
-import crypto from "node:crypto";
+import { v2 as cloudinary } from "cloudinary";
 import { getCurrentUser } from "@/lib/auth/user";
 
-const ALLOWED: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "image/avif": "avif",
-};
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
+const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 const MAX_BYTES = 8 * 1024 * 1024;
 
 export async function POST(request: Request) {
@@ -23,19 +21,20 @@ export async function POST(request: Request) {
   if (!(file instanceof File)) {
     return Response.json({ error: "No file provided" }, { status: 400 });
   }
-
-  const ext = ALLOWED[file.type];
-  if (!ext) {
+  if (!ALLOWED.has(file.type)) {
     return Response.json({ error: "Only JPEG, PNG, WebP or AVIF images are allowed" }, { status: 400 });
   }
   if (file.size > MAX_BYTES) {
     return Response.json({ error: "Image must be under 8MB" }, { status: 400 });
   }
 
-  const name = `${crypto.randomUUID()}.${ext}`;
-  const dir = path.join(process.cwd(), "public", "uploads");
-  await mkdir(dir, { recursive: true });
-  await writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const dataUri = `data:${file.type};base64,${buffer.toString("base64")}`;
 
-  return Response.json({ url: `/uploads/${name}` });
+  const result = await cloudinary.uploader.upload(dataUri, {
+    folder: "vmf-holidays",
+    resource_type: "image",
+  });
+
+  return Response.json({ url: result.secure_url });
 }
