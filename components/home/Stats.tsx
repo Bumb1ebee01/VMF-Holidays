@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Stats.module.css";
 
 const STATS = [
-  { target: 500, suffix: "+", label: "Happy Travellers" },
+  { target: 200, suffix: "+", label: "Happy Travellers" },
   { target: 8,   suffix: "+", label: "Years of Excellence" },
   { target: 50,  suffix: "+", label: "Destinations" },
   { target: 100, suffix: "%", label: "Satisfaction Rate" },

@@ -24,8 +24,10 @@ export default async function FeaturedPackages() {
           </Link>
         </div>
         <div className="grid-3">
-          {featured.map((pkg) => (
-            <PackageCard key={pkg.slug} pkg={pkg} />
+          {featured.map((pkg, i) => (
+            <div key={pkg.slug} className={`reveal reveal-d${i + 1}`}>
+              <PackageCard pkg={pkg} />
+            </div>
           ))}
         </div>
         <div className={styles.viewAll}>

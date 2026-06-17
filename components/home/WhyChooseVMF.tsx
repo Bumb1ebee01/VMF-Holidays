@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { FadeIn, Stagger, fadeUp } from "@/components/ui/Motion";
 import styles from "./WhyChooseVMF.module.css";
 
 const REASONS = [
@@ -37,7 +41,7 @@ const REASONS = [
   {
     num: "04",
     title: "Experienced Team",
-    desc: "Over a decade of travel expertise, 500+ happy trips and deep destination knowledge across India and beyond.",
+    desc: "Travel expertise, 200+ happy trips and deep destination knowledge across India and beyond.",
     icon: (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="8" r="4" />
@@ -51,23 +55,25 @@ export default function WhyChooseVMF() {
   return (
     <section className={styles.section}>
       <div className="container">
-        <div className={`${styles.header} reveal`}>
+        <FadeIn className={styles.header}>
           <p className={styles.eyebrow}>Why Choose VMF</p>
           <h2 className={styles.title}>We Do Things Differently</h2>
           <p className={styles.sub}>
             Your holiday deserves more than a booking — it deserves an experience built around you.
           </p>
-        </div>
-        <div className={styles.grid}>
+        </FadeIn>
+
+        <Stagger className={styles.grid} stagger={0.1} delay={0.05}>
           {REASONS.map((r) => (
-            <div key={r.num} className={`${styles.card} reveal`}>
+            <motion.div key={r.num} className={styles.card} variants={fadeUp}>
               <span className={styles.num}>{r.num}</span>
               <div className={styles.iconWrap}>{r.icon}</div>
               <h3 className={styles.cardTitle}>{r.title}</h3>
               <p className={styles.cardDesc}>{r.desc}</p>
-            </div>
+              <div className={styles.cardGlow} aria-hidden="true" />
+            </motion.div>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   );

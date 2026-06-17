@@ -4,11 +4,11 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "VMF Holidays Pvt. Ltd. — Goa's trusted travel company. Our story, mission and why 500+ families choose us.",
+  description: "VMF Holidays Pvt. Ltd. — Goa's trusted travel company. Our story, mission and why 200+ families choose us.",
 };
 
 const STATS = [
-  { value: "500+", label: "Trips Planned" },
+  { value: "200+", label: "Trips Planned" },
   { value: "8+", label: "Years Experience" },
   { value: "20+", label: "Destinations" },
   { value: "98%", label: "Happy Clients" },
@@ -58,7 +58,7 @@ export default function AboutPage() {
               VMF Holidays Pvt. Ltd. was founded with a simple frustration — too many travel agencies promised the world and delivered confusion, hidden costs and impersonal service.
             </p>
             <p>
-              We set out to do it differently. Based in Nagoa, Bardez, Goa, we started by helping friends and family plan trips with full transparency and personal attention. Word spread, and today we've helped over 500 families and couples experience extraordinary journeys — domestic and international.
+              We set out to do it differently. Based in Nagoa, Bardez, Goa, we started by helping friends and family plan trips with full transparency and personal attention. Word spread, and today we've helped over 200 families and couples experience extraordinary journeys — domestic and international.
             </p>
             <p>
               Every package we sell comes with a detailed itinerary, a transparent cost breakdown and a dedicated point of contact who stays with you from planning to return.

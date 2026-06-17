@@ -1,6 +1,6 @@
 .section {
-  padding: 112px 0;
-  background: #F5F3EF;
+  padding: 120px 0;
+  background: linear-gradient(160deg, #F0EDE5 0%, #EAE6DC 100%);
 }
 
 .inner {
@@ -54,12 +54,12 @@
 }
 
 .title {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: clamp(1.875rem, 3.5vw, 2.75rem);
+  font-weight: 900;
   color: var(--white);
-  line-height: 1.15;
-  letter-spacing: -0.5px;
-  margin-bottom: 12px;
+  line-height: 1.08;
+  letter-spacing: -1px;
+  margin-bottom: 14px;
 }
 
 .sub {
@@ -151,9 +151,9 @@
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #FF7A3A;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px rgba(254, 92, 16, 0.35);
+  background: #FF7040;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(254, 92, 16, 0.5);
 }
 
 .submitBtn:disabled {

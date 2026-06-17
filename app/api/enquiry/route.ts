@@ -14,8 +14,8 @@ export async function POST(request: Request) {
   }
 
   const { name, phone, email } = body as { name?: string; phone?: string; email?: string };
-  if (!name || !phone || !email) {
-    return Response.json({ error: "name, phone and email are required" }, { status: 400 });
+  if (!name || !phone) {
+    return Response.json({ error: "name and phone are required" }, { status: 400 });
   }
 
   // CRM: persist the lead before anything else so it's never lost

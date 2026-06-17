@@ -136,7 +136,7 @@ export default function CTABanner() {
                 "Transparent Pricing — No Hidden Charges",
                 "Personal Travel Expert Assigned to You",
                 "24 / 7 Support Before & During Your Trip",
-                "500+ Happy Travellers Since 2016",
+                "200+ Happy Travellers Since 2016",
               ].map((item) => (
                 <div key={item} className={styles.trustItem}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

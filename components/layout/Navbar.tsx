@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
@@ -30,10 +31,24 @@ export default function Navbar() {
     <header className={`${styles.nav} ${scrolled ? styles.scrolled : ""}`}>
       <div className={`container ${styles.inner}`}>
         <Link href="/" className={styles.logo}>
-          <span className={styles.logoText}>
-            <span className={styles.logoVmf}>VMF</span>
-            <span className={styles.logoHols}>Holidays</span>
-          </span>
+          <div className={styles.logoWrap}>
+            <Image
+              src="/logo-white.png"
+              alt="VMF Holidays"
+              width={160}
+              height={66}
+              className={`${styles.logoImg} ${scrolled ? styles.logoOut : ""}`}
+              priority
+            />
+            <Image
+              src="/logo-blue.png"
+              alt=""
+              width={160}
+              height={67}
+              className={`${styles.logoImg} ${styles.logoBlue} ${scrolled ? "" : styles.logoOut}`}
+              priority
+            />
+          </div>
         </Link>
 
         <nav className={styles.links}>

@@ -25,25 +25,12 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.10);
 }
 
-/* Brand column — wordmark matches navbar */
-.logoText {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  font-size: var(--text-2xl);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: var(--sp-3);
-}
-
-.logoVmf  { color: var(--white); font-weight: var(--fw-bold); }
-
-.logoHols {
-  color: var(--orange);
-  font-weight: var(--fw-light);
-  font-style: italic;
-  text-transform: none;
-  letter-spacing: 0.02em;
+/* Brand column logo */
+.footerLogo {
+  width: 150px;
+  height: auto;
+  margin-bottom: var(--sp-4);
+  object-fit: contain;
 }
 
 .tagline {

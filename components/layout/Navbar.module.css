@@ -34,41 +34,37 @@
   gap: var(--sp-8);
 }
 
-/* Logo — tracked editorial wordmark */
+/* Logo */
 .logo {
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
   flex-shrink: 0;
   text-decoration: none;
+  display: block;
 }
 
-.logoText {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  font-size: var(--text-lg);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.logoWrap {
+  position: relative;
+  width: 140px;
+  height: 58px;
 }
 
-.logoVmf {
-  color: var(--white);
-  font-weight: var(--fw-bold);
-  transition: color 0.4s var(--ease);
+.logoImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+  transition: opacity 0.4s var(--ease);
 }
 
-.logoHols {
-  color: var(--orange);
-  font-weight: var(--fw-light);
-  font-style: italic;
-  text-transform: none;
-  letter-spacing: 0.02em;
+.logoBlue {
+  opacity: 1;
 }
 
-.scrolled .logoVmf  { color: var(--navy); }
-
-:global([data-theme="dark"]) .scrolled .logoVmf { color: var(--white); }
+.logoOut {
+  opacity: 0;
+  pointer-events: none;
+}
 
 /* Nav links — tracked small caps */
 .links {

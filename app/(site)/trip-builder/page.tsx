@@ -1,27 +1,17 @@
 import type { Metadata } from "next";
+import { getAllDestinations, getAllPackages } from "@/lib/queries";
 import TripWizard from "@/components/forms/TripWizard";
-import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Trip Builder",
-  description: "Build your perfect holiday with VMF Holidays. Tell us your dream trip and we'll craft a personalised itinerary.",
+  title: "Build My Trip | VMF Holidays",
+  description: "Build your perfect holiday — choose destination, travel style, and dates. VMF Holidays crafts personalised itineraries just for you.",
 };
 
-export default function TripBuilderPage() {
-  return (
-    <div className={styles.page}>
-      <div className={styles.hero}>
-        <div className="container">
-          <span className="eyebrow">Plan Your Holiday</span>
-          <h1 className={styles.heroTitle}>Build Your Perfect Trip</h1>
-          <p className={styles.heroSub}>
-            Answer a few quick questions and our travel experts will craft a personalised itinerary just for you.
-          </p>
-        </div>
-      </div>
-      <div className={`container ${styles.content}`}>
-        <TripWizard />
-      </div>
-    </div>
-  );
+export default async function TripBuilderPage() {
+  const [destinations, packages] = await Promise.all([
+    getAllDestinations(),
+    getAllPackages(),
+  ]);
+
+  return <TripWizard destinations={destinations} packages={packages} />;
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import styles from "./Footer.module.css";
 
@@ -8,10 +9,13 @@ export default function Footer() {
         <div className={styles.grid}>
           {/* Brand col */}
           <div className={styles.brand}>
-            <div className={styles.logoText}>
-              <span className={styles.logoVmf}>VMF</span>
-              <span className={styles.logoHols}>Holidays</span>
-            </div>
+            <Image
+              src="/logo-white.png"
+              alt="VMF Holidays"
+              width={160}
+              height={66}
+              className={styles.footerLogo}
+            />
             <p className={styles.tagline}>Discover Your World, Your Way</p>
             <p className={styles.about}>
               VMF HOLIDAYS PVT. LTD. — a Goa-based travel company dedicated to crafting
