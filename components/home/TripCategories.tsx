@@ -1,50 +1,45 @@
 "use client";
+
 import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
 import { categories } from "@/lib/data/categories";
-import { FadeIn, Stagger, fadeUp } from "@/components/ui/Motion";
+import { FadeIn, LineReveal } from "@/components/ui/Motion";
 import styles from "./TripCategories.module.css";
 
 export default function TripCategories() {
-  const GRID_CLASSES = [
-    styles.hero, styles.slot1, styles.slot2, styles.slot3, styles.slot4, styles.wide,
-  ];
   return (
     <section className={styles.section}>
-      <FadeIn className={styles.header}>
-        <div className={styles.headLeft}>
+      <div className="container">
+        <div className={styles.header}>
           <span className={styles.eyebrow}>Travel Your Way</span>
-          <h2 className={styles.title}>
-            Every journey<br /><em>starts here.</em>
-          </h2>
+          <LineReveal
+            as="h2"
+            className={styles.title}
+            lines={["Built for", "every journey"]}
+            stagger={0.12}
+          />
         </div>
-        <p className={styles.sub}>
-          Six curated travel styles. One trusted team. Endless possibilities.
-        </p>
-      </FadeIn>
 
-      <Stagger className={styles.bentoGrid} stagger={0.07} delay={0.15}>
-        {categories.map((cat, i) => (
-          <motion.div key={cat.slug} variants={fadeUp} className={`${styles.tile} ${GRID_CLASSES[i]}`}>
-            <Link href={`/${cat.slug}`} className={styles.tileLink}>
-              <Image
-                src={cat.image}
-                alt={cat.label}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw"
-                className={styles.img}
-              />
-              <div className={styles.overlay} />
-              <div className={styles.tileContent}>
-                <h3 className={styles.tileName}>{cat.label}</h3>
-                <p className={styles.tileBlurb}>{cat.blurb}</p>
-                <span className={styles.tileArrow}>Explore →</span>
-              </div>
-            </Link>
-          </motion.div>
-        ))}
-      </Stagger>
+        <ul className={styles.list}>
+          {categories.map((cat, i) => (
+            <li key={cat.slug}>
+              <FadeIn delay={i * 0.09} y={26}>
+                <Link href={`/${cat.slug}`} className={styles.row}>
+                  <span className={styles.index}>{String(i + 1).padStart(2, "0")}</span>
+                  <span className={styles.body}>
+                    <span className={styles.name}>{cat.label}</span>
+                    <span className={styles.desc}>{cat.blurb}</span>
+                  </span>
+                  <span className={styles.arrow}>
+                    <svg className={styles.arrowIcon} width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
+                    </svg>
+                  </span>
+                </Link>
+              </FadeIn>
+            </li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 }

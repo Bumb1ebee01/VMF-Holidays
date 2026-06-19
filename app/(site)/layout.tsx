@@ -7,6 +7,7 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppFloat from "@/components/ui/WhatsAppFloat";
 import PageLoader from "@/components/ui/PageLoader";
 import ScrollRevealInit from "@/components/ui/ScrollRevealInit";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 export default function SiteLayout({
   children,
@@ -15,6 +16,7 @@ export default function SiteLayout({
 }>) {
   return (
     <>
+      <SmoothScroll />
       <PageLoader />
       <ScrollRevealInit />
       <Navbar />

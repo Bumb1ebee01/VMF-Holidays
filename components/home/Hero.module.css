@@ -1,108 +1,59 @@
 .hero {
   position: relative;
-  height: 100vh;
-  min-height: 700px;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   overflow: hidden;
+  isolation: isolate;
 }
 
-/* Background photo */
-.heroBg {
+/* Parallax photo plate — oversized + shifted so the scroll never exposes an edge */
+.heroPlate {
   position: absolute;
-  inset: 0;
-  background: url('/images/destinations/kerala.jpg') center / cover no-repeat;
-  transform: scale(1.06);
-  transition: transform 14s ease-out;
+  left: 0;
+  right: 0;
+  top: -16%;
+  height: 132%;
+  width: 100%;
+  z-index: -2;
   will-change: transform;
 }
 
-.heroBgLoaded {
-  transform: scale(1);
+.heroImg {
+  object-fit: cover;
 }
 
 /* Deep navy gradient overlay */
 .heroOverlay {
   position: absolute;
   inset: 0;
+  z-index: -1;
   background:
     linear-gradient(115deg,
-      rgba(0, 20, 70, 0.96) 0%,
-      rgba(0, 36, 100, 0.82) 50%,
-      rgba(0, 48, 128, 0.55) 100%);
-  z-index: 1;
+      rgba(0, 16, 56, 0.94) 0%,
+      rgba(0, 28, 84, 0.80) 48%,
+      rgba(0, 40, 110, 0.55) 100%);
 }
 
-/* ── Aurora orbs ── */
-.orb1,
-.orb2,
-.orb3 {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.orb1 {
-  width: 700px;
-  height: 700px;
-  top: -220px;
-  right: -80px;
-  background: radial-gradient(circle, rgba(254, 92, 16, 0.22) 0%, transparent 70%);
-  filter: blur(60px);
-  animation: orbPulse1 9s ease-in-out infinite;
-}
-
-.orb2 {
-  width: 500px;
-  height: 500px;
-  bottom: -120px;
-  left: -60px;
-  background: radial-gradient(circle, rgba(21, 70, 140, 0.35) 0%, transparent 70%);
-  filter: blur(70px);
-  animation: orbPulse2 11s ease-in-out infinite;
-}
-
-.orb3 {
-  width: 360px;
-  height: 360px;
-  top: 35%;
-  left: 52%;
-  background: radial-gradient(circle, rgba(255, 163, 51, 0.14) 0%, transparent 70%);
-  filter: blur(50px);
-  animation: orbPulse3 14s ease-in-out infinite;
-}
-
-@keyframes orbPulse1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
-  50%       { transform: translate(-24px, 18px) scale(1.06); opacity: 0.8; }
-}
-@keyframes orbPulse2 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 1; }
-  50%       { transform: translate(18px, -24px) scale(1.08); opacity: 0.85; }
-}
-@keyframes orbPulse3 {
-  0%, 100% { transform: translate(0, 0); opacity: 1; }
-  50%       { transform: translate(-16px, 16px); opacity: 0.7; }
-}
-
-/* Content */
+/* Content — two columns on desktop */
 .content {
   position: relative;
   z-index: 2;
-  padding-top: calc(var(--nav-h) + 40px);
-  padding-bottom: 100px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
+  gap: 56px;
+  padding-top: calc(var(--nav-h) + 48px);
+  padding-bottom: 96px;
 }
 
-.contentInner {
+.left {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 26px;
-  max-width: 680px;
+  gap: 22px;
+  max-width: 640px;
+  flex: 1;
 }
 
 /* Trust badge */
@@ -123,41 +74,43 @@
   -webkit-backdrop-filter: blur(8px);
 }
 
-/* Headline */
+/* Giant headline — clip-mask reveal target */
 .headline {
-  font-size: clamp(3rem, 7vw, 5.5rem);
-  font-weight: 900;
+  font-size: clamp(3rem, 8vw, 6.25rem);
+  font-weight: 500;
+  text-transform: uppercase;
   color: var(--white);
-  line-height: 0.97;
-  letter-spacing: -3px;
-  max-width: 660px;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
-.headline em {
-  font-style: normal;
-  color: var(--orange);
-  display: block;
+.tagline {
+  font-size: clamp(1.6rem, 3.4vw, 2.6rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  color: var(--orange-lt);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  margin: 0;
 }
 
 .sub {
   font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.66);
   max-width: 480px;
-  line-height: 1.8;
-  margin: 0;
+  line-height: 1.75;
+  margin: 4px 0 0;
   font-weight: 300;
-  letter-spacing: 0.15px;
 }
 
 /* Search wrapper — positions the dropdown */
 .searchWrap {
   position: relative;
-  max-width: 580px;
+  max-width: 560px;
   width: 100%;
 }
 
-/* Search bar — frosted glass */
 .searchBar {
   display: flex;
   align-items: center;
@@ -174,7 +127,6 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 0 2px rgba(254, 92, 16, 0.5);
 }
 
-/* Autocomplete dropdown */
 .dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -357,10 +309,163 @@
   transform: translateY(-2px);
 }
 
+/* ── Glass card cluster ── */
+.cardCluster {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 290px;
+  flex-shrink: 0;
+}
+
+.slider {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.slideCard {
+  display: flex;
+  gap: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.10);
+  padding: 12px;
+  box-shadow: 0 20px 50px rgba(0, 16, 56, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  text-decoration: none;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+}
+
+.slideCard:hover {
+  border-color: rgba(254, 92, 16, 0.45);
+  transform: translateY(-2px);
+}
+
+.slideThumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+.slideMeta {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+}
+
+.slideBrand {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--orange-lt);
+}
+
+.slideTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.slideCta {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+  padding-left: 4px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.dotActive {
+  width: 20px;
+  background: #fff;
+}
+
+.membersCard {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.10);
+  padding: 12px;
+  box-shadow: 0 20px 50px rgba(0, 16, 56, 0.35);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.membersInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  flex: 1;
+}
+
+.membersValue {
+  font-size: 30px;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1;
+}
+
+.avatars {
+  display: flex;
+}
+
+.avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 36, 100, 0.4);
+  margin-left: -6px;
+}
+
+.avatar:first-child {
+  margin-left: 0;
+}
+
+.membersLabel {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.04em;
+}
+
+.membersThumb {
+  width: 64px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
 /* Scroll indicator */
 .scrollIndicator {
   position: absolute;
-  bottom: 44px;
+  bottom: 36px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -435,19 +540,19 @@
   to   { transform: translateX(-50%); }
 }
 
-/* Responsive */
+/* Hide the card cluster on smaller screens */
+@media (max-width: 980px) {
+  .cardCluster { display: none; }
+  .content { gap: 0; }
+  .left { max-width: 100%; }
+}
+
 @media (max-width: 640px) {
-  .hero {
-    min-height: 640px;
-  }
+  .hero { min-height: 640px; }
 
   .content {
     padding-top: calc(var(--nav-h) + 20px);
     padding-bottom: 80px;
-  }
-
-  .headline {
-    letter-spacing: -2px;
   }
 
   .searchBar {
@@ -474,15 +579,9 @@
   }
 
   .scrollIndicator { display: none; }
-
-  .orb1 { width: 300px; height: 300px; }
-  .orb2 { width: 250px; height: 250px; }
-  .orb3 { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .heroBg { transition: none; }
-  .orb1, .orb2, .orb3 { animation: none; }
   .scrollLine { animation: none; }
   .marqueeTrack { animation: none; }
 }

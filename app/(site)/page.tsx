@@ -1,4 +1,5 @@
 import Hero from "@/components/home/Hero";
+import DestinationSpotlight from "@/components/home/DestinationSpotlight";
 import Stats from "@/components/home/Stats";
 import PopularDestinations from "@/components/home/PopularDestinations";
 import FeaturedPackages from "@/components/home/FeaturedPackages";
@@ -23,12 +24,13 @@ export default async function HomePage() {
 
   return (
     <main>
-      <Hero suggestions={suggestions} />
+      <Hero suggestions={suggestions} destinations={destinations} />
+      <DestinationSpotlight destinations={destinations} />
       <Stats />
-      <WhyChooseVMF />
+      <TripCategories />
       <PopularDestinations destinations={destinations} />
       <FeaturedPackages />
-      <TripCategories />
+      <WhyChooseVMF />
       <Testimonials />
       <HowItWorks />
       <CTABanner />

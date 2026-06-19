@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { WordReveal, LineReveal } from "@/components/ui/Motion";
+import type { Destination } from "@/lib/types";
 import styles from "./Hero.module.css";
 
 interface Suggestion {
@@ -26,27 +29,33 @@ const MARQUEE = [
   "Shimla", "Manali", "Kashmir", "Coorg", "Ooty",
 ];
 
-const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring" as const, stiffness: 210, damping: 24 };
 
-const CONTENT = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.15 } },
-};
-
-const ITEM = {
-  hidden: { opacity: 0, y: 36 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.75, ease: EASE } },
-};
-
-export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] }) {
+export default function Hero({
+  suggestions = [],
+  destinations = [],
+}: {
+  suggestions?: Suggestion[];
+  destinations?: Destination[];
+}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [bgLoaded, setBgLoaded] = useState(false);
+  const [ready, setReady] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
 
+  // Parallax: shift the oversized photo plate down as the hero scrolls past.
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const plateY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
+
+  // Gate the big reveals so they animate in as the intro curtain lifts.
   useEffect(() => {
-    const t = setTimeout(() => setBgLoaded(true), 80);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t = setTimeout(() => setReady(true), reduce ? 0 : 1400);
     return () => clearTimeout(t);
   }, []);
 
@@ -60,12 +69,14 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
     return () => document.removeEventListener("mousedown", onClickOutside);
   }, []);
 
-  const filtered = query.trim().length > 0
-    ? suggestions.filter((s) =>
-        s.title.toLowerCase().includes(query.toLowerCase()) ||
-        s.destination.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  const filtered =
+    query.trim().length > 0
+      ? suggestions.filter(
+          (s) =>
+            s.title.toLowerCase().includes(query.toLowerCase()) ||
+            s.destination.toLowerCase().includes(query.toLowerCase())
+        )
+      : [];
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -82,40 +93,69 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
 
   return (
     <>
-      <section className={styles.hero}>
-        {/* Background */}
-        <div className={`${styles.heroBg} ${bgLoaded ? styles.heroBgLoaded : ""}`} />
+      <section className={styles.hero} ref={heroRef}>
+        {/* Parallax photo plate */}
+        <motion.div className={styles.heroPlate} style={{ y: plateY }} aria-hidden="true">
+          <Image
+            src="https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/kerala.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className={styles.heroImg}
+          />
+        </motion.div>
         <div className={styles.heroOverlay} />
 
-        {/* Aurora orbs */}
-        <div className={styles.orb1} aria-hidden="true" />
-        <div className={styles.orb2} aria-hidden="true" />
-        <div className={styles.orb3} aria-hidden="true" />
-
         <div className={`container ${styles.content}`}>
-          <motion.div
-            className={styles.contentInner}
-            variants={CONTENT}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div variants={ITEM} className={styles.heroBadge}>
+          <div className={styles.left}>
+            <motion.div
+              className={styles.heroBadge}
+              initial={{ opacity: 0, y: 16 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+              transition={SPRING}
+            >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
               </svg>
               India&apos;s Trust-First Travel Company
             </motion.div>
 
-            <motion.h1 variants={ITEM} className={styles.headline}>
-              Discover Your World,<br /><em>Your Way.</em>
-            </motion.h1>
+            <WordReveal
+              as="h1"
+              className={styles.headline}
+              text="Discover Your World"
+              play={ready}
+              stagger={0.14}
+              duration={1.1}
+            />
 
-            <motion.p variants={ITEM} className={styles.sub}>
-              We don&apos;t just plan trips — we craft journeys for those who want more than a destination.
-              Trusted by 200+ travellers across India.
+            <LineReveal
+              as="p"
+              className={styles.tagline}
+              lines={["Your Way."]}
+              play={ready}
+              delay={0.35}
+              duration={0.9}
+            />
+
+            <motion.p
+              className={styles.sub}
+              initial={{ opacity: 0, y: 20 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ ...SPRING, delay: 0.1 }}
+            >
+              We don&apos;t just plan trips — we craft journeys for those who want
+              more than a destination. Trusted by 200+ travellers across India.
             </motion.p>
 
-            <motion.div variants={ITEM} className={styles.searchWrap} ref={searchRef}>
+            <motion.div
+              className={styles.searchWrap}
+              ref={searchRef}
+              initial={{ opacity: 0, y: 20 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ ...SPRING, delay: 0.2 }}
+            >
               <form className={styles.searchBar} onSubmit={handleSearch}>
                 <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
@@ -148,7 +188,12 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
               )}
             </motion.div>
 
-            <motion.div variants={ITEM} className={styles.pills}>
+            <motion.div
+              className={styles.pills}
+              initial={{ opacity: 0, y: 20 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ ...SPRING, delay: 0.3 }}
+            >
               {FILTER_PILLS.map((p) => (
                 <Link key={p.href + p.label} href={p.href} className={styles.pill}>
                   {p.label}
@@ -156,7 +201,12 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
               ))}
             </motion.div>
 
-            <motion.div variants={ITEM} className={styles.ctas}>
+            <motion.div
+              className={styles.ctas}
+              initial={{ opacity: 0, y: 20 }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ ...SPRING, delay: 0.4 }}
+            >
               <Link href="/packages" className={styles.btnPrimary}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
@@ -175,7 +225,13 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
                 Talk to an Expert
               </a>
             </motion.div>
-          </motion.div>
+          </div>
+
+          {/* Glass card cluster — featured destination slider + members card */}
+          <div className={styles.cardCluster}>
+            <CollectionSlider destinations={destinations} ready={ready} />
+            <MembersCard ready={ready} />
+          </div>
         </div>
 
         <div className={styles.scrollIndicator}>
@@ -196,5 +252,98 @@ export default function Hero({ suggestions = [] }: { suggestions?: Suggestion[] 
         </div>
       </div>
     </>
+  );
+}
+
+function CollectionSlider({
+  destinations,
+  ready,
+}: {
+  destinations: Destination[];
+  ready: boolean;
+}) {
+  const slides = destinations.slice(0, 4);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (!ready || slides.length < 2) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), 3800);
+    return () => clearInterval(id);
+  }, [ready, slides.length]);
+
+  if (slides.length === 0) return null;
+  const active = slides[index];
+
+  return (
+    <motion.div
+      className={styles.slider}
+      initial={{ opacity: 0, y: 28 }}
+      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+      transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.65 }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={active.slug}
+          initial={{ opacity: 0, y: 16, scale: 0.96 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: -12, scale: 0.97 }}
+          transition={SPRING}
+        >
+          <Link href={`/packages?destination=${active.slug}`} className={styles.slideCard}>
+            <span className={styles.slideThumb} style={{ backgroundImage: `url(${active.heroImage})` }} />
+            <span className={styles.slideMeta}>
+              <span className={styles.slideBrand}>
+                {active.region === "domestic" ? "India" : "International"}
+              </span>
+              <span className={styles.slideTitle}>{active.name}</span>
+              <span className={styles.slideCta}>
+                from ₹{(active.fromPrice / 1000).toFixed(0)}k →
+              </span>
+            </span>
+          </Link>
+        </motion.div>
+      </AnimatePresence>
+      <div className={styles.dots}>
+        {slides.map((s, i) => (
+          <button
+            key={s.slug}
+            type="button"
+            className={`${styles.dot} ${i === index ? styles.dotActive : ""}`}
+            aria-label={`Show ${s.name}`}
+            aria-current={i === index}
+            onClick={() => setIndex(i)}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function MembersCard({ ready }: { ready: boolean }) {
+  const AVATARS = ["#5790e6", "#FFA333", "#0b6e97", "#FE5C10"];
+  return (
+    <motion.article
+      className={styles.membersCard}
+      initial={{ opacity: 0, y: 28 }}
+      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
+      transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.78 }}
+    >
+      <div className={styles.membersInfo}>
+        <span className={styles.membersValue}>200+</span>
+        <div className={styles.avatars}>
+          {AVATARS.map((c, i) => (
+            <span key={i} className={styles.avatar} style={{ background: c }} />
+          ))}
+        </div>
+        <span className={styles.membersLabel}>Travellers served</span>
+      </div>
+      <span
+        className={styles.membersThumb}
+        style={{
+          backgroundImage:
+            "url(https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/maldives.jpg)",
+        }}
+      />
+    </motion.article>
   );
 }

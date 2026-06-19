@@ -1,0 +1,266 @@
+.section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--bg);
+  padding: 80px 24px;
+}
+
+/* ── Top badges ── */
+.badges {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.percentBadge {
+  width: 124px;
+  height: 124px;
+  border-radius: 100px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  flex-shrink: 0;
+}
+
+.percentNum {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--navy);
+  line-height: 1;
+}
+
+.percentCap {
+  font-size: 0.6rem;
+  color: var(--text-lighter);
+  max-width: 8em;
+  margin-top: 6px;
+  line-height: 1.3;
+}
+
+.badgeCard {
+  display: flex;
+  gap: 18px;
+  max-width: 28rem;
+  border-radius: 20px;
+  background: var(--surface);
+  padding: 22px;
+}
+
+.indexChip {
+  align-self: flex-start;
+  border-radius: 12px;
+  background: var(--card-bg);
+  padding: 8px 16px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--navy);
+  flex-shrink: 0;
+}
+
+.badgeTitle {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--navy);
+  margin: 0 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.badgeBody {
+  font-size: 0.8rem;
+  color: var(--text-lighter);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Stage: ghost heading behind, tilted photo in front ── */
+.stage {
+  position: relative;
+  max-width: 1100px;
+  margin: 44px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(360px, 42vw, 520px);
+}
+
+.ghostHeading {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
+  pointer-events: none;
+  user-select: none;
+  font-size: clamp(2.5rem, 8.2vw, 7rem);
+  font-weight: 500;
+  text-transform: uppercase;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+.ghostRow {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.ghostClip {
+  display: inline-block;
+  overflow: hidden;
+  padding-bottom: 0.12em;
+}
+
+.ghostWord {
+  display: inline-block;
+  color: rgba(0, 36, 100, 0.11);
+}
+
+.ghostInk {
+  color: var(--navy);
+}
+
+/* Tilted photo card (rotation comes from framer-motion to avoid transform clashes) */
+.photoCard {
+  position: relative;
+  z-index: 1;
+  width: clamp(12rem, 24vw, 16rem);
+  aspect-ratio: 3 / 4;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--navy);
+  box-shadow: 0 30px 70px rgba(0, 16, 56, 0.3);
+  margin: 0;
+}
+
+.photoInner {
+  position: absolute;
+  inset: 0;
+}
+
+.photoImg {
+  object-fit: cover;
+}
+
+.photoCaption {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: 12px;
+  background: rgba(0, 16, 56, 0.42);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 9px 12px;
+  text-decoration: none;
+}
+
+.photoName {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.photoRole {
+  font-size: 0.65rem;
+  opacity: 0.8;
+}
+
+/* ── Controls ── */
+.controls {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 48px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.arrow {
+  width: 52px;
+  height: 52px;
+  border-radius: 100px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.arrowOutline {
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--navy);
+}
+
+.arrowOutline:hover {
+  border-color: var(--navy);
+}
+
+.arrowSolid {
+  border: 1px solid var(--navy);
+  background: var(--navy);
+  color: #fff;
+}
+
+.arrowSolid:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
+.dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 100px;
+  background: var(--hairline);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.dotActive {
+  width: 20px;
+  background: var(--navy);
+}
+
+@media (min-width: 641px) {
+  .section { padding: 96px 40px; }
+  .badges { flex-direction: row; align-items: center; gap: 28px; }
+  .percentBadge { width: 128px; height: 128px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photoCard { transform: rotate(6deg); }
+}
+
+/* Dark mode: navy text → readable, ghost tint inverts */
+:global([data-theme="dark"]) .percentNum,
+:global([data-theme="dark"]) .badgeTitle,
+:global([data-theme="dark"]) .indexChip,
+:global([data-theme="dark"]) .arrowOutline { color: var(--text); }
+
+:global([data-theme="dark"]) .ghostWord { color: rgba(226, 232, 244, 0.10); }
+:global([data-theme="dark"]) .ghostInk { color: var(--text); }
+:global([data-theme="dark"]) .arrowSolid { background: var(--text); border-color: var(--text); color: var(--bg); }
+:global([data-theme="dark"]) .dotActive { background: var(--text); }
