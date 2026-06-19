@@ -1,17 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Destination, Package } from "@/lib/types";
+import { geography, CONTINENT_ORDER, type GeoCountry, type GeoPlace } from "@/lib/data/geography";
 import styles from "./TripWizard.module.css";
 
 interface Props {
   destinations: Destination[];
   packages: Package[];
 }
-
-type RegionFilter = "all" | "domestic" | "international";
 
 const CATEGORIES = [
   { slug: "honeymoon", label: "Honeymoon", emoji: "💑", blurb: "Romance & luxury escapes" },
@@ -176,8 +175,9 @@ function DatePicker({ startDate, endDate, onRange }: {
 
 export default function TripWizard({ destinations, packages }: Props) {
   const [step, setStep] = useState(0);
-  const [regionFilter, setRegionFilter] = useState<RegionFilter>("all");
-  const [selectedDest, setSelectedDest] = useState<Destination | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<GeoCountry | null>(null);
+  const [selectedPlace, setSelectedPlace] = useState<GeoPlace | null>(null);
+  const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
   const [customPackage, setCustomPackage] = useState(false);
@@ -189,9 +189,25 @@ export default function TripWizard({ destinations, packages }: Props) {
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
-  const filteredDests = destinations.filter(d =>
-    regionFilter === "all" || d.region === regionFilter
+  // The chosen place maps to a real Destination when possible — this drives the
+  // package step, dates summary and enquiry just like the old flat selection did.
+  const selectedDest = useMemo<Destination | null>(
+    () =>
+      selectedPlace?.destinationSlug
+        ? destinations.find(d => d.slug === selectedPlace.destinationSlug) ?? null
+        : null,
+    [selectedPlace, destinations]
   );
+
+  const countriesByContinent = CONTINENT_ORDER
+    .map(continent => ({ continent, countries: geography.filter(c => c.continent === continent) }))
+    .filter(group => group.countries.length > 0);
+
+  const placeImage = (p: GeoPlace): string | undefined =>
+    p.image ?? destinations.find(d => d.slug === p.destinationSlug)?.heroImage;
+
+  const placePrice = (p: GeoPlace) =>
+    destinations.find(d => d.slug === p.destinationSlug)?.fromPrice ?? null;
 
   const destPackages = selectedDest
     ? packages.filter(p => p.destinationSlug === selectedDest.slug)
@@ -203,8 +219,27 @@ export default function TripWizard({ destinations, packages }: Props) {
     );
   }
 
+  function toggleActivity(label: string) {
+    setSelectedActivities(prev =>
+      prev.includes(label) ? prev.filter(a => a !== label) : [...prev, label]
+    );
+  }
+
+  function selectPlace(place: GeoPlace) {
+    setSelectedPlace(place);
+    setSelectedActivities([]);
+    setSelectedPackage(null);
+    setCustomPackage(false);
+  }
+
+  function handleBack() {
+    if (step === 0 && selectedPlace) { setSelectedPlace(null); return; }
+    if (step === 0 && selectedCountry) { setSelectedCountry(null); return; }
+    setStep(s => s - 1);
+  }
+
   function canNext() {
-    if (step === 0) return !!selectedDest;
+    if (step === 0) return !!selectedPlace;
     if (step === 1) return selectedCategories.length > 0;
     if (step === 2) return !!(selectedPackage || customPackage);
     if (step === 3) return !!startDate;
@@ -225,11 +260,13 @@ export default function TripWizard({ destinations, packages }: Props) {
           name: form.name,
           phone: form.phone,
           email: form.email || "",
-          destination: selectedDest?.name ?? "",
+          destination: selectedPlace
+            ? `${selectedPlace.name}${selectedCountry ? `, ${selectedCountry.name}` : ""}`
+            : "",
           dates: datesStr,
           travelers: `${adults} Adult${adults !== 1 ? "s" : ""}${children > 0 ? `, ${children} Child${children !== 1 ? "ren" : ""}` : ""}`,
           budget,
-          interests: selectedCategories,
+          interests: [...selectedCategories, ...selectedActivities],
           message: form.message,
           packageTitle: selectedPackage?.title ?? (customPackage ? "Custom Package" : ""),
         }),
@@ -259,15 +296,15 @@ export default function TripWizard({ destinations, packages }: Props) {
           <h2 className={styles.successTitle}>Your Dream Trip is Locked In!</h2>
           <p className={styles.successSub}>
             Thanks, {form.name}! Our travel experts will reach out within 24 hours with a personalised itinerary
-            {selectedDest ? ` for ${selectedDest.name}` : ""}.
+            {selectedPlace ? ` for ${selectedPlace.name}` : ""}.
           </p>
           <div className={styles.successDetails}>
-            {selectedDest && <span>📍 {selectedDest.name}</span>}
+            {selectedPlace && <span>📍 {selectedPlace.name}</span>}
             {startDate && <span>📅 {formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</span>}
             <span>👥 {adults} Adult{adults !== 1 ? "s" : ""}{children > 0 ? `, ${children} Child${children !== 1 ? "ren" : ""}` : ""}</span>
           </div>
           <a
-            href={`https://wa.me/917499322412?text=${encodeURIComponent(`Hi VMF Holidays! I just submitted a trip request for ${selectedDest?.name ?? "a destination"}. My name is ${form.name} and my phone is ${form.phone}.`)}`}
+            href={`https://wa.me/917499322412?text=${encodeURIComponent(`Hi VMF Holidays! I just submitted a trip request for ${selectedPlace?.name ?? "a destination"}. My name is ${form.name} and my phone is ${form.phone}.`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.waBtn}
@@ -315,52 +352,139 @@ export default function TripWizard({ destinations, packages }: Props) {
       {/* Step content */}
       <div className={styles.stepWrap}>
 
-        {/* STEP 1 — DESTINATION */}
+        {/* STEP 1 — DESTINATION (Country › Place › Activities drill-down) */}
         {step === 0 && (
           <div className={styles.step} key="step-0">
-            <div className={styles.filterRow}>
-              {(["all", "domestic", "international"] as RegionFilter[]).map(f => (
-                <button
-                  key={f}
-                  type="button"
-                  className={`${styles.filterPill} ${regionFilter === f ? styles.filterPillActive : ""}`}
-                  onClick={() => setRegionFilter(f)}
-                >
-                  {f === "all" ? "All Destinations" : f === "domestic" ? "🇮🇳 India" : "🌏 International"}
-                </button>
-              ))}
+            {/* Breadcrumb */}
+            <div className={styles.geoCrumbs}>
+              <button
+                type="button"
+                className={`${styles.crumb} ${!selectedCountry ? styles.crumbActive : ""}`}
+                onClick={() => { setSelectedCountry(null); setSelectedPlace(null); }}
+              >
+                🌍 All Countries
+              </button>
+              {selectedCountry && (
+                <>
+                  <span className={styles.crumbSep}>›</span>
+                  <button
+                    type="button"
+                    className={`${styles.crumb} ${!selectedPlace ? styles.crumbActive : ""}`}
+                    onClick={() => setSelectedPlace(null)}
+                  >
+                    {selectedCountry.flag} {selectedCountry.name}
+                  </button>
+                </>
+              )}
+              {selectedPlace && (
+                <>
+                  <span className={styles.crumbSep}>›</span>
+                  <span className={`${styles.crumb} ${styles.crumbActive}`}>{selectedPlace.name}</span>
+                </>
+              )}
             </div>
-            <div className={styles.destGrid}>
-              {filteredDests.map(dest => (
-                <button
-                  key={dest.slug}
-                  type="button"
-                  className={`${styles.destCard} ${selectedDest?.slug === dest.slug ? styles.destCardSelected : ""}`}
-                  onClick={() => { setSelectedDest(dest); setSelectedPackage(null); setCustomPackage(false); }}
-                >
-                  <div className={styles.destImgWrap}>
-                    <Image
-                      src={dest.heroImage || "/images/placeholder.jpg"}
-                      alt={dest.name}
-                      fill
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className={styles.destImg}
-                    />
-                    <div className={styles.destGradient} />
-                    <div className={styles.destBottom}>
-                      <div className={styles.destName}>{dest.name}</div>
-                      <div className={styles.destCountry}>{dest.country}</div>
+
+            {/* 0a — Choose country (grouped by continent) */}
+            {!selectedCountry && (
+              <div className={styles.continents}>
+                {countriesByContinent.map(group => (
+                  <div key={group.continent} className={styles.continentGroup}>
+                    <h3 className={styles.continentLabel}>{group.continent}</h3>
+                    <div className={styles.countryGrid}>
+                      {group.countries.map(c => (
+                        <button
+                          key={c.code}
+                          type="button"
+                          className={styles.countryCard}
+                          onClick={() => { setSelectedCountry(c); setSelectedPlace(null); }}
+                        >
+                          <span className={styles.countryFlag}>{c.flag}</span>
+                          <span className={styles.countryName}>{c.name}</span>
+                          <span className={styles.countryCount}>
+                            {c.places.length} {c.places.length === 1 ? "place" : "places"}
+                          </span>
+                        </button>
+                      ))}
                     </div>
-                    <div className={styles.destPrice}>From ₹{dest.fromPrice.toLocaleString("en-IN")}</div>
-                    {selectedDest?.slug === dest.slug && (
-                      <div className={styles.destCheckBadge}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                      </div>
-                    )}
                   </div>
-                </button>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
+
+            {/* 0b — Choose place within country */}
+            {selectedCountry && !selectedPlace && (
+              <div className={styles.destGrid}>
+                {selectedCountry.places.map(place => {
+                  const price = placePrice(place);
+                  const img = placeImage(place);
+                  return (
+                    <button
+                      key={place.slug}
+                      type="button"
+                      className={styles.destCard}
+                      onClick={() => selectPlace(place)}
+                    >
+                      <div className={styles.destImgWrap}>
+                        {img ? (
+                          <Image
+                            src={img}
+                            alt={place.name}
+                            fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                            className={styles.destImg}
+                          />
+                        ) : (
+                          <div className={styles.destImgFallback} aria-hidden="true">
+                            <span className={styles.destImgFlag}>{selectedCountry.flag}</span>
+                          </div>
+                        )}
+                        <div className={styles.destGradient} />
+                        <div className={styles.destBottom}>
+                          <div className={styles.destName}>{place.name}</div>
+                          <div className={styles.destCountry}>{selectedCountry.name}</div>
+                        </div>
+                        {price != null && (
+                          <div className={styles.destPrice}>From ₹{price.toLocaleString("en-IN")}</div>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* 0c — Choose activities in the place */}
+            {selectedPlace && (
+              selectedPlace.activities.length > 0 ? (
+                <>
+                  <p className={styles.stepHint}>
+                    What do you want to do in {selectedPlace.name}?{" "}
+                    <span className={styles.hintMuted}>Select all that apply — optional</span>
+                  </p>
+                  <div className={styles.activityGrid}>
+                    {selectedPlace.activities.map(a => (
+                      <button
+                        key={a}
+                        type="button"
+                        className={`${styles.activityPill} ${selectedActivities.includes(a) ? styles.activityPillActive : ""}`}
+                        onClick={() => toggleActivity(a)}
+                      >
+                        {selectedActivities.includes(a) && (
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                        )}
+                        {a}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className={styles.noActivities}>
+                  <div className={styles.noActivitiesGlyph}>✦</div>
+                  <h3>We&apos;ll plan the best of {selectedPlace.name}</h3>
+                  <p>No fixed activities listed here yet — continue and our experts will tailor the experiences for you.</p>
+                </div>
+              )
+            )}
           </div>
         )}
 
@@ -541,12 +665,23 @@ export default function TripWizard({ destinations, packages }: Props) {
               <div className={styles.contactRight}>
                 <div className={styles.tripSummary}>
                   <div className={styles.summaryHead}>Your Trip Summary</div>
-                  {selectedDest && (
+                  {selectedPlace && (
                     <div className={styles.summaryItem}>
                       <span className={styles.summaryIcon}>📍</span>
                       <div>
                         <div className={styles.summaryLabel}>Destination</div>
-                        <div className={styles.summaryVal}>{selectedDest.name}, {selectedDest.country}</div>
+                        <div className={styles.summaryVal}>
+                          {selectedPlace.name}{selectedCountry ? `, ${selectedCountry.name}` : ""}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  {selectedActivities.length > 0 && (
+                    <div className={styles.summaryItem}>
+                      <span className={styles.summaryIcon}>🎯</span>
+                      <div>
+                        <div className={styles.summaryLabel}>Things to do</div>
+                        <div className={styles.summaryVal}>{selectedActivities.join(", ")}</div>
                       </div>
                     </div>
                   )}
@@ -608,8 +743,8 @@ export default function TripWizard({ destinations, packages }: Props) {
       {/* Sticky nav */}
       <div className={styles.navBar}>
         <div className={styles.navInner}>
-          {step > 0 ? (
-            <button type="button" className={styles.backBtn} onClick={() => setStep(s => s - 1)}>← Back</button>
+          {step > 0 || selectedCountry ? (
+            <button type="button" className={styles.backBtn} onClick={handleBack}>← Back</button>
           ) : <div />}
           <div className={styles.navRight}>
             {step === 3 && !startDate && <span className={styles.navHint}>Pick your departure date to continue</span>}
