@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { db } from "@/lib/db";
+import { sendEnquiryWhatsApp } from "@/lib/whatsapp";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
   // CRM: persist the lead before anything else so it's never lost
   const source = body.packageTitle
     ? "PACKAGE_PAGE"
-    : body.interests || body.budget
+    : body.interests || body.budget || body.contactMode
       ? "TRIP_WIZARD"
       : "CONTACT_FORM";
 
@@ -36,6 +37,9 @@ export async function POST(request: Request) {
         dates: body.dates ? String(body.dates) : null,
         travelers: body.travelers ? String(body.travelers) : null,
         budget: body.budget ? String(body.budget) : null,
+        tripLength: body.tripLength ? String(body.tripLength) : null,
+        contactMode: body.contactMode ? String(body.contactMode) : null,
+        contactTime: body.contactTime ? String(body.contactTime) : null,
         interests: Array.isArray(body.interests) ? (body.interests as string[]).map(String) : [],
         message: body.message ? String(body.message) : null,
         packageTitle: body.packageTitle ? String(body.packageTitle) : null,
@@ -44,6 +48,14 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("[enquiry] Failed to save lead:", err);
   }
+
+  // Auto-confirm to the customer over WhatsApp (best-effort, never blocks the response)
+  const interest = body.packageTitle
+    ? String(body.packageTitle)
+    : body.destination
+      ? String(body.destination)
+      : null;
+  void sendEnquiryWhatsApp(String(name), String(phone), interest);
 
   const subject = body.packageTitle
     ? `New Enquiry: ${body.packageTitle} — ${name}`
@@ -59,6 +71,8 @@ export async function POST(request: Request) {
       ${body.destination ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Destination</td><td style="padding:8px 0;font-size:14px">${body.destination}</td></tr>` : ""}
       ${body.dates ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Dates</td><td style="padding:8px 0;font-size:14px">${body.dates}</td></tr>` : ""}
       ${body.travelers ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Travelers</td><td style="padding:8px 0;font-size:14px">${body.travelers}</td></tr>` : ""}
+      ${body.tripLength ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Approx. Length</td><td style="padding:8px 0;font-size:14px">${body.tripLength}</td></tr>` : ""}
+      ${body.contactMode ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Preferred Contact</td><td style="padding:8px 0;font-size:14px;font-weight:600">${body.contactMode}${body.contactTime ? ` · ${body.contactTime}` : ""}</td></tr>` : ""}
       ${body.budget ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Budget</td><td style="padding:8px 0;font-size:14px">${body.budget}</td></tr>` : ""}
       ${Array.isArray(body.interests) && body.interests.length ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Interests</td><td style="padding:8px 0;font-size:14px">${(body.interests as string[]).join(", ")}</td></tr>` : ""}
       ${body.message ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px;vertical-align:top">Message</td><td style="padding:8px 0;font-size:14px">${body.message}</td></tr>` : ""}

@@ -1,0 +1,28 @@
+.map {
+  width: 100%;
+  height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 36, 100, 0.1);
+  z-index: 0;
+}
+
+/* Numbered route pin */
+.pin {
+  background: var(--orange, #FE5C10);
+  color: #fff;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.pin span {
+  line-height: 1;
+}

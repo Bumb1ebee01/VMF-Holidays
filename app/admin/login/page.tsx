@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState } from "react";
 import { login, type LoginState } from "./actions";
 import styles from "./page.module.css";
@@ -13,8 +14,21 @@ export default function AdminLoginPage() {
     <div className={styles.page}>
       <div className={styles.card}>
         <div className={styles.logo}>
-          <span className={styles.logoVmf}>VMF</span>
-          <span className={styles.logoHols}>Holidays</span>
+          <Image
+            src="/logo-blue.png"
+            alt="VMF Holidays"
+            width={160}
+            height={67}
+            className={`${styles.logoImg} ${styles.logoBlue}`}
+            priority
+          />
+          <Image
+            src="/logo-white.png"
+            alt="VMF Holidays"
+            width={160}
+            height={66}
+            className={`${styles.logoImg} ${styles.logoWhite}`}
+          />
         </div>
         <p className={styles.kicker}>Team Console</p>
         <h1 className={styles.title}>Sign in</h1>

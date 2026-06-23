@@ -1,11 +1,44 @@
-.search {
-  margin-left: auto;
+.headActions {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
 }
 
-.searchInput {
-  width: 260px;
-  padding: 9px 14px;
-  font-size: var(--text-sm);
+.viewToggle {
+  display: inline-flex;
+  padding: 3px;
+  background: var(--off-white);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+}
+
+.viewBtn {
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.viewBtn:hover { color: var(--text); }
+
+.viewActive {
+  background: var(--card-bg);
+  color: var(--navy);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+:global([data-theme="dark"]) .viewActive { color: var(--text); }
+
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-5);
 }
 
 .contactCell {
@@ -24,13 +57,6 @@
   font-size: var(--text-xs);
 }
 
-@media (max-width: 900px) {
-  .search {
-    margin-left: 0;
-    width: 100%;
-  }
-
-  .searchInput {
-    width: 100%;
-  }
+@media (max-width: 700px) {
+  .headActions { width: 100%; justify-content: space-between; }
 }

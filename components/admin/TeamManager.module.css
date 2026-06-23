@@ -82,8 +82,74 @@
   color: #dc2626;
 }
 
+.fullAccess {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  color: var(--orange);
+}
+
+.permToggle {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  padding: 5px 11px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--text-light);
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.permToggle:hover { border-color: var(--navy); color: var(--navy); }
+
+.permRow td {
+  background: var(--surface-2, rgba(0, 36, 100, 0.025));
+  padding: 0;
+}
+
+.permPanel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
+}
+
+.permGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+}
+
+.permGroupLabel {
+  font-size: 10px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.permItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: var(--text-sm);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.permItem input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
 @media (max-width: 900px) {
   .createForm {
     grid-template-columns: 1fr 1fr;
   }
+  .permPanel { gap: var(--sp-4); }
 }

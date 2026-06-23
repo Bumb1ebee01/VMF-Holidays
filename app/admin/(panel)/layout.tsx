@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth/user";
-import AdminSidebar from "@/components/admin/AdminSidebar";
-import styles from "./layout.module.css";
+import { can } from "@/lib/permissions";
+import { db } from "@/lib/db";
+import AdminShell from "@/components/admin/AdminShell";
 
 export const metadata: Metadata = {
   title: { default: "Admin", template: "%s | VMF Admin" },
@@ -14,11 +15,13 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }>) {
   const user = await requireUser();
+  const newLeads = can(user, "leads:view")
+    ? await db.lead.count({ where: { status: "NEW" } })
+    : 0;
 
   return (
-    <div className={styles.shell}>
-      <AdminSidebar user={user} />
-      <main className={styles.main}>{children}</main>
-    </div>
+    <AdminShell user={user} newLeads={newLeads}>
+      {children}
+    </AdminShell>
   );
 }

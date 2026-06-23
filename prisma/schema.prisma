@@ -42,16 +42,33 @@ enum TripCategory {
 }
 
 model User {
-  id           String     @id @default(cuid())
-  email        String     @unique
+  id           String        @id @default(cuid())
+  email        String        @unique
   name         String
   passwordHash String
-  role         Role       @default(MEMBER)
-  active       Boolean    @default(true)
-  leads        Lead[]     @relation("AssignedLeads")
+  role         Role          @default(MEMBER)
+  active       Boolean       @default(true)
+  permissions  String[]      @default([])
+  leads        Lead[]        @relation("AssignedLeads")
   notes        LeadNote[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  activity     ActivityLog[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId    String?
+  userName  String
+  action    String
+  entity    String
+  entityId  String?
+  detail    String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model Lead {
@@ -65,6 +82,9 @@ model Lead {
   dates        String?
   travelers    String?
   budget       String?
+  tripLength   String?
+  contactMode  String?
+  contactTime  String?
   interests    String[]
   message      String?
   packageTitle String?

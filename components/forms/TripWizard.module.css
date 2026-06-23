@@ -1410,3 +1410,417 @@
 @media (max-width: 480px) {
   .countryGrid { grid-template-columns: 1fr 1fr; }
 }
+
+/* ── Approx-days badge (activities step) ──────────────── */
+.activityHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.daysBadge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: linear-gradient(140deg, var(--navy) 0%, var(--navy-mid, #154667) 100%);
+  color: white;
+  flex-shrink: 0;
+}
+
+.daysBadgeNum { font-size: 22px; font-weight: 900; line-height: 1; letter-spacing: -0.02em; }
+.daysBadgeUnit { font-size: 12px; font-weight: 700; opacity: 0.9; }
+.daysBadgeTag {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--orange-lt, #FFA333);
+}
+
+/* ── Trip-length card (dates step) ────────────────────── */
+.tripLenCard {
+  background: white;
+  border-radius: 16px;
+  border: 1.5px solid var(--border);
+  padding: 22px 24px;
+  box-shadow: 0 4px 24px rgba(0, 36, 100, 0.08);
+}
+
+.tripLenMain { display: flex; align-items: baseline; gap: 10px; }
+.tripLenNum { font-size: 34px; font-weight: 900; color: var(--orange); line-height: 1; letter-spacing: -0.03em; }
+.tripLenUnit { font-size: 15px; font-weight: 800; color: var(--navy); }
+.tripLenNote { margin: 10px 0 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+/* ── Contact mode + time (contact step) ───────────────── */
+.contactModeGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.contactModeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: white;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.contactModeCard:hover { border-color: var(--navy); }
+
+.contactModeCardActive {
+  border-color: var(--orange);
+  background: linear-gradient(140deg, #fff9f5, white);
+  box-shadow: 0 0 0 1px var(--orange);
+}
+
+.contactModeEmoji { font-size: 20px; line-height: 1; }
+.contactModeLabel { font-size: 13.5px; font-weight: 800; color: var(--navy); }
+.contactModeSub { font-size: 11px; color: var(--muted); }
+
+.contactTimeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.contactTimeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 11px 8px;
+  border-radius: 11px;
+  border: 1.5px solid var(--border);
+  background: white;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.contactTimeCard:hover { border-color: var(--navy); }
+
+.contactTimeCardActive {
+  border-color: var(--orange);
+  background: linear-gradient(140deg, #fff9f5, white);
+  box-shadow: 0 0 0 1px var(--orange);
+}
+
+.contactTimeLabel { font-size: 12.5px; font-weight: 800; color: var(--navy); }
+.contactTimeSub { font-size: 9.5px; color: var(--muted); }
+
+.waAutoNote {
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+  margin: 0 0 14px;
+  line-height: 1.6;
+}
+
+@media (max-width: 560px) {
+  .contactTimeGrid { grid-template-columns: 1fr 1fr; }
+  .contactModeGrid { grid-template-columns: 1fr; }
+  .daysBadge { padding: 8px 14px; }
+}
+
+/* ══════════════════════════════════════════════════════════
+   Touron-style two-panel layout
+   ══════════════════════════════════════════════════════════ */
+.pageWrap {
+  padding: calc(var(--nav-h, 72px) + 36px) 24px 60px;
+  background: #eef1f6;
+  min-height: 100vh;
+}
+
+:global([data-theme="dark"]) .pageWrap { background: #0a1422; }
+
+.shell {
+  display: flex;
+  max-width: 1280px;
+  margin: 0 auto;
+  min-height: 74vh;
+  background: #fff;
+  border: 1px solid rgba(0, 36, 100, 0.08);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(0, 36, 100, 0.1);
+}
+
+/* ── Left rail ── */
+.rail {
+  flex: 0 0 300px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 26px;
+  background: linear-gradient(180deg, #f7f8fb 0%, #fbfcfe 100%);
+  border-right: 1px solid rgba(0, 36, 100, 0.07);
+}
+
+.railLogo { display: flex; align-items: baseline; gap: 6px; margin-bottom: 36px; }
+.railLogoMark { font-size: 22px; font-weight: 900; color: var(--orange); letter-spacing: -0.03em; }
+.railLogoText { font-size: 18px; font-weight: 800; color: var(--navy); letter-spacing: -0.02em; }
+
+.railSteps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+.railStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 12px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.railStep:disabled { cursor: default; opacity: 0.55; }
+.railStep:not(:disabled):hover { background: rgba(0, 36, 100, 0.04); }
+
+.railIcon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1px solid rgba(0, 36, 100, 0.1);
+  color: var(--muted);
+}
+
+.railStepActive .railIcon { background: var(--orange); border-color: var(--orange); color: #fff; }
+.railStepDone .railIcon { background: var(--navy); border-color: var(--navy); color: #fff; }
+
+.railText { display: flex; flex-direction: column; gap: 2px; }
+.railTitle { font-size: 14px; font-weight: 700; color: var(--navy); }
+.railSub { font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+.railStepActive .railTitle { color: var(--orange); }
+
+.railFoot { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); padding-top: 20px; border-top: 1px solid rgba(0, 36, 100, 0.07); }
+
+/* ── Main panel ── */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+.brandHead { text-align: center; padding: 34px 32px 18px; }
+.brandTitle { font-size: clamp(1.4rem, 2.4vw, 2rem); font-weight: 800; letter-spacing: -0.03em; color: var(--navy); margin: 0; }
+.brandSub { font-size: 14px; color: var(--muted); margin: 8px 0 0; }
+:global([data-theme="dark"]) .brandTitle { color: var(--text); }
+
+.mainScroll { flex: 1; padding: 8px 32px 24px; }
+
+/* ── Tabs row ── */
+.tabsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(0, 36, 100, 0.08);
+  padding-bottom: 4px;
+}
+
+.filterTabs { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.filterTab {
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.filterTab:hover { color: var(--navy); }
+.filterTabActive { color: var(--navy); font-weight: 800; border-bottom-color: var(--orange); }
+
+.searchBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 36, 100, 0.12);
+  color: var(--muted);
+}
+.searchInput { border: none; outline: none; background: none; font-family: inherit; font-size: 13px; color: var(--text); width: 150px; }
+
+/* ── Image card grid ── */
+.cardGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.gcard {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1.5px solid rgba(0, 36, 100, 0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  padding: 0;
+  transition: transform 0.25s var(--ease-out, ease), box-shadow 0.25s ease, border-color 0.2s ease;
+}
+
+.gcard:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0, 36, 100, 0.13); }
+.gcardOn { border-color: var(--orange); box-shadow: 0 0 0 1.5px var(--orange); }
+
+.gcardImgWrap { position: relative; width: 100%; aspect-ratio: 4 / 3; background: var(--navy); }
+.gcardImg { object-fit: cover; }
+
+.gcardCheck {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.gcardBody { padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+.gcardName { font-size: 16px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+.gcardSub { font-size: 12px; color: var(--muted); }
+:global([data-theme="dark"]) .gcardName { color: var(--text); }
+
+.emptyNote { grid-column: 1 / -1; text-align: center; color: var(--muted); padding: 30px 0; }
+
+/* ── Approx days pill ── */
+.daysPill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 16px;
+  border-radius: 12px;
+  background: linear-gradient(140deg, var(--navy), var(--navy-mid, #154667));
+  color: #fff;
+  flex-shrink: 0;
+}
+.daysPillLabel { font-size: 9px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; color: var(--orange-lt, #FFA333); }
+.daysPillNum { font-size: 17px; font-weight: 900; }
+
+/* ── Experiences ── */
+.expGrid { display: flex; flex-wrap: wrap; gap: 11px; }
+
+.expCard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border, rgba(0, 36, 100, 0.12));
+  background: #fff;
+  color: var(--text-light, #444);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.expCard:hover { border-color: var(--navy); }
+.expCardOn { border-color: var(--orange); color: var(--orange); background: linear-gradient(140deg, #fff9f5, #fff); box-shadow: 0 0 0 1px var(--orange); }
+
+.expCheck { width: 14px; display: inline-flex; }
+
+.emptyExp { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 50px 0; max-width: 440px; margin: 0 auto; }
+.emptyExpGlyph { font-size: 40px; color: var(--orange); }
+.emptyExp h3 { font-size: 19px; font-weight: 700; color: var(--navy); margin: 0; }
+.emptyExp p { color: var(--muted); line-height: 1.7; margin: 0; font-size: 14px; }
+
+/* ── Dates layout ── */
+.datesLayout { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+.routeNote { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ── Footer nav ── */
+.footerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 32px;
+  border-top: 1px solid rgba(0, 36, 100, 0.08);
+  background: #fff;
+}
+
+.footerBack {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px 8px;
+}
+.footerBack:hover { color: var(--orange); }
+
+.footerNext {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--orange);
+  border: none;
+  border-radius: 100px;
+  padding: 13px 30px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+.footerNext:hover:not(:disabled) { transform: translateY(-2px); background: var(--navy); }
+.footerNext:disabled { opacity: 0.4; cursor: not-allowed; }
+
+@media (max-width: 1024px) {
+  .cardGrid { grid-template-columns: repeat(2, 1fr); }
+  .datesLayout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 860px) {
+  .shell { flex-direction: column; min-height: 0; }
+  .rail { flex-basis: auto; flex-direction: row; align-items: center; gap: 16px; padding: 16px 18px; border-right: none; border-bottom: 1px solid rgba(0, 36, 100, 0.07); overflow-x: auto; }
+  .railLogo { margin-bottom: 0; }
+  .railSteps { flex-direction: row; gap: 4px; }
+  .railStep { padding: 8px 10px; white-space: nowrap; }
+  .railSub, .railFoot { display: none; }
+  .brandHead { padding: 22px 18px 12px; }
+  .mainScroll { padding: 4px 18px 20px; }
+  .footerBar { padding: 14px 18px; }
+}
+
+@media (max-width: 560px) {
+  .cardGrid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gcardName { font-size: 14px; }
+  .pageWrap { padding: calc(var(--nav-h, 72px) + 16px) 10px 36px; }
+}
+
+:global([data-theme="dark"]) .shell { background: #0d1b33; border-color: rgba(255, 255, 255, 0.08); }
+:global([data-theme="dark"]) .rail { background: #0b1730; border-right-color: rgba(255, 255, 255, 0.08); }
+:global([data-theme="dark"]) .gcard,
+:global([data-theme="dark"]) .expCard,
+:global([data-theme="dark"]) .footerBar,
+:global([data-theme="dark"]) .railIcon { background: #0d1b33; border-color: rgba(255, 255, 255, 0.1); }
+:global([data-theme="dark"]) .railTitle { color: var(--text); }

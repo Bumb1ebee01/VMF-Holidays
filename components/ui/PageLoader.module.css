@@ -25,7 +25,7 @@
 }
 
 .logoImg {
-  width: 200px;
+  width: min(340px, 68vw);
   height: auto;
   display: block;
 }

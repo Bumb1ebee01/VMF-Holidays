@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import DestinationCard from "@/components/ui/DestinationCard";
-import { getAllDestinations } from "@/lib/queries";
+import DestinationExplorer, { type ExplorerCountry } from "@/components/ui/DestinationExplorer";
+import { geography, type GeoCountry, type GeoPlace } from "@/lib/data/geography";
+import { getAllDestinations, getAllPackages } from "@/lib/queries";
+import type { Destination, Package } from "@/lib/types";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -8,10 +10,49 @@ export const metadata: Metadata = {
   description: "Explore our handpicked domestic and international destinations — from Kerala backwaters to Bali temples.",
 };
 
+function placeImages(p: GeoPlace, c: GeoCountry, destinations: Destination[], packages: Package[]): string[] {
+  const dest = p.destinationSlug ? destinations.find((d) => d.slug === p.destinationSlug) : null;
+  const imgs = [p.image ?? dest?.heroImage ?? c.heroImage];
+  if (dest) {
+    const pkgs = packages.filter((pk) => pk.destinationSlug === dest.slug);
+    imgs.push(...pkgs.flatMap((pk) => [pk.heroImage, ...(pk.gallery ?? [])]));
+  }
+  return Array.from(new Set(imgs.filter(Boolean))).slice(0, 5);
+}
+
+function toExplorer(countries: GeoCountry[], destinations: Destination[], packages: Package[]): ExplorerCountry[] {
+  return countries.map((c) => {
+    const places = c.places.map((p) => {
+      const dest = p.destinationSlug ? destinations.find((d) => d.slug === p.destinationSlug) : null;
+      return {
+        slug: p.slug,
+        name: p.name,
+        images: placeImages(p, c, destinations, packages),
+        href: dest ? `/packages?destination=${dest.slug}` : "/trip-builder",
+        activityCount: p.activities.length,
+      };
+    });
+    // Country slideshow = its hero plus a sampling of its places' photos.
+    const images = Array.from(
+      new Set([c.heroImage, ...places.flatMap((p) => p.images)].filter(Boolean))
+    ).slice(0, 5);
+    return { code: c.code, name: c.name, flag: c.flag, images, placeCount: c.places.length, places };
+  });
+}
+
 export default async function DestinationsPage() {
-  const destinations = await getAllDestinations();
-  const domestic = destinations.filter((d) => d.region === "domestic");
-  const international = destinations.filter((d) => d.region === "international");
+  const [destinations, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+
+  const domestic = toExplorer(
+    geography.filter((c) => c.region === "domestic"),
+    destinations,
+    packages
+  );
+  const international = toExplorer(
+    geography.filter((c) => c.region === "international"),
+    destinations,
+    packages
+  );
 
   return (
     <div className={styles.page}>
@@ -31,13 +72,7 @@ export default async function DestinationsPage() {
             <span className={styles.sectionEyebrow}>Within India</span>
             <h2 className={styles.sectionTitle}>Domestic Destinations</h2>
           </div>
-          <div className={styles.grid}>
-            {domestic.map((d, i) => (
-              <div key={d.slug} className={`reveal reveal-d${Math.min(i + 1, 6)}`}>
-                <DestinationCard destination={d} />
-              </div>
-            ))}
-          </div>
+          <DestinationExplorer countries={domestic} />
         </div>
 
         <div className={styles.sectionBlock}>
@@ -45,13 +80,7 @@ export default async function DestinationsPage() {
             <span className={styles.sectionEyebrow}>Around the World</span>
             <h2 className={styles.sectionTitle}>International Destinations</h2>
           </div>
-          <div className={styles.grid}>
-            {international.map((d, i) => (
-              <div key={d.slug} className={`reveal reveal-d${Math.min(i + 1, 6)}`}>
-                <DestinationCard destination={d} />
-              </div>
-            ))}
-          </div>
+          <DestinationExplorer countries={international} />
         </div>
       </div>
     </div>

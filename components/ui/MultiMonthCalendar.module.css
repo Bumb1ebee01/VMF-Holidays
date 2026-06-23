@@ -1,0 +1,137 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  /* Theme react-day-picker via its own CSS variables (v9) */
+  --rdp-accent-color: var(--orange);
+  --rdp-accent-background-color: rgba(254, 92, 16, 0.14);
+  --rdp-today-color: var(--orange);
+  --rdp-day-width: 40px;
+  --rdp-day-height: 40px;
+  --rdp-day_button-width: 38px;
+  --rdp-day_button-height: 38px;
+  --rdp-day_button-border-radius: 10px;
+  --rdp-selected-border: none;
+  --rdp-outside-opacity: 0.4;
+  --rdp-disabled-opacity: 0.3;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.selects {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.selectWrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy);
+  background: #fff;
+  border: 1.5px solid var(--border, rgba(0, 36, 100, 0.15));
+  border-radius: 10px;
+  padding: 9px 30px 9px 14px;
+  cursor: pointer;
+  min-width: 120px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23002464' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  transition: border-color 0.2s ease;
+}
+
+.select:hover { border-color: var(--navy); }
+.select:focus-visible { outline: 2px solid var(--orange); outline-offset: 1px; }
+
+/* ── react-day-picker theming ─────────────────────────── */
+.wrapper :global(.rdp-root) {
+  --rdp-font-family: inherit;
+}
+
+.wrapper :global(.rdp-months) {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+}
+
+.wrapper :global(.rdp-month_caption) {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--navy);
+  justify-content: center;
+}
+
+.wrapper :global(.rdp-weekday) {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.wrapper :global(.rdp-day_button) {
+  font-size: 13.5px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.wrapper :global(.rdp-day_button:hover) {
+  background: rgba(0, 36, 100, 0.07);
+}
+
+.wrapper :global(.rdp-selected) :global(.rdp-day_button) {
+  background: var(--orange);
+  color: #fff;
+  font-weight: 800;
+}
+
+.wrapper :global(.rdp-range_middle) :global(.rdp-day_button) {
+  background: rgba(254, 92, 16, 0.14);
+  color: var(--navy);
+  border-radius: 0;
+}
+
+.wrapper :global(.rdp-range_start) :global(.rdp-day_button),
+.wrapper :global(.rdp-range_end) :global(.rdp-day_button) {
+  background: var(--orange);
+  color: #fff;
+}
+
+.wrapper :global(.rdp-chevron) {
+  fill: var(--navy);
+}
+
+.wrapper :global(.rdp-button_previous:hover) :global(.rdp-chevron),
+.wrapper :global(.rdp-button_next:hover) :global(.rdp-chevron) {
+  fill: var(--orange);
+}
+
+:global([data-theme="dark"]) .select {
+  background-color: #0d1b33;
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+:global([data-theme="dark"]) .wrapper :global(.rdp-month_caption),
+:global([data-theme="dark"]) .wrapper :global(.rdp-day_button) {
+  color: var(--text);
+}
+
+:global([data-theme="dark"]) .wrapper :global(.rdp-day_button:hover) {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 560px) {
+  .wrapper :global(.rdp-months) { gap: 12px; }
+  .select { min-width: 104px; }
+}

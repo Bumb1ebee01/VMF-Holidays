@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireUser } from "@/lib/auth/user";
+import { requirePermission } from "@/lib/auth/user";
+import { logActivity } from "@/lib/activity";
 import { slugify } from "@/lib/utils";
 
 const CATEGORIES = ["honeymoon", "family", "adventure", "corporate", "pilgrimage", "college"] as const;
@@ -34,7 +35,7 @@ export interface PackagePayload {
 export type SaveResult = { error: string } | undefined;
 
 export async function savePackage(payload: PackagePayload): Promise<SaveResult> {
-  await requireUser();
+  const actor = await requirePermission("packages:manage");
 
   const title = payload.title.trim();
   const slug = slugify(payload.slug.trim() || title);
@@ -75,8 +76,10 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
 
   if (payload.id) {
     await db.package.update({ where: { id: payload.id }, data });
+    await logActivity(actor, { action: "package.update", entity: "Package", entityId: payload.id, detail: `Updated package “${title}”` });
   } else {
-    await db.package.create({ data });
+    const created = await db.package.create({ data });
+    await logActivity(actor, { action: "package.create", entity: "Package", entityId: created.id, detail: `Created package “${title}”` });
   }
 
   revalidatePath("/", "layout");
@@ -84,8 +87,9 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
 }
 
 export async function deletePackage(id: string) {
-  await requireUser();
-  await db.package.delete({ where: { id } });
+  const actor = await requirePermission("packages:manage");
+  const pkg = await db.package.delete({ where: { id } });
+  await logActivity(actor, { action: "package.delete", entity: "Package", entityId: id, detail: `Deleted package “${pkg.title}”` });
   revalidatePath("/", "layout");
   redirect("/admin/packages");
 }

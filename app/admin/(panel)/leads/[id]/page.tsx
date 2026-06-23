@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { requireUser } from "@/lib/auth/user";
+import { can } from "@/lib/permissions";
 import StatusBadge, { type LeadStatusValue } from "@/components/admin/StatusBadge";
 import LeadControls from "@/components/admin/LeadControls";
 import { addLeadNote } from "../actions";
@@ -25,6 +27,7 @@ export default async function LeadDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const me = await requireUser();
 
   const [lead, users] = await Promise.all([
     db.lead.findUnique({
@@ -55,6 +58,8 @@ export default async function LeadDetailPage({
     ["Package", lead.packageTitle],
     ["Travel dates", lead.dates],
     ["Travellers", lead.travelers],
+    ["Approx. length", lead.tripLength],
+    ["Preferred contact", lead.contactMode ? `${lead.contactMode}${lead.contactTime ? ` · ${lead.contactTime}` : ""}` : null],
     ["Budget", lead.budget],
     ["Interests", lead.interests.length ? lead.interests.join(", ") : null],
     ["Source", SOURCE_LABELS[lead.source] ?? lead.source],
@@ -95,16 +100,18 @@ export default async function LeadDetailPage({
 
           <div className={`${shared.panel} ${shared.panelPad}`}>
             <h2 className={styles.panelTitle}>Notes</h2>
-            <form action={addNote} className={styles.noteForm}>
-              <textarea
-                name="body"
-                className="form-textarea"
-                rows={3}
-                placeholder="Add a note — calls made, quotes sent, follow-ups…"
-                required
-              />
-              <button type="submit" className="btn btn-navy btn--sm">Add Note</button>
-            </form>
+            {can(me, "leads:edit") && (
+              <form action={addNote} className={styles.noteForm}>
+                <textarea
+                  name="body"
+                  className="form-textarea"
+                  rows={3}
+                  placeholder="Add a note — calls made, quotes sent, follow-ups…"
+                  required
+                />
+                <button type="submit" className="btn btn-navy btn--sm">Add Note</button>
+              </form>
+            )}
 
             {lead.notes.length === 0 ? (
               <p className={styles.noNotes}>No notes yet.</p>
@@ -130,6 +137,9 @@ export default async function LeadDetailPage({
               status={lead.status}
               assignedToId={lead.assignedTo?.id ?? null}
               users={users}
+              canEdit={can(me, "leads:edit")}
+              canAssign={can(me, "leads:assign")}
+              canDelete={can(me, "leads:delete")}
             />
           </div>
           <a

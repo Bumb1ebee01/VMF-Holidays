@@ -4,10 +4,17 @@
   background: var(--bg);
 }
 
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 .main {
   flex: 1;
   min-width: 0;
-  padding: var(--sp-10) var(--sp-12);
+  padding: var(--sp-8) var(--sp-10) var(--sp-12);
 }
 
 @media (max-width: 900px) {
@@ -16,6 +23,6 @@
   }
 
   .main {
-    padding: var(--sp-6) var(--sp-4);
+    padding: var(--sp-6) var(--sp-4) var(--sp-10);
   }
 }

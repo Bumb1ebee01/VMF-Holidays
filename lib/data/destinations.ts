@@ -37,7 +37,8 @@ export const destinations: Destination[] = [
     name: "Rajasthan",
     country: "India",
     region: "domestic",
-    heroImage: "https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/rajasthan.jpg",
+    heroImage:
+      "https://upload.wikimedia.org/wikipedia/commons/4/41/East_facade_Hawa_Mahal_Jaipur_from_ground_level_%28July_2022%29_-_img_01.jpg",
     fromPrice: 24999,
     blurb: "Majestic forts, golden deserts, vibrant bazaars and royal palaces — the Land of Kings never stops dazzling.",
     tags: ["Heritage", "Desert", "Palaces", "Culture"],

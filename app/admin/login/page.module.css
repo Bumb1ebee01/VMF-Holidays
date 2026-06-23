@@ -32,26 +32,19 @@
 }
 
 .logo {
-  display: flex;
-  align-items: baseline;
-  gap: 7px;
-  font-size: var(--text-xl);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   margin-bottom: var(--sp-2);
 }
 
-.logoVmf { color: var(--navy); font-weight: var(--fw-bold); }
-
-.logoHols {
-  color: var(--orange);
-  font-weight: var(--fw-light);
-  font-style: italic;
-  text-transform: none;
-  letter-spacing: 0.02em;
+.logoImg {
+  width: 150px;
+  height: auto;
+  display: block;
 }
 
-:global([data-theme="dark"]) .logoVmf { color: var(--text); }
+.logoWhite { display: none; }
+
+:global([data-theme="dark"]) .logoBlue { display: none; }
+:global([data-theme="dark"]) .logoWhite { display: block; }
 
 .kicker {
   font-size: 10px;

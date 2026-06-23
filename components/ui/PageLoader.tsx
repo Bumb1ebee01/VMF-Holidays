@@ -58,8 +58,8 @@ export default function PageLoader() {
         <Image
           src="/logo-white.png"
           alt="VMF Holidays"
-          width={200}
-          height={83}
+          width={340}
+          height={141}
           priority
           className={styles.logoImg}
         />

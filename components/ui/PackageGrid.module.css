@@ -1,0 +1,46 @@
+.cellReveal {
+  animation: pkgFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pkgFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+
+.moreWrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+.moreBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--navy);
+  background: #fff;
+  border: 1.5px solid rgba(0, 36, 100, 0.15);
+  border-radius: 100px;
+  padding: 13px 26px;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.moreBtn:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+  transform: translateY(-2px);
+}
+
+.moreBtn svg { transition: transform 0.3s ease; }
+.chevUp { transform: rotate(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .cellReveal { animation: none; }
+  .moreBtn:hover { transform: none; }
+}

@@ -15,7 +15,7 @@ export default function PopularDestinations({ destinations }: { destinations: De
   const visible =
     filter === "all"
       ? destinations.slice(0, 5)
-      : destinations.filter((d) => d.region === filter);
+      : destinations.filter((d) => d.region === filter).slice(0, 8);
 
   return (
     <section className={styles.section}>

@@ -1,5 +1,5 @@
 import Hero from "@/components/home/Hero";
-import DestinationSpotlight from "@/components/home/DestinationSpotlight";
+import PackageFan from "@/components/home/PackageFan";
 import Stats from "@/components/home/Stats";
 import PopularDestinations from "@/components/home/PopularDestinations";
 import FeaturedPackages from "@/components/home/FeaturedPackages";
@@ -20,12 +20,18 @@ export default async function HomePage() {
     title: p.title,
     slug: p.slug,
     destination: p.destination,
+    heroImage: p.heroImage,
+    fromPrice: p.fromPrice,
+    duration: p.duration,
   }));
+
+  const featured = packages.filter((p) => p.featured);
+  const fanPackages = featured.length >= 3 ? featured : packages;
 
   return (
     <main>
       <Hero suggestions={suggestions} destinations={destinations} />
-      <DestinationSpotlight destinations={destinations} />
+      <PackageFan packages={fanPackages} />
       <Stats />
       <TripCategories />
       <PopularDestinations destinations={destinations} />

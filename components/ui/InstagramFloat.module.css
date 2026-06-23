@@ -1,0 +1,47 @@
+.btn {
+  position: fixed;
+  /* Sit just to the left of the WhatsApp bubble (58px wide + gap) */
+  bottom: var(--sp-6);
+  right: calc(var(--sp-6) + 58px + 14px);
+  z-index: 200;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(220, 39, 67, 0.45);
+  transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
+  text-decoration: none;
+}
+
+.btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 28px rgba(220, 39, 67, 0.55);
+}
+
+/* Pulse ring */
+.pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: #dc2743;
+  animation: igPulse 2.5s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes igPulse {
+  0%   { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+@media (max-width: 640px) {
+  .btn {
+    bottom: var(--sp-4);
+    right: calc(var(--sp-4) + 52px + 12px);
+    width: 52px;
+    height: 52px;
+  }
+}

@@ -68,6 +68,9 @@ export interface EnquiryPayload {
   dates?: string;
   travelers?: string;
   budget?: string;
+  tripLength?: string;
+  contactMode?: string;
+  contactTime?: string;
   interests?: string[];
   message?: string;
   packageTitle?: string;

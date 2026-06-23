@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireUser } from "@/lib/auth/user";
+import { requirePermission } from "@/lib/auth/user";
+import { logActivity } from "@/lib/activity";
 import { slugify } from "@/lib/utils";
 
 export interface DestinationPayload {
@@ -21,7 +22,7 @@ export interface DestinationPayload {
 export type SaveResult = { error: string } | undefined;
 
 export async function saveDestination(payload: DestinationPayload): Promise<SaveResult> {
-  await requireUser();
+  const actor = await requirePermission("destinations:manage");
 
   const name = payload.name.trim();
   const slug = slugify(payload.slug.trim() || name);
@@ -51,8 +52,10 @@ export async function saveDestination(payload: DestinationPayload): Promise<Save
 
   if (payload.id) {
     await db.destination.update({ where: { id: payload.id }, data });
+    await logActivity(actor, { action: "destination.update", entity: "Destination", entityId: payload.id, detail: `Updated destination “${name}”` });
   } else {
-    await db.destination.create({ data });
+    const created = await db.destination.create({ data });
+    await logActivity(actor, { action: "destination.create", entity: "Destination", entityId: created.id, detail: `Created destination “${name}”` });
   }
 
   revalidatePath("/", "layout");
@@ -60,8 +63,9 @@ export async function saveDestination(payload: DestinationPayload): Promise<Save
 }
 
 export async function deleteDestination(id: string) {
-  await requireUser();
-  await db.destination.delete({ where: { id } });
+  const actor = await requirePermission("destinations:manage");
+  const dest = await db.destination.delete({ where: { id } });
+  await logActivity(actor, { action: "destination.delete", entity: "Destination", entityId: id, detail: `Deleted destination “${dest.name}”` });
   revalidatePath("/", "layout");
   redirect("/admin/destinations");
 }

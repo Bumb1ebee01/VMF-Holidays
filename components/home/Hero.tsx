@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { WordReveal, LineReveal } from "@/components/ui/Motion";
@@ -13,6 +13,9 @@ interface Suggestion {
   title: string;
   slug: string;
   destination: string;
+  heroImage?: string;
+  fromPrice?: number;
+  duration?: string;
 }
 
 const FILTER_PILLS = [
@@ -52,6 +55,24 @@ export default function Hero({
   });
   const plateY = useTransform(scrollYProgress, [0, 1], ["0%", "12%"]);
 
+  // Moving backdrop — cross-fade through hero photos of real destinations.
+  const KERALA = "https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/kerala.jpg";
+  const bgImages = useMemo(() => {
+    const fromDest = destinations
+      .map((d) => d.heroImage)
+      .filter((src) => src.startsWith("https://"));
+    return Array.from(new Set([KERALA, ...fromDest])).slice(0, 6);
+  }, [destinations]);
+  const [bgIndex, setBgIndex] = useState(0);
+
+  useEffect(() => {
+    if (bgImages.length < 2) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return;
+    const id = setInterval(() => setBgIndex((i) => (i + 1) % bgImages.length), 4500);
+    return () => clearInterval(id);
+  }, [bgImages.length]);
+
   // Gate the big reveals so they animate in as the intro curtain lifts.
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -78,7 +99,7 @@ export default function Hero({
         )
       : [];
 
-  function handleSearch(e: React.FormEvent) {
+  function handleSearch(e: React.SyntheticEvent) {
     e.preventDefault();
     setShowDropdown(false);
     if (query.trim()) router.push(`/packages?q=${encodeURIComponent(query.trim())}`);
@@ -96,14 +117,18 @@ export default function Hero({
       <section className={styles.hero} ref={heroRef}>
         {/* Parallax photo plate */}
         <motion.div className={styles.heroPlate} style={{ y: plateY }} aria-hidden="true">
-          <Image
-            src="https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/kerala.jpg"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className={styles.heroImg}
-          />
+          {bgImages.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              priority={i === 0}
+              sizes="100vw"
+              className={styles.heroImg}
+              style={{ opacity: i === bgIndex ? 1 : 0, transition: "opacity 1.4s ease" }}
+            />
+          ))}
         </motion.div>
         <div className={styles.heroOverlay} />
 
@@ -171,20 +196,44 @@ export default function Hero({
                 />
                 <button type="submit" className={styles.searchBtn}>Search Packages</button>
               </form>
-              {showDropdown && filtered.length > 0 && (
-                <ul className={styles.dropdown}>
-                  {filtered.map((s) => (
-                    <li key={s.slug}>
-                      <button type="button" className={styles.dropdownItem} onClick={() => pickSuggestion(s)}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" />
-                        </svg>
-                        <span className={styles.dropdownTitle}>{s.title}</span>
-                        <span className={styles.dropdownDest}>{s.destination}</span>
+              {showDropdown && query.trim().length > 0 && (
+                <div className={styles.dropdown}>
+                  {filtered.length > 0 ? (
+                    <>
+                      <ul className={styles.dropdownList}>
+                        {filtered.slice(0, 6).map((s) => (
+                          <li key={s.slug}>
+                            <button type="button" className={styles.dropdownItem} onClick={() => pickSuggestion(s)}>
+                              <span
+                                className={styles.dropdownThumb}
+                                style={s.heroImage ? { backgroundImage: `url(${s.heroImage})` } : undefined}
+                                aria-hidden="true"
+                              />
+                              <span className={styles.dropdownText}>
+                                <span className={styles.dropdownTitle}>{s.title}</span>
+                                <span className={styles.dropdownDest}>
+                                  {s.destination}{s.duration ? ` · ${s.duration}` : ""}
+                                </span>
+                              </span>
+                              {typeof s.fromPrice === "number" && (
+                                <span className={styles.dropdownPrice}>
+                                  ₹{(s.fromPrice / 1000).toFixed(0)}k
+                                </span>
+                              )}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                      <button type="button" className={styles.dropdownAll} onClick={handleSearch}>
+                        See all {filtered.length} result{filtered.length !== 1 ? "s" : ""} for “{query.trim()}” →
                       </button>
-                    </li>
-                  ))}
-                </ul>
+                    </>
+                  ) : (
+                    <button type="button" className={styles.dropdownEmpty} onClick={handleSearch}>
+                      No packages match “{query.trim()}” — search all packages →
+                    </button>
+                  )}
+                </div>
               )}
             </motion.div>
 

@@ -167,10 +167,33 @@
   flex-shrink: 0;
 }
 
-.dropdownTitle {
+.dropdownList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdownThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  background-color: var(--navy);
+  background-size: cover;
+  background-position: center;
+}
+
+.dropdownText {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdownTitle {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
   white-space: nowrap;
   overflow: hidden;
@@ -181,7 +204,44 @@
   font-size: 12px;
   color: var(--muted);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdownPrice {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--orange);
   flex-shrink: 0;
+}
+
+.dropdownAll,
+.dropdownEmpty {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  margin-top: 4px;
+  border: none;
+  border-top: 1px solid rgba(0, 36, 100, 0.08);
+  background: transparent;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  text-align: left;
+  cursor: pointer;
+  border-radius: 0 0 9px 9px;
+  transition: background 0.15s ease;
+}
+
+.dropdownAll:hover,
+.dropdownEmpty:hover {
+  background: rgba(0, 36, 100, 0.05);
+}
+
+.dropdownEmpty {
+  color: var(--muted);
+  border-top: none;
 }
 
 .searchIcon {

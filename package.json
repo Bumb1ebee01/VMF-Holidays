@@ -10,6 +10,8 @@
     "db:dev": "prisma dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:admin": "tsx prisma/reset-admin.ts",
+    "db:places": "tsx prisma/import-places.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {
@@ -25,6 +27,7 @@
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-day-picker": "^9.4.0",
     "resend": "^6.12.4"
   },
   "devDependencies": {

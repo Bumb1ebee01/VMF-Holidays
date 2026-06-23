@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPackages, getAllDestinations } from "@/lib/queries";
 import { categories } from "@/lib/data/categories";
-import PackageCard from "@/components/ui/PackageCard";
+import PackageGrid from "@/components/ui/PackageGrid";
 import PackageFilters from "@/components/packages/PackageFilters";
 import styles from "./page.module.css";
 
@@ -72,11 +72,7 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
               </Link>
             </div>
           ) : (
-            <div className="grid-3">
-              {filtered.map((pkg) => (
-                <PackageCard key={pkg.slug} pkg={pkg} />
-              ))}
-            </div>
+            <PackageGrid packages={filtered} />
           )}
         </div>
       </div>
