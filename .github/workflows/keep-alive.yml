@@ -1,0 +1,33 @@
+name: Keep Neon warm
+
+# Pings the /api/keep-alive endpoint so Neon's free-tier compute doesn't
+# scale-to-zero during the day (which adds a 1-3s cold start to the first query).
+# Runs every 5 minutes between 02:00–17:55 UTC (~07:30–23:25 IST) so the DB stays
+# warm during business hours but is allowed to sleep overnight to save compute hours.
+
+on:
+  schedule:
+    - cron: "*/5 2-17 * * *"
+  workflow_dispatch: {}
+
+# Avoid overlapping pings if a run is slow.
+concurrency:
+  group: keep-alive
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping keep-alive endpoint
+        env:
+          URL: ${{ secrets.KEEP_ALIVE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$URL" ]; then
+            echo "KEEP_ALIVE_URL secret is not set — skipping."
+            exit 0
+          fi
+          curl -fsS -m 30 -H "Authorization: Bearer ${CRON_SECRET}" "$URL"
+          echo ""
+          echo "Pinged $URL"
