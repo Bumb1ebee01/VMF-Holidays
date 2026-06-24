@@ -139,3 +139,6 @@
   .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .hero { padding: 72px 0 60px; }
 }
+
+/* Dark mode — navy section titles need to be readable on the dark page bg */
+:global([data-theme="dark"]) .sectionTitle { color: var(--text); }

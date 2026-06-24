@@ -248,3 +248,6 @@
   .formSide { padding: 36px 24px; }
   .title { font-size: 26px; }
 }
+
+/* Dark mode — darken the outer band; inner navy card already has light text */
+:global([data-theme="dark"]) .section { background: var(--bg); }

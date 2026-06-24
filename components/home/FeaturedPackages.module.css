@@ -92,3 +92,7 @@
 @media (max-width: 640px) {
   .section { padding: 80px 0; }
 }
+
+/* Dark mode — darken the section and flip the navy title */
+:global([data-theme="dark"]) .section { background: var(--bg); }
+:global([data-theme="dark"]) .title { color: var(--text); }

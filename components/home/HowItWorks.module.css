@@ -285,3 +285,9 @@
   .iconCircle,
   .stepTitle { transition: none; }
 }
+
+/* Dark mode — darken section, flip navy headings/links to light */
+:global([data-theme="dark"]) .section { background: var(--bg); }
+:global([data-theme="dark"]) .title,
+:global([data-theme="dark"]) .stepTitle,
+:global([data-theme="dark"]) .builderLink { color: var(--text); }
