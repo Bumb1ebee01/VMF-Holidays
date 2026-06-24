@@ -7,6 +7,8 @@ import { db } from "@/lib/db";
 import { formatINR } from "@/lib/utils";
 import { JsonLd, packageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import ItineraryAccordion from "@/components/packages/ItineraryAccordion";
+import CitySights from "@/components/packages/CitySights";
+import PackageFaq from "@/components/packages/PackageFaq";
 import EnquirySidebar from "@/components/packages/EnquirySidebar";
 import PackageCard from "@/components/ui/PackageCard";
 import styles from "./page.module.css";
@@ -123,6 +125,9 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
             <ItineraryAccordion itinerary={pkg.itinerary} />
           </section>
 
+          {/* City-wise sightseeing */}
+          <CitySights destinationSlug={pkg.destinationSlug} />
+
           {/* Inclusions & Exclusions */}
           <section className={styles.section}>
             <h2 className={styles.sectionTitle}>Inclusions &amp; Exclusions</h2>
@@ -149,6 +154,9 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
               </div>
             </div>
           </section>
+
+          {/* FAQ */}
+          <PackageFaq pkg={pkg} />
         </div>
 
         {/* Sidebar */}

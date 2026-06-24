@@ -34,11 +34,24 @@ const CONTACT_TIMES = [
   { label: "Anytime", sub: "Whenever suits" },
 ];
 
+const HOTEL_CATEGORIES = [
+  { label: "3 Star", sub: "Comfortable & great value", emoji: "⭐⭐⭐" },
+  { label: "4 Star", sub: "Premium comfort", emoji: "⭐⭐⭐⭐" },
+  { label: "5 Star", sub: "Luxury all the way", emoji: "⭐⭐⭐⭐⭐" },
+];
+
+const MEAL_PLANS = [
+  { label: "Breakfast Only", sub: "Daily breakfast", emoji: "🍳" },
+  { label: "Half Board", sub: "Breakfast + lunch or dinner", emoji: "🥗" },
+  { label: "Full Board", sub: "Breakfast, lunch & dinner", emoji: "🍽️" },
+];
+
 const STEPS = [
   { title: "Select Countries", sub: "Choose the countries you wish to travel to" },
   { title: "Add Cities", sub: "Add the cities you want to visit" },
   { title: "Add Experiences", sub: "Collate the experiences in each city" },
   { title: "Choose Dates", sub: "Plan your travel dates & travellers" },
+  { title: "Preferences", sub: "Hotel category & meal plan" },
   { title: "Traveller Details", sub: "We'll send your itinerary across" },
 ];
 
@@ -49,6 +62,7 @@ function StepIcon({ index }: { index: number }) {
     case 1: return <svg {...common}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>;
     case 2: return <svg {...common}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>;
     case 3: return <svg {...common}><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>;
+    case 4: return <svg {...common}><path d="M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6" /><path d="M5 10V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3" /><path d="M2 18h20" /><path d="M8 10V8h8v2" /></svg>;
     default: return <svg {...common}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>;
   }
 }
@@ -80,7 +94,11 @@ export default function TripWizard({ destinations }: Props) {
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
 
-  // Step 4 — contact
+  // Step 4 — preferences
+  const [hotelCategory, setHotelCategory] = useState("");
+  const [mealPlan, setMealPlan] = useState("");
+
+  // Step 5 — contact
   const [contactMode, setContactMode] = useState("WhatsApp");
   const [contactTime, setContactTime] = useState("Anytime");
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
@@ -167,7 +185,8 @@ export default function TripWizard({ destinations }: Props) {
     if (step === 1) return places.length > 0;
     if (step === 2) return true;
     if (step === 3) return !!startDate;
-    if (step === 4) return !!(form.name && form.phone);
+    if (step === 4) return !!(hotelCategory && mealPlan);
+    if (step === 5) return !!(form.name && form.phone);
     return true;
   }
 
@@ -194,6 +213,8 @@ export default function TripWizard({ destinations }: Props) {
           dates: datesStr,
           travelers: travelersLabel,
           tripLength: `${tripDays} Days / ${tripNights} Nights`,
+          hotelCategory,
+          mealPlan,
           contactMode,
           contactTime,
           interests: allExperiences,
@@ -215,10 +236,12 @@ export default function TripWizard({ destinations }: Props) {
       `Approx. length: ${tripDays} Days / ${tripNights} Nights`,
       startDate ? `Dates: ${formatDate(startDate)}${endDate ? ` – ${formatDate(endDate)}` : ""}` : "",
       `Travellers: ${travelersLabel}`,
+      hotelCategory ? `Hotel: ${hotelCategory}` : "",
+      mealPlan ? `Meals: ${mealPlan}` : "",
       `Preferred contact: ${contactMode} (${contactTime})`,
     ].filter(Boolean);
     return lines.join("\n");
-  }, [form.name, form.phone, destinationStr, tripDays, tripNights, startDate, endDate, travelersLabel, contactMode, contactTime]);
+  }, [form.name, form.phone, destinationStr, tripDays, tripNights, startDate, endDate, travelersLabel, hotelCategory, mealPlan, contactMode, contactTime]);
 
   const waHref = `https://wa.me/917499322412?text=${encodeURIComponent(waText)}`;
 
@@ -479,8 +502,48 @@ export default function TripWizard({ destinations }: Props) {
             </div>
           )}
 
-          {/* STEP 4 — Contact */}
+          {/* STEP 4 — Preferences */}
           {step === 4 && (
+            <div className={styles.prefsWrap}>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Preferred hotel category *</label>
+                <div className={styles.contactModeGrid}>
+                  {HOTEL_CATEGORIES.map((h) => (
+                    <button
+                      key={h.label}
+                      type="button"
+                      className={`${styles.contactModeCard} ${hotelCategory === h.label ? styles.contactModeCardActive : ""}`}
+                      onClick={() => setHotelCategory(h.label)}
+                    >
+                      <span className={styles.contactModeEmoji}>{h.emoji}</span>
+                      <span className={styles.contactModeLabel}>{h.label}</span>
+                      <span className={styles.contactModeSub}>{h.sub}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Meal preferences *</label>
+                <div className={styles.contactModeGrid}>
+                  {MEAL_PLANS.map((m) => (
+                    <button
+                      key={m.label}
+                      type="button"
+                      className={`${styles.contactModeCard} ${mealPlan === m.label ? styles.contactModeCardActive : ""}`}
+                      onClick={() => setMealPlan(m.label)}
+                    >
+                      <span className={styles.contactModeEmoji}>{m.emoji}</span>
+                      <span className={styles.contactModeLabel}>{m.label}</span>
+                      <span className={styles.contactModeSub}>{m.sub}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5 — Contact */}
+          {step === 5 && (
             <div className={styles.contactGrid}>
               <div className={styles.contactLeft}>
                 <div className={styles.formGroup}>
@@ -541,6 +604,9 @@ export default function TripWizard({ destinations }: Props) {
                     <div className={styles.summaryItem}><span className={styles.summaryIcon}>📅</span><div><div className={styles.summaryLabel}>Travel Dates</div><div className={styles.summaryVal}>{formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</div></div></div>
                   )}
                   <div className={styles.summaryItem}><span className={styles.summaryIcon}>👥</span><div><div className={styles.summaryLabel}>Travellers</div><div className={styles.summaryVal}>{travelersLabel}</div></div></div>
+                  {(hotelCategory || mealPlan) && (
+                    <div className={styles.summaryItem}><span className={styles.summaryIcon}>🏨</span><div><div className={styles.summaryLabel}>Preferences</div><div className={styles.summaryVal}>{[hotelCategory, mealPlan].filter(Boolean).join(" · ")}</div></div></div>
+                  )}
                   <div className={styles.summaryItem}><span className={styles.summaryIcon}>📞</span><div><div className={styles.summaryLabel}>Contact Preference</div><div className={styles.summaryVal}>{contactMode} · {contactTime}</div></div></div>
                 </div>
               </div>

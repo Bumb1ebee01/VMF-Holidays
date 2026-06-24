@@ -12,6 +12,7 @@ export type PermissionKey =
   | "packages:manage"
   | "destinations:manage"
   | "testimonials:manage"
+  | "posts:manage"
   | "activity:view-all";
 
 export interface PermissionDef {
@@ -29,6 +30,7 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "packages:manage", label: "Manage packages", group: "Content", hint: "Create, edit and delete packages" },
   { key: "destinations:manage", label: "Manage destinations", group: "Content", hint: "Create, edit and delete destinations" },
   { key: "testimonials:manage", label: "Manage testimonials", group: "Content", hint: "Create, edit and delete testimonials" },
+  { key: "posts:manage", label: "Manage blog", group: "Content", hint: "Write, edit and delete blog posts" },
   { key: "activity:view-all", label: "View everyone's activity", group: "Oversight", hint: "See the full team activity log, not just their own" },
 ];
 

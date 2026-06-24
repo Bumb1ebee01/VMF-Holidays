@@ -1,4 +1,4 @@
-import type { Package } from "@/lib/types";
+import type { Package, BlogPost } from "@/lib/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Central SEO source of truth — site URL, business identity, and JSON-LD
@@ -130,6 +130,37 @@ export function packageJsonLd(pkg: Package) {
       seller: { "@id": `${SITE_URL}/#organization` },
       priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
     },
+  };
+}
+
+/** FAQPage schema from a list of question/answer pairs (rich result eligible). */
+export function faqJsonLd(faqs: { q: string; a: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
+  };
+}
+
+/** BlogPosting schema for a blog article (rich result eligible). */
+export function postJsonLd(post: BlogPost) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.coverImage ? [absoluteUrl(post.coverImage)] : [absoluteUrl("/opengraph-image")],
+    datePublished: post.publishedAt?.toISOString(),
+    dateModified: post.publishedAt?.toISOString(),
+    author: { "@type": "Organization", name: post.author || SITE_NAME },
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    keywords: post.tags.join(", "),
+    url: absoluteUrl(`/blog/${post.slug}`),
+    mainEntityOfPage: absoluteUrl(`/blog/${post.slug}`),
   };
 }
 

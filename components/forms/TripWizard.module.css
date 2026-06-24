@@ -852,6 +852,13 @@
   gap: 20px;
 }
 
+.prefsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  max-width: 760px;
+}
+
 .formGroup {
   display: flex;
   flex-direction: column;

@@ -43,6 +43,8 @@ export async function POST(request: Request) {
         interests: Array.isArray(body.interests) ? (body.interests as string[]).map(String) : [],
         message: body.message ? String(body.message) : null,
         packageTitle: body.packageTitle ? String(body.packageTitle) : null,
+        hotelCategory: body.hotelCategory ? String(body.hotelCategory) : null,
+        mealPlan: body.mealPlan ? String(body.mealPlan) : null,
       },
     });
   } catch (err) {
@@ -72,6 +74,8 @@ export async function POST(request: Request) {
       ${body.dates ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Dates</td><td style="padding:8px 0;font-size:14px">${body.dates}</td></tr>` : ""}
       ${body.travelers ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Travelers</td><td style="padding:8px 0;font-size:14px">${body.travelers}</td></tr>` : ""}
       ${body.tripLength ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Approx. Length</td><td style="padding:8px 0;font-size:14px">${body.tripLength}</td></tr>` : ""}
+      ${body.hotelCategory ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Hotel Category</td><td style="padding:8px 0;font-size:14px">${body.hotelCategory}</td></tr>` : ""}
+      ${body.mealPlan ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Meal Plan</td><td style="padding:8px 0;font-size:14px">${body.mealPlan}</td></tr>` : ""}
       ${body.contactMode ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Preferred Contact</td><td style="padding:8px 0;font-size:14px;font-weight:600">${body.contactMode}${body.contactTime ? ` · ${body.contactTime}` : ""}</td></tr>` : ""}
       ${body.budget ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Budget</td><td style="padding:8px 0;font-size:14px">${body.budget}</td></tr>` : ""}
       ${Array.isArray(body.interests) && body.interests.length ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Interests</td><td style="padding:8px 0;font-size:14px">${(body.interests as string[]).join(", ")}</td></tr>` : ""}

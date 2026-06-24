@@ -12,6 +12,7 @@ import {
   IconPackage,
   IconMap,
   IconStar,
+  IconBook,
   IconActivity,
   IconTeam,
   IconExternal,
@@ -42,6 +43,7 @@ const GROUPS: NavGroup[] = [
       { href: "/admin/packages", label: "Packages", icon: IconPackage, perm: "packages:manage" },
       { href: "/admin/destinations", label: "Destinations", icon: IconMap, perm: "destinations:manage" },
       { href: "/admin/testimonials", label: "Testimonials", icon: IconStar, perm: "testimonials:manage" },
+      { href: "/admin/blog", label: "Blog", icon: IconBook, perm: "posts:manage" },
     ],
   },
   {

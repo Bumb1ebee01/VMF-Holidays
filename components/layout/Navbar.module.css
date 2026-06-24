@@ -126,6 +126,18 @@
   transform: scaleX(1);
 }
 
+.links a.active {
+  color: #fff;
+}
+
+.scrolled .links a.active {
+  color: var(--orange);
+}
+
+.links a.active::after {
+  transform: scaleX(1);
+}
+
 /* Actions */
 .actions {
   display: flex;

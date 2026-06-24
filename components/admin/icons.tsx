@@ -71,6 +71,15 @@ export const IconActivity = svg(
   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
 );
 
+export const IconBook = svg(
+  <>
+    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+    <path d="M9 7h7" />
+    <path d="M9 11h5" />
+  </>
+);
+
 export const IconTeam = svg(
   <>
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />

@@ -59,6 +59,8 @@ export default async function LeadDetailPage({
     ["Travel dates", lead.dates],
     ["Travellers", lead.travelers],
     ["Approx. length", lead.tripLength],
+    ["Hotel category", lead.hotelCategory],
+    ["Meal plan", lead.mealPlan],
     ["Preferred contact", lead.contactMode ? `${lead.contactMode}${lead.contactTime ? ` · ${lead.contactTime}` : ""}` : null],
     ["Budget", lead.budget],
     ["Interests", lead.interests.length ? lead.interests.join(", ") : null],

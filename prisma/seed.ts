@@ -5,6 +5,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { packages } from "../lib/data/packages";
 import { destinations } from "../lib/data/destinations";
 import { testimonials } from "../lib/data/testimonials";
+import { posts } from "../lib/data/posts";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter });
@@ -67,6 +68,25 @@ async function main() {
     });
     console.log(`Seeded ${testimonials.length} testimonials`);
   }
+
+  for (const p of posts) {
+    await db.post.upsert({
+      where: { slug: p.slug },
+      create: {
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        content: p.content,
+        coverImage: p.coverImage,
+        author: p.author,
+        tags: p.tags,
+        published: true,
+        publishedAt: new Date(),
+      },
+      update: {},
+    });
+  }
+  console.log(`Seeded ${posts.length} blog posts`);
 
   const adminEmail = process.env.ADMIN_EMAIL ?? "info@vmfholidays.com";
   const adminPassword = process.env.ADMIN_PASSWORD ?? "ChangeMe@2026";

@@ -5,6 +5,7 @@ import PopularDestinations from "@/components/home/PopularDestinations";
 import FeaturedPackages from "@/components/home/FeaturedPackages";
 import WhyChooseVMF from "@/components/home/WhyChooseVMF";
 import TripCategories from "@/components/home/TripCategories";
+import TripBuilderCTA from "@/components/home/TripBuilderCTA";
 import Testimonials from "@/components/home/Testimonials";
 import HowItWorks from "@/components/home/HowItWorks";
 import CTABanner from "@/components/home/CTABanner";
@@ -35,6 +36,7 @@ export default async function HomePage() {
       <Stats />
       <TripCategories />
       <PopularDestinations destinations={destinations} />
+      <TripBuilderCTA />
       <FeaturedPackages />
       <WhyChooseVMF />
       <Testimonials />

@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { db } from "./db";
-import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug } from "./types";
+import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug, BlogPost } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
 
 function toPackage(row: DbPackage): Package {
@@ -97,3 +97,39 @@ export async function getPublishedTestimonials(): Promise<Testimonial[]> {
     quote: t.quote,
   }));
 }
+
+function toPost(row: {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string | null;
+  author: string;
+  tags: string[];
+  publishedAt: Date | null;
+}): BlogPost {
+  return {
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: row.content,
+    coverImage: row.coverImage,
+    author: row.author,
+    tags: row.tags,
+    publishedAt: row.publishedAt,
+  };
+}
+
+export const getPublishedPosts = cache(async (): Promise<BlogPost[]> => {
+  const rows = await db.post.findMany({
+    where: { published: true },
+    orderBy: { publishedAt: "desc" },
+  });
+  return rows.map(toPost);
+});
+
+export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null> => {
+  const row = await db.post.findUnique({ where: { slug } });
+  if (!row || !row.published) return null;
+  return toPost(row);
+});

@@ -7,15 +7,28 @@ import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import styles from "./Navbar.module.css";
 
+const NAV_LINKS = [
+  { href: "/packages", label: "Packages" },
+  { href: "/destinations", label: "Destinations" },
+  { href: "/trip-builder", label: "Trip Builder" },
+  { href: "/blog", label: "Blog" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   const [scrolled, setScrolled] = useState(!isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     if (!isHome) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScrolled(true);
       return;
     }
@@ -52,11 +65,16 @@ export default function Navbar() {
         </Link>
 
         <nav className={styles.links}>
-          <Link href="/packages">Packages</Link>
-          <Link href="/destinations">Destinations</Link>
-          <Link href="/trip-builder">Trip Builder</Link>
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={isActive(link.href) ? styles.active : ""}
+              aria-current={isActive(link.href) ? "page" : undefined}
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         <div className={styles.actions}>
@@ -78,11 +96,16 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className={styles.mobileMenu}>
-          <Link href="/packages" onClick={() => setMobileOpen(false)}>Packages</Link>
-          <Link href="/destinations" onClick={() => setMobileOpen(false)}>Destinations</Link>
-          <Link href="/trip-builder" onClick={() => setMobileOpen(false)}>Trip Builder</Link>
-          <Link href="/about" onClick={() => setMobileOpen(false)}>About</Link>
-          <Link href="/contact" onClick={() => setMobileOpen(false)}>Contact</Link>
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={isActive(link.href) ? styles.active : ""}
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </Link>
+          ))}
           <Link href="/trip-builder" className="btn btn-primary" onClick={() => setMobileOpen(false)}>
             Plan My Trip
           </Link>

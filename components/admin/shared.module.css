@@ -799,3 +799,16 @@
   font-size: var(--text-xs);
   color: var(--muted);
 }
+
+.fieldHint {
+  margin-top: var(--sp-1);
+  font-size: var(--text-xs);
+  color: var(--muted);
+}
+
+.fieldHint code {
+  font-family: var(--font-mono, monospace);
+  background: var(--off-white);
+  padding: 0 4px;
+  border-radius: var(--radius-xs);
+}

@@ -60,6 +60,17 @@ export interface Testimonial {
   quote: string;
 }
 
+export interface BlogPost {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage: string | null;
+  author: string;
+  tags: string[];
+  publishedAt: Date | null;
+}
+
 export interface EnquiryPayload {
   name: string;
   phone: string;
