@@ -13,6 +13,8 @@ import {
   IconMap,
   IconStar,
   IconBook,
+  IconTag,
+  IconImage,
   IconActivity,
   IconTeam,
   IconExternal,
@@ -44,6 +46,8 @@ const GROUPS: NavGroup[] = [
       { href: "/admin/destinations", label: "Destinations", icon: IconMap, perm: "destinations:manage" },
       { href: "/admin/testimonials", label: "Testimonials", icon: IconStar, perm: "testimonials:manage" },
       { href: "/admin/blog", label: "Blog", icon: IconBook, perm: "posts:manage" },
+      { href: "/admin/offers", label: "Offers", icon: IconTag, perm: "offers:manage" },
+      { href: "/admin/gallery", label: "Gallery", icon: IconImage, perm: "gallery:manage" },
     ],
   },
   {

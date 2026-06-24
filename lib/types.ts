@@ -71,6 +71,24 @@ export interface BlogPost {
   publishedAt: Date | null;
 }
 
+export interface Offer {
+  id: string;
+  title: string;
+  description: string | null;
+  image: string;
+  ctaLabel: string | null;
+  ctaHref: string | null;
+  badge: string | null;
+  endsAt: Date | null;
+}
+
+export interface GalleryPhoto {
+  id: string;
+  image: string;
+  caption: string | null;
+  location: string | null;
+}
+
 export interface EnquiryPayload {
   name: string;
   phone: string;

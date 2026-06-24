@@ -6,6 +6,7 @@ import { packages } from "../lib/data/packages";
 import { destinations } from "../lib/data/destinations";
 import { testimonials } from "../lib/data/testimonials";
 import { posts } from "../lib/data/posts";
+import { seedOffers, seedGallery } from "../lib/data/promos";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter });
@@ -87,6 +88,18 @@ async function main() {
     });
   }
   console.log(`Seeded ${posts.length} blog posts`);
+
+  const offerCount = await db.offer.count();
+  if (offerCount === 0) {
+    await db.offer.createMany({ data: seedOffers });
+    console.log(`Seeded ${seedOffers.length} offers`);
+  }
+
+  const galleryCount = await db.galleryPhoto.count();
+  if (galleryCount === 0) {
+    await db.galleryPhoto.createMany({ data: seedGallery });
+    console.log(`Seeded ${seedGallery.length} gallery photos`);
+  }
 
   const adminEmail = process.env.ADMIN_EMAIL ?? "info@vmfholidays.com";
   const adminPassword = process.env.ADMIN_PASSWORD ?? "ChangeMe@2026";

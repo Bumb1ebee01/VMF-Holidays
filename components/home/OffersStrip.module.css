@@ -1,0 +1,131 @@
+.wrap {
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+.title {
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  font-weight: var(--fw-black);
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-top: var(--sp-2);
+}
+
+[data-theme="dark"] .title {
+  color: var(--text);
+}
+
+.seeAll {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--text-sm);
+  font-weight: var(--fw-bold);
+  color: var(--orange);
+  white-space: nowrap;
+  transition: gap 0.2s ease;
+}
+
+.seeAll:hover {
+  gap: 11px;
+}
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.track {
+  display: flex;
+  gap: var(--sp-4);
+  width: max-content;
+  animation: homeOfferScroll 50s linear infinite;
+}
+
+.marquee:hover .track {
+  animation-play-state: paused;
+}
+
+.tile {
+  position: relative;
+  flex: 0 0 auto;
+  width: 340px;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 12px 36px rgba(0, 36, 100, 0.12);
+}
+
+.img {
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.tile:hover .img {
+  transform: scale(1.05);
+}
+
+.badge {
+  position: absolute;
+  top: var(--sp-3);
+  left: var(--sp-3);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--orange);
+  padding: 4px 11px;
+  border-radius: 100px;
+}
+
+.tileBody {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: var(--sp-10) var(--sp-4) var(--sp-4);
+  background: linear-gradient(to top, rgba(0, 14, 40, 0.92), transparent);
+}
+
+.tileTitle {
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  color: #fff;
+  line-height: 1.25;
+}
+
+.tileCta {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-medium);
+  color: var(--orange-lt);
+}
+
+@media (max-width: 600px) {
+  .tile {
+    width: 260px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+  }
+}
+
+@keyframes homeOfferScroll {
+  to {
+    transform: translateX(-50%);
+  }
+}

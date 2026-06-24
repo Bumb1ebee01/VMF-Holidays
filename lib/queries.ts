@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { db } from "./db";
-import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug, BlogPost } from "./types";
+import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
 
 function toPackage(row: DbPackage): Package {
@@ -132,4 +132,37 @@ export const getPostBySlug = cache(async (slug: string): Promise<BlogPost | null
   const row = await db.post.findUnique({ where: { slug } });
   if (!row || !row.published) return null;
   return toPost(row);
+});
+
+export const getPublishedOffers = cache(async (): Promise<Offer[]> => {
+  const rows = await db.offer.findMany({
+    where: {
+      published: true,
+      OR: [{ endsAt: null }, { endsAt: { gte: new Date() } }],
+    },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+  });
+  return rows.map((o) => ({
+    id: o.id,
+    title: o.title,
+    description: o.description,
+    image: o.image,
+    ctaLabel: o.ctaLabel,
+    ctaHref: o.ctaHref,
+    badge: o.badge,
+    endsAt: o.endsAt,
+  }));
+});
+
+export const getPublishedGalleryPhotos = cache(async (): Promise<GalleryPhoto[]> => {
+  const rows = await db.galleryPhoto.findMany({
+    where: { published: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+  });
+  return rows.map((p) => ({
+    id: p.id,
+    image: p.image,
+    caption: p.caption,
+    location: p.location,
+  }));
 });

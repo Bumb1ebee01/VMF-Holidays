@@ -46,10 +46,10 @@ export default function Footer() {
             <ul className={styles.colLinks}>
               <li><Link href="/packages">All Packages</Link></li>
               <li><Link href="/destinations">Destinations</Link></li>
+              <li><Link href="/offers">Offers &amp; Deals</Link></li>
+              <li><Link href="/gallery">Gallery</Link></li>
+              <li><Link href="/blog">Travel Blog</Link></li>
               <li><Link href="/trip-builder">Trip Builder</Link></li>
-              <li><Link href="/honeymoon">Honeymoon</Link></li>
-              <li><Link href="/family">Family Tours</Link></li>
-              <li><Link href="/adventure">Adventure</Link></li>
             </ul>
           </div>
 

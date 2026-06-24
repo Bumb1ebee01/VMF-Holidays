@@ -80,6 +80,21 @@ export const IconBook = svg(
   </>
 );
 
+export const IconTag = svg(
+  <>
+    <path d="M20.59 13.41 13.42 20.6a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+    <path d="M7 7h.01" />
+  </>
+);
+
+export const IconImage = svg(
+  <>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <path d="m21 15-5-5L5 21" />
+  </>
+);
+
 export const IconTeam = svg(
   <>
     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />

@@ -10,7 +10,8 @@ import styles from "./Navbar.module.css";
 const NAV_LINKS = [
   { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },
-  { href: "/trip-builder", label: "Trip Builder" },
+  { href: "/offers", label: "Offers" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Blog" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },

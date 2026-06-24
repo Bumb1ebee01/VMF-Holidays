@@ -13,6 +13,8 @@ export type PermissionKey =
   | "destinations:manage"
   | "testimonials:manage"
   | "posts:manage"
+  | "offers:manage"
+  | "gallery:manage"
   | "activity:view-all";
 
 export interface PermissionDef {
@@ -31,6 +33,8 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "destinations:manage", label: "Manage destinations", group: "Content", hint: "Create, edit and delete destinations" },
   { key: "testimonials:manage", label: "Manage testimonials", group: "Content", hint: "Create, edit and delete testimonials" },
   { key: "posts:manage", label: "Manage blog", group: "Content", hint: "Write, edit and delete blog posts" },
+  { key: "offers:manage", label: "Manage offers", group: "Content", hint: "Post and remove offer flyers" },
+  { key: "gallery:manage", label: "Manage gallery", group: "Content", hint: "Add and remove gallery photos" },
   { key: "activity:view-all", label: "View everyone's activity", group: "Oversight", hint: "See the full team activity log, not just their own" },
 ];
 

@@ -6,15 +6,17 @@ import FeaturedPackages from "@/components/home/FeaturedPackages";
 import WhyChooseVMF from "@/components/home/WhyChooseVMF";
 import TripCategories from "@/components/home/TripCategories";
 import TripBuilderCTA from "@/components/home/TripBuilderCTA";
+import OffersStrip from "@/components/home/OffersStrip";
 import Testimonials from "@/components/home/Testimonials";
 import HowItWorks from "@/components/home/HowItWorks";
 import CTABanner from "@/components/home/CTABanner";
-import { getAllDestinations, getAllPackages } from "@/lib/queries";
+import { getAllDestinations, getAllPackages, getPublishedOffers } from "@/lib/queries";
 
 export default async function HomePage() {
-  const [destinations, packages] = await Promise.all([
+  const [destinations, packages, offers] = await Promise.all([
     getAllDestinations(),
     getAllPackages(),
+    getPublishedOffers(),
   ]);
 
   const suggestions = packages.map((p) => ({
@@ -33,6 +35,7 @@ export default async function HomePage() {
     <main>
       <Hero suggestions={suggestions} destinations={destinations} />
       <PackageFan packages={fanPackages} />
+      <OffersStrip offers={offers} />
       <Stats />
       <TripCategories />
       <PopularDestinations destinations={destinations} />

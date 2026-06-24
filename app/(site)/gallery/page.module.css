@@ -1,0 +1,35 @@
+.page {
+  padding-bottom: var(--sp-20);
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+  color: #fff;
+  padding: calc(var(--nav-h) + var(--sp-12)) 0 var(--sp-12);
+  margin-bottom: var(--sp-10);
+}
+
+.heroTitle {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: var(--fw-black);
+  letter-spacing: -0.02em;
+  margin: var(--sp-3) 0 var(--sp-3);
+  max-width: 18ch;
+}
+
+.heroSub {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 56ch;
+}
+
+.empty {
+  text-align: center;
+  padding: var(--sp-16) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+  color: var(--muted);
+  font-size: var(--text-lg);
+}

@@ -179,3 +179,33 @@ model Post {
 
   @@index([published, publishedAt])
 }
+
+model Offer {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  image       String
+  ctaLabel    String?
+  ctaHref     String?
+  badge       String?
+  published   Boolean   @default(true)
+  sortOrder   Int       @default(0)
+  endsAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([published, sortOrder])
+}
+
+model GalleryPhoto {
+  id        String   @id @default(cuid())
+  image     String
+  caption   String?
+  location  String?
+  published Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([published, sortOrder])
+}
