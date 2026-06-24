@@ -51,13 +51,22 @@ export const getAllPackages = cache(async (): Promise<Package[]> => {
   return rows.map(toPackage);
 });
 
-export async function getFeaturedPackages(): Promise<Package[]> {
-  const rows = await db.package.findMany({
+export async function getFeaturedPackages(count = 5): Promise<Package[]> {
+  const featured = await db.package.findMany({
     where: { featured: true },
     orderBy: { updatedAt: "desc" },
-    take: 3,
+    take: count,
   });
-  return rows.map(toPackage);
+  if (featured.length >= count) return featured.map(toPackage);
+
+  // Not enough flagged-featured packages — top up with the most recent others
+  // so the homepage grid is always full.
+  const fill = await db.package.findMany({
+    where: { featured: false },
+    orderBy: { createdAt: "desc" },
+    take: count - featured.length,
+  });
+  return [...featured, ...fill].map(toPackage);
 }
 
 export const getPackageBySlug = cache(async (slug: string): Promise<Package | null> => {
