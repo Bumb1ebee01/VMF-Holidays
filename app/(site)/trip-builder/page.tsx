@@ -3,8 +3,9 @@ import { getAllDestinations, getAllPackages } from "@/lib/queries";
 import TripWizard from "@/components/forms/TripWizard";
 
 export const metadata: Metadata = {
-  title: "Build My Trip | VMF Holidays",
+  title: "Build My Trip",
   description: "Build your perfect holiday — choose destination, travel style, and dates. VMF Holidays crafts personalised itineraries just for you.",
+  alternates: { canonical: "/trip-builder" },
 };
 
 export default async function TripBuilderPage() {

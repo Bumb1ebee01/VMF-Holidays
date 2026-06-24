@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "About Us",
   description: "VMF Holidays Pvt. Ltd. — Goa's trusted travel company. Our story, mission and why 200+ families choose us.",
+  alternates: { canonical: "/about" },
 };
 
 const STATS = [

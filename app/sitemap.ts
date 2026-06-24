@@ -1,11 +1,12 @@
 import type { MetadataRoute } from "next";
-import { getAllPackages, getAllDestinations } from "@/lib/queries";
+import { db } from "@/lib/db";
+import { getAllDestinations } from "@/lib/queries";
 
 const BASE = "https://vmfholidays.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [packages, destinations] = await Promise.all([
-    getAllPackages(),
+    db.package.findMany({ select: { slug: true, updatedAt: true } }),
     getAllDestinations(),
   ]);
 
@@ -33,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const packagePages = packages.map((p) => ({
     url: `${BASE}/packages/${p.slug}`,
-    lastModified: new Date(),
+    lastModified: p.updatedAt,
     changeFrequency: "monthly" as const,
     priority: 0.8,
   }));

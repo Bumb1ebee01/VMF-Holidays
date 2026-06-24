@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description: "VMF Holidays privacy policy — how we collect, use and protect your information.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

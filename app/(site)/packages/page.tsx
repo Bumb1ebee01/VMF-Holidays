@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Holiday Packages",
   description:
     "Browse our full range of domestic and international holiday packages — transparent pricing, full itineraries, no hidden costs.",
+  alternates: { canonical: "/packages" },
 };
 
 export default async function PackagesPage(props: PageProps<"/packages">) {

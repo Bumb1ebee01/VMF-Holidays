@@ -5,6 +5,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Contact Us",
   description: "Get in touch with VMF Holidays. Plan your next trip or ask us anything — we respond fast.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage(props: PageProps<"/contact">) {

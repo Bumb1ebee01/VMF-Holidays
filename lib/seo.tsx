@@ -1,0 +1,147 @@
+import type { Package } from "@/lib/types";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Central SEO source of truth — site URL, business identity, and JSON-LD
+// builders. Keep all canonical/structured-data logic here so every page stays
+// consistent and there's a single place to update business facts.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const SITE_URL = "https://vmfholidays.com";
+export const SITE_NAME = "VMF Holidays";
+export const SITE_TAGLINE = "Discover Your World, Your Way";
+export const SITE_DESCRIPTION =
+  "VMF Holidays offers curated domestic and international holiday packages with transparent pricing, full itineraries, and personalised service. Based in Goa, India.";
+
+export const BUSINESS = {
+  legalName: "VMF Holidays Pvt. Ltd.",
+  email: "info@vmfholidays.com",
+  phones: ["+917499322412", "+918788324054"],
+  whatsapp: "https://wa.me/917499322412",
+  instagram: "https://www.instagram.com/vmfholidays/",
+  facebook: "https://www.facebook.com/vmfholidays/",
+  address: {
+    street: "Mendes Vaddo, H. No 128/3/A",
+    locality: "Calangute, Nagva",
+    region: "Goa",
+    postalCode: "403516",
+    country: "IN",
+  },
+  geo: { lat: 15.5439, lng: 73.7553 },
+} as const;
+
+/** Build an absolute URL from a path (always returns a canonical, https URL). */
+export function absoluteUrl(path = "/"): string {
+  if (path.startsWith("http")) return path;
+  return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
+
+/** TravelAgency / Organization schema — emitted once, sitewide, in the root layout. */
+export function organizationJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "@id": `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    legalName: BUSINESS.legalName,
+    url: SITE_URL,
+    logo: absoluteUrl("/logo-blue.png"),
+    image: absoluteUrl("/opengraph-image"),
+    description: SITE_DESCRIPTION,
+    slogan: SITE_TAGLINE,
+    email: BUSINESS.email,
+    telephone: BUSINESS.phones[0],
+    priceRange: "₹₹",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: `${BUSINESS.address.street}, ${BUSINESS.address.locality}`,
+      addressLocality: "Calangute",
+      addressRegion: BUSINESS.address.region,
+      postalCode: BUSINESS.address.postalCode,
+      addressCountry: BUSINESS.address.country,
+    },
+    geo: {
+      "@type": "GeoCoordinates",
+      latitude: BUSINESS.geo.lat,
+      longitude: BUSINESS.geo.lng,
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: BUSINESS.phones[0],
+      contactType: "customer service",
+      areaServed: "IN",
+      availableLanguage: ["en", "hi"],
+    },
+    sameAs: [BUSINESS.instagram, BUSINESS.facebook],
+  };
+}
+
+/** WebSite schema with a sitewide search action (enables the search box in SERPs). */
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/packages?destination={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
+/** BreadcrumbList schema for a trail of { name, path } items. */
+export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: item.name,
+      item: absoluteUrl(item.path),
+    })),
+  };
+}
+
+/** Product + Offer schema for a holiday package detail page (rich result eligible). */
+export function packageJsonLd(pkg: Package) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: pkg.title,
+    description: `${pkg.duration} in ${pkg.destination}. ${pkg.highlights.slice(0, 3).join(". ")}.`,
+    image: pkg.gallery?.length ? pkg.gallery.map((g) => absoluteUrl(g)) : [absoluteUrl(pkg.heroImage)],
+    brand: { "@type": "Brand", name: SITE_NAME },
+    category: pkg.category,
+    url: absoluteUrl(`/packages/${pkg.slug}`),
+    offers: {
+      "@type": "Offer",
+      price: pkg.fromPrice,
+      priceCurrency: "INR",
+      availability: "https://schema.org/InStock",
+      url: absoluteUrl(`/packages/${pkg.slug}`),
+      seller: { "@id": `${SITE_URL}/#organization` },
+      priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+    },
+  };
+}
+
+/** Render a JSON-LD <script> tag. Spread the object(s) you build above. */
+export function JsonLd({ data }: { data: object | object[] }) {
+  const payload = Array.isArray(data) ? data : [data];
+  return payload.map((d, i) => (
+    <script
+      key={i}
+      type="application/ld+json"
+      // Escape `<` so a stray "</script>" inside admin-entered text can't break out.
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(d).replace(/</g, "\\u003c") }}
+    />
+  ));
+}

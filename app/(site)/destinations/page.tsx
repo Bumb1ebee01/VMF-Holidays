@@ -8,6 +8,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Destinations",
   description: "Explore our handpicked domestic and international destinations — from Kerala backwaters to Bali temples.",
+  alternates: { canonical: "/destinations" },
 };
 
 function placeImages(p: GeoPlace, c: GeoCountry, destinations: Destination[], packages: Package[]): string[] {

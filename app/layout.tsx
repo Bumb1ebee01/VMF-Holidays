@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
+import { JsonLd, organizationJsonLd, websiteJsonLd, SITE_URL } from "@/lib/seo";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -26,11 +27,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "VMF Holidays Pvt. Ltd." }],
   creator: "VMF Holidays Pvt. Ltd.",
-  metadataBase: new URL("https://vmfholidays.com"),
+  publisher: "VMF Holidays Pvt. Ltd.",
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
+  category: "travel",
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: "https://vmfholidays.com",
+    url: SITE_URL,
     siteName: "VMF Holidays",
     title: "VMF Holidays — Discover Your World, Your Way",
     description:
@@ -40,6 +44,17 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "VMF Holidays — Discover Your World, Your Way",
     description: "Curated holiday packages with transparent pricing from Goa, India.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
 };
 
@@ -61,7 +76,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        {children}
+      </body>
     </html>
   );
 }

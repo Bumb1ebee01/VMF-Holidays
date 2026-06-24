@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getPackageBySlug, getRelatedPackages } from "@/lib/queries";
 import { db } from "@/lib/db";
 import { formatINR } from "@/lib/utils";
+import { JsonLd, packageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import ItineraryAccordion from "@/components/packages/ItineraryAccordion";
 import EnquirySidebar from "@/components/packages/EnquirySidebar";
 import PackageCard from "@/components/ui/PackageCard";
@@ -21,9 +22,32 @@ export async function generateMetadata(
   const { slug } = await props.params;
   const pkg = await getPackageBySlug(slug);
   if (!pkg) return {};
+  const url = `/packages/${pkg.slug}`;
+  const description = `${pkg.duration} in ${pkg.destination} from ${formatINR(pkg.fromPrice)} per person. ${pkg.highlights[0]}.`;
   return {
     title: pkg.title,
-    description: `${pkg.duration} in ${pkg.destination} from ${formatINR(pkg.fromPrice)} per person. ${pkg.highlights[0]}.`,
+    description,
+    keywords: [
+      `${pkg.destination} tour package`,
+      `${pkg.destination} holiday`,
+      `${pkg.category} packages`,
+      `${pkg.destination} itinerary`,
+      "vmf holidays",
+    ],
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      title: `${pkg.title} | VMF Holidays`,
+      description,
+      images: [{ url: pkg.heroImage, width: 1200, height: 630, alt: pkg.title }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pkg.title} | VMF Holidays`,
+      description,
+      images: [pkg.heroImage],
+    },
   };
 }
 
@@ -36,6 +60,17 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
 
   return (
     <div className={styles.page}>
+      <JsonLd
+        data={[
+          packageJsonLd(pkg),
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Packages", path: "/packages" },
+            { name: pkg.destination, path: `/packages?destination=${pkg.destinationSlug}` },
+            { name: pkg.title, path: `/packages/${pkg.slug}` },
+          ]),
+        ]}
+      />
       {/* Hero */}
       <div className={styles.hero}>
         <Image

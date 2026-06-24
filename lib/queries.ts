@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { db } from "./db";
 import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
@@ -38,15 +39,17 @@ function toDestination(row: DbDestination): Destination {
   };
 }
 
-export async function getAllDestinations(): Promise<Destination[]> {
+// React `cache` dedupes these within a single request, so the page body,
+// generateMetadata, and the sitemap can each call them without re-hitting the DB.
+export const getAllDestinations = cache(async (): Promise<Destination[]> => {
   const rows = await db.destination.findMany({ orderBy: { name: "asc" } });
   return rows.map(toDestination);
-}
+});
 
-export async function getAllPackages(): Promise<Package[]> {
+export const getAllPackages = cache(async (): Promise<Package[]> => {
   const rows = await db.package.findMany({ orderBy: { createdAt: "asc" } });
   return rows.map(toPackage);
-}
+});
 
 export async function getFeaturedPackages(): Promise<Package[]> {
   const rows = await db.package.findMany({
@@ -57,10 +60,10 @@ export async function getFeaturedPackages(): Promise<Package[]> {
   return rows.map(toPackage);
 }
 
-export async function getPackageBySlug(slug: string): Promise<Package | null> {
+export const getPackageBySlug = cache(async (slug: string): Promise<Package | null> => {
   const row = await db.package.findUnique({ where: { slug } });
   return row ? toPackage(row) : null;
-}
+});
 
 export async function getRelatedPackages(pkg: Package): Promise<Package[]> {
   const rows = await db.package.findMany({

@@ -4,6 +4,7 @@ import styles from "../privacy/page.module.css";
 export const metadata: Metadata = {
   title: "Terms & Conditions",
   description: "VMF Holidays terms and conditions for travel bookings.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
