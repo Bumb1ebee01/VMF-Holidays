@@ -64,6 +64,7 @@
   font-weight: var(--fw-black);
   line-height: 1.08;
   letter-spacing: -0.02em;
+  color: #fff;
 }
 
 .title em {
