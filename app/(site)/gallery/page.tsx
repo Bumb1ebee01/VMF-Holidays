@@ -12,7 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/gallery" },
 };
 
-export const dynamic = "force-dynamic";
+// Cached (ISR) instead of per-request so visitors never wait on a DB round-trip.
+// Admin edits revalidate "/gallery" instantly.
+export const revalidate = 300;
 
 export default async function GalleryPage() {
   const photos = await getPublishedGalleryPhotos();

@@ -12,7 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/offers" },
 };
 
-export const dynamic = "force-dynamic";
+// Cached (ISR) instead of per-request so visitors never wait on a DB round-trip.
+// Admin edits revalidate "/offers" instantly; expiring offers refresh within 5 min.
+export const revalidate = 300;
 
 const WA_DEFAULT =
   "https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20details%20on%20your%20current%20offers.";
