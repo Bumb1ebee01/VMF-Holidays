@@ -1,7 +1,6 @@
 import Hero from "@/components/home/Hero";
 import PackageFan from "@/components/home/PackageFan";
 import Stats from "@/components/home/Stats";
-import PopularDestinations from "@/components/home/PopularDestinations";
 import FeaturedPackages from "@/components/home/FeaturedPackages";
 import WhyChooseVMF from "@/components/home/WhyChooseVMF";
 import TripCategories from "@/components/home/TripCategories";
@@ -38,7 +37,6 @@ export default async function HomePage() {
       <OffersStrip offers={offers} />
       <Stats />
       <TripCategories />
-      <PopularDestinations destinations={destinations} />
       <TripBuilderCTA />
       <FeaturedPackages />
       <WhyChooseVMF />
