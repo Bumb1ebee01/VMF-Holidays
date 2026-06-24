@@ -28,7 +28,12 @@ export default async function HomePage() {
   }));
 
   const featured = packages.filter((p) => p.featured);
-  const fanPackages = featured.length >= 3 ? featured : packages;
+  // Show 5 cards in the Featured Journeys fan: featured first, then top up with
+  // other packages so it's always full even if fewer than 5 are flagged featured.
+  const fanPackages = [
+    ...featured,
+    ...packages.filter((p) => !p.featured),
+  ].slice(0, 5);
 
   return (
     <main>
