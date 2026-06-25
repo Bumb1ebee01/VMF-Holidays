@@ -17,6 +17,7 @@ function toPackage(row: DbPackage): Package {
     hotel: row.hotel ?? undefined,
     hotelImage: row.hotelImage ?? undefined,
     fromPrice: row.fromPrice,
+    priceOnRequest: row.priceOnRequest,
     highlights: row.highlights,
     inclusions: row.inclusions,
     exclusions: row.exclusions,

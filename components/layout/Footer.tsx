@@ -50,6 +50,7 @@ export default function Footer() {
               <li><Link href="/gallery">Gallery</Link></li>
               <li><Link href="/blog">Travel Blog</Link></li>
               <li><Link href="/trip-builder">Trip Builder</Link></li>
+              <li><Link href="/about">About Us</Link></li>
             </ul>
           </div>
 
@@ -57,12 +58,12 @@ export default function Footer() {
           <div className={styles.col}>
             <h4 className={styles.colTitle}>Services</h4>
             <ul className={styles.colLinks}>
-              <li><Link href="/services">Hotel Bookings</Link></li>
-              <li><Link href="/services">Flights & Trains</Link></li>
-              <li><Link href="/visa">Visa Assistance</Link></li>
-              <li><Link href="/services">Travel Insurance</Link></li>
-              <li><Link href="/corporate">MICE & Corporate</Link></li>
-              <li><Link href="/services">College Tours</Link></li>
+              <li><Link href="/contact?service=Hotel%20Bookings">Hotel Bookings</Link></li>
+              <li><Link href="/contact?service=Flights%20%26%20Trains">Flights & Trains</Link></li>
+              <li><Link href="/contact?service=Visa%20Assistance">Visa Assistance</Link></li>
+              <li><Link href="/contact?service=Travel%20Insurance">Travel Insurance</Link></li>
+              <li><Link href="/contact?service=MICE%20%26%20Corporate">MICE & Corporate</Link></li>
+              <li><Link href="/contact?service=College%20Tours">College Tours</Link></li>
             </ul>
           </div>
 
@@ -72,7 +73,11 @@ export default function Footer() {
             <ul className={styles.contact}>
               <li>
                 <span className={styles.contactIcon}>📍</span>
-                <span>Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516</span>
+                <span><strong>Goa (Head Office):</strong> Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516</span>
+              </li>
+              <li>
+                <span className={styles.contactIcon}>📍</span>
+                <span><strong>Mangalore (Branch):</strong> First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, near St. Theresa&apos;s School &amp; Cognizant, Bendoorwell, Mangaluru, Karnataka 575001</span>
               </li>
               <li>
                 <span className={styles.contactIcon}>📞</span>

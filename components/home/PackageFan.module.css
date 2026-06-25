@@ -134,6 +134,86 @@
   overflow: hidden;
 }
 
+/* ── Mobile swipe row (replaces the fan on phones) ────── */
+.mobileRow {
+  display: none;
+}
+
+.mobileCard {
+  position: relative;
+  flex: 0 0 68%;
+  max-width: 280px;
+  aspect-ratio: 3 / 4;
+  scroll-snap-align: center;
+  border: none;
+  padding: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 14px 36px rgba(0, 36, 100, 0.20);
+  background: var(--navy);
+}
+
+.mobileCardImg {
+  object-fit: cover;
+}
+
+.mobileCardOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 10, 44, 0.92) 0%, rgba(0, 10, 44, 0.25) 55%, rgba(0, 10, 44, 0) 100%);
+}
+
+.mobileCardCaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 16px 18px;
+  text-align: left;
+}
+
+.mobileCardTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.mobileCardMeta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--orange-lt);
+}
+
+.mobileCardTap {
+  margin-top: 6px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+@media (max-width: 768px) {
+  .stage { display: none; }
+  .controls { display: none; }
+  .mobileRow {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 6px 4px 18px;
+    margin: 0 -4px;
+    scrollbar-width: thin;
+  }
+}
+
 /* ── Controls ─────────────────────────────────────────── */
 .controls {
   display: flex;

@@ -138,6 +138,7 @@ model Package {
   hotel           String?
   hotelImage      String?
   fromPrice       Int
+  priceOnRequest  Boolean      @default(false)
   highlights      String[]
   inclusions      String[]
   exclusions      String[]

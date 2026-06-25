@@ -50,11 +50,21 @@ export default function PackageCard({ pkg }: { pkg: Package }) {
 
       <div className={styles.reveal}>
         <div className={styles.priceWrap}>
-          <span className={styles.priceLabel}>starting from</span>
-          <div className={styles.price}>
-            <sup>₹</sup>{pkg.fromPrice.toLocaleString("en-IN")}
-          </div>
-          <p className={styles.priceNote}>per person</p>
+          {pkg.priceOnRequest ? (
+            <>
+              <span className={styles.priceLabel}>pricing</span>
+              <div className={styles.price} style={{ fontSize: "1.5rem", whiteSpace: "nowrap" }}>On Request</div>
+              <p className={styles.priceNote}>tailored quote</p>
+            </>
+          ) : (
+            <>
+              <span className={styles.priceLabel}>starting from</span>
+              <div className={styles.price}>
+                <sup>₹</sup>{pkg.fromPrice.toLocaleString("en-IN")}
+              </div>
+              <p className={styles.priceNote}>per person</p>
+            </>
+          )}
         </div>
         <span className={styles.viewBtn}>
           View Details

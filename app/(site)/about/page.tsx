@@ -59,7 +59,7 @@ export default function AboutPage() {
               VMF Holidays Pvt. Ltd. was founded with a simple frustration — too many travel agencies promised the world and delivered confusion, hidden costs and impersonal service.
             </p>
             <p>
-              We set out to do it differently. Based in Nagoa, Bardez, Goa, we started by helping friends and family plan trips with full transparency and personal attention. Word spread, and today we've helped over 200 families and couples experience extraordinary journeys — domestic and international.
+              We set out to do it differently. Based in Nagoa, Bardez, Goa, we started by helping friends and family plan trips with full transparency and personal attention. Word spread, and today we&apos;ve helped over 200 families and couples experience extraordinary journeys — domestic and international.
             </p>
             <p>
               Every package we sell comes with a detailed itinerary, a transparent cost breakdown and a dedicated point of contact who stays with you from planning to return.
@@ -100,13 +100,13 @@ export default function AboutPage() {
         <div className="container">
           <div className={styles.miceContent}>
             <div>
-              <span className="eyebrow">Corporate Travel</span>
-              <h2 className={styles.miceTitle}>MICE &amp; Corporate Specialists</h2>
+              <span className="eyebrow">Tailor-Made Travel</span>
+              <h2 className={styles.miceTitle}>Specialists in Customised Trips</h2>
               <p className={styles.miceDesc}>
-                From team offsites to large-scale incentive trips and conference logistics, VMF Holidays delivers end-to-end corporate travel solutions. We handle everything — venue, transport, accommodation, activities and on-ground support — so your team can focus on what matters.
+                We&apos;re not a one-size-fits-all agency — every itinerary is built around you. Whether it&apos;s a honeymoon, a family holiday, a college tour or a corporate offsite, we tailor the route, stays, transport and experiences to match exactly what you want, then stay with you from planning to return.
               </p>
-              <Link href="/corporate" className="btn btn-primary btn--lg">
-                Explore Corporate Packages
+              <Link href="/contact" className="btn btn-primary btn--lg">
+                Plan a Custom Trip
               </Link>
             </div>
           </div>

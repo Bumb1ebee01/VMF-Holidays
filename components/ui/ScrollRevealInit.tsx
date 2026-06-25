@@ -40,9 +40,24 @@ export default function ScrollRevealInit() {
     });
     mutationObserver.observe(document.body, { childList: true, subtree: true });
 
+    // Fail-safe: if hydration stalls on a slow phone, elements already in/above
+    // the viewport can sit hidden and show as blank gaps. Shortly after mount,
+    // force-reveal any such element; genuinely below-fold ones still animate on scroll.
+    const failSafe = window.setTimeout(() => {
+      document.querySelectorAll(SELECTOR).forEach((el) => {
+        if (el.classList.contains("revealed")) return;
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add("revealed");
+          observer.unobserve(el);
+        }
+      });
+    }, 1200);
+
     return () => {
       observer.disconnect();
       mutationObserver.disconnect();
+      window.clearTimeout(failSafe);
     };
   }, []);
 

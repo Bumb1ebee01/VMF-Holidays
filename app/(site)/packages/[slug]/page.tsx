@@ -25,7 +25,8 @@ export async function generateMetadata(
   const pkg = await getPackageBySlug(slug);
   if (!pkg) return {};
   const url = `/packages/${pkg.slug}`;
-  const description = `${pkg.duration} in ${pkg.destination} from ${formatINR(pkg.fromPrice)} per person. ${pkg.highlights[0]}.`;
+  const priceText = pkg.priceOnRequest ? "custom pricing on request" : `from ${formatINR(pkg.fromPrice)} per person`;
+  const description = `${pkg.duration} in ${pkg.destination} — ${priceText}. ${pkg.highlights[0]}.`;
   return {
     title: pkg.title,
     description,
@@ -96,7 +97,11 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
           </div>
           <h1 className={styles.heroTitle}>{pkg.title}</h1>
           <p className={styles.heroPrice}>
-            from <strong>{formatINR(pkg.fromPrice)}</strong> per person
+            {pkg.priceOnRequest ? (
+              <><strong>Price on Request</strong> · tailored to you</>
+            ) : (
+              <>from <strong>{formatINR(pkg.fromPrice)}</strong> per person</>
+            )}
           </p>
         </div>
       </div>

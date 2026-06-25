@@ -95,6 +95,13 @@
   font-size: var(--text-sm);
 }
 
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  justify-content: center;
+}
+
 @media (max-width: 1024px) {
   .layout {
     flex-direction: column;

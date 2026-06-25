@@ -146,6 +146,75 @@
   margin-left: var(--sp-4);
 }
 
+/* Plan My Trip dropdown */
+.planWrap {
+  position: relative;
+}
+
+.planBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planCaret {
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.planCaretOpen {
+  transform: rotate(180deg);
+}
+
+.planMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 220px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-2);
+  background: var(--bg);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 44px rgba(0, 36, 100, 0.16);
+  z-index: 110;
+  animation: planMenuIn 0.18s var(--ease) both;
+}
+
+@keyframes planMenuIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.planMenu a {
+  padding: 11px var(--sp-3);
+  border-radius: calc(var(--radius) - 4px);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.planMenu a:hover {
+  background: var(--card-bg);
+  color: var(--orange);
+}
+
+.planMenu .planPrimary {
+  background: var(--orange);
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.planMenu .planPrimary:hover {
+  background: var(--orange);
+  color: #fff;
+  filter: brightness(1.05);
+}
+
 /* Hamburger */
 .hamburger {
   display: none;

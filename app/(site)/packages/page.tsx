@@ -18,6 +18,8 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
   const destination = typeof sp.destination === "string" ? sp.destination : "";
   const category = typeof sp.category === "string" ? sp.category : "";
   const region = typeof sp.region === "string" ? sp.region : "";
+  const q = typeof sp.q === "string" ? sp.q : "";
+  const query = q.trim().toLowerCase();
 
   const [packages, destinations] = await Promise.all([
     getAllPackages(),
@@ -30,6 +32,10 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
     if (region) {
       const dest = destinations.find((d) => d.slug === pkg.destinationSlug);
       if (dest && dest.region !== region) return false;
+    }
+    if (query) {
+      const haystack = `${pkg.title} ${pkg.destination} ${pkg.category} ${pkg.highlights?.join(" ") ?? ""}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
     }
     return true;
   });
@@ -49,6 +55,7 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
           <p className={styles.heroSub}>
             {filtered.length} package{filtered.length !== 1 ? "s" : ""} available
             {activeDestName ? ` in ${activeDestName}` : ""}
+            {q.trim() ? ` for “${q.trim()}”` : ""}
           </p>
         </div>
       </div>
@@ -60,17 +67,23 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
           activeDestination={destination}
           activeCategory={category}
           activeRegion={region}
+          activeQuery={q}
         />
 
         <div className={styles.results}>
           {filtered.length === 0 ? (
             <div className={styles.empty}>
               <div className={styles.emptyIcon}>🔍</div>
-              <h3>No packages found</h3>
-              <p>Try adjusting your filters or browse all packages.</p>
-              <Link href="/packages" className="btn btn-navy btn--sm">
-                Clear Filters
-              </Link>
+              <h3>No packages found{q.trim() ? ` for “${q.trim()}”` : ""}</h3>
+              <p>Try adjusting your filters, or tell us where you want to go — we build custom trips too.</p>
+              <div className={styles.emptyActions}>
+                <Link href="/packages" className="btn btn-navy btn--sm">
+                  Clear Filters
+                </Link>
+                <Link href="/trip-builder" className="btn btn-primary btn--sm">
+                  Build a Custom Trip
+                </Link>
+              </div>
             </div>
           ) : (
             <PackageGrid packages={filtered} />

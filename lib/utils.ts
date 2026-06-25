@@ -6,6 +6,13 @@ export function formatINR(amount: number): string {
   }).format(amount);
 }
 
+export const PRICE_ON_REQUEST_LABEL = "On Request";
+
+/** Price label for a package — "On Request" when the price is hidden, else from ₹X. */
+export function packagePriceLabel(pkg: { fromPrice: number; priceOnRequest?: boolean }): string {
+  return pkg.priceOnRequest ? PRICE_ON_REQUEST_LABEL : formatINR(pkg.fromPrice);
+}
+
 export function slugify(str: string): string {
   return str
     .toLowerCase()

@@ -8,17 +8,24 @@ import styles from "./EnquirySidebar.module.css";
 const WA_NUMBER = "917499322412";
 
 export default function EnquirySidebar({ pkg }: { pkg: Package }) {
+  const priceBit = pkg.priceOnRequest ? "" : `, from ${formatINR(pkg.fromPrice)} per person`;
   const waText = encodeURIComponent(
-    `Hi VMF Holidays! I'd like to enquire about the *${pkg.title}* package (${pkg.duration}, from ${formatINR(pkg.fromPrice)} per person). Please share more details.`
+    `Hi VMF Holidays! I'd like to enquire about the *${pkg.title}* package (${pkg.duration}${priceBit}). Please share more details.`
   );
 
   return (
     <aside className={styles.sidebar}>
       <div className={styles.card}>
         <div className={styles.priceBlock}>
-          <span className={styles.fromLabel}>from</span>
-          <span className={styles.price}>{formatINR(pkg.fromPrice)}</span>
-          <span className={styles.perPerson}>per person</span>
+          {pkg.priceOnRequest ? (
+            <span className={styles.price}>On Request</span>
+          ) : (
+            <>
+              <span className={styles.fromLabel}>from</span>
+              <span className={styles.price}>{formatINR(pkg.fromPrice)}</span>
+              <span className={styles.perPerson}>per person</span>
+            </>
+          )}
         </div>
 
         <div className={styles.meta}>

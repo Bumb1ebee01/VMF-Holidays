@@ -245,6 +245,18 @@ export default function TripWizard({ destinations }: Props) {
 
   const waHref = `https://wa.me/917499322412?text=${encodeURIComponent(waText)}`;
 
+  // The cities + experiences determine an approximate trip length (tripDays).
+  // So once the traveller picks a departure date we auto-set the return date to
+  // match that length (e.g. 8 days from the 10th → the 17th), rather than making
+  // them count it out themselves.
+  useEffect(() => {
+    if (!startDate) return;
+    const end = new Date(startDate);
+    end.setDate(end.getDate() + Math.max(tripDays - 1, 0));
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setEndDate(end);
+  }, [startDate, tripDays]);
+
   const waOpened = useRef(false);
   useEffect(() => {
     if (status === "success" && contactMode === "WhatsApp" && !waOpened.current) {
@@ -451,6 +463,11 @@ export default function TripWizard({ destinations }: Props) {
             <div className={styles.datesLayout}>
               <div>
                 <div className={styles.subhead}>When are you travelling?</div>
+                <p className={styles.calNote}>
+                  Based on your cities &amp; experiences we&apos;ve planned an approximate{" "}
+                  <strong>{tripDays}-day</strong> trip. Just pick your <strong>departure date</strong> —
+                  we&apos;ll set the return automatically. You can fine-tune it with us later.
+                </p>
                 <div className={styles.calendarWrap}>
                   <MultiMonthCalendar
                     mode="range"
@@ -459,15 +476,23 @@ export default function TripWizard({ destinations }: Props) {
                     selected={startDate ? { from: startDate, to: endDate ?? undefined } : undefined}
                     onSelect={(value) => {
                       const range = value as DateRange | undefined;
-                      if (range?.from) { setStartDate(range.from); setEndDate(range.to ?? null); }
+                      // Take whichever end of the selection is the new departure; the
+                      // return date is derived from tripDays by the effect above.
+                      if (range?.from) setStartDate(range.from);
                     }}
                   />
                   <div className={styles.calFooter}>
                     {startDate ? (
                       <>
-                        <span className={styles.calDate}>{formatDate(startDate)}</span>
+                        <span className={styles.calDateBlock}>
+                          <span className={styles.calDateLabel}>Departure</span>
+                          <span className={styles.calDate}>{formatDate(startDate)}</span>
+                        </span>
                         <span className={styles.calArrow}>→</span>
-                        {endDate ? <span className={styles.calDate}>{formatDate(endDate)}</span> : <span className={styles.calHint}>Pick return date</span>}
+                        <span className={styles.calDateBlock}>
+                          <span className={styles.calDateLabel}>Return ({tripDays} days)</span>
+                          <span className={styles.calDate}>{endDate ? formatDate(endDate) : "—"}</span>
+                        </span>
                       </>
                     ) : <span className={styles.calHint}>Pick your departure date</span>}
                   </div>

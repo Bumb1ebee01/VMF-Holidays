@@ -51,6 +51,7 @@ export default async function EditPackagePage({
           duration: pkg.duration,
           nights: pkg.nights,
           fromPrice: pkg.fromPrice,
+          priceOnRequest: pkg.priceOnRequest,
           heroImage: pkg.heroImage,
           gallery: pkg.gallery,
           highlights: pkg.highlights,

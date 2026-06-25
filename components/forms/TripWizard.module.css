@@ -719,11 +719,38 @@
   font-weight: 700;
 }
 
+.calDateBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.calDateLabel {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
 .calHint {
   color: var(--muted);
   font-weight: 400;
   font-size: 12.5px;
 }
+
+.calNote {
+  margin: 0 0 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.calNote strong { color: var(--navy); font-weight: 700; }
+
+:global([data-theme="dark"]) .calNote strong,
+:global([data-theme="dark"]) .calDate,
+:global([data-theme="dark"]) .calFooter { color: var(--text); }
 
 /* Traveler counters */
 .travelerCard {

@@ -28,6 +28,7 @@ export interface Package {
   hotel?: string;
   hotelImage?: string;
   fromPrice: number;
+  priceOnRequest?: boolean;
   highlights: string[];
   inclusions: string[];
   exclusions: string[];

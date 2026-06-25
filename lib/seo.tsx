@@ -112,7 +112,7 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
 
 /** Product + Offer schema for a holiday package detail page (rich result eligible). */
 export function packageJsonLd(pkg: Package) {
-  return {
+  const base = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: pkg.title,
@@ -121,6 +121,12 @@ export function packageJsonLd(pkg: Package) {
     brand: { "@type": "Brand", name: SITE_NAME },
     category: pkg.category,
     url: absoluteUrl(`/packages/${pkg.slug}`),
+  };
+  // A price-on-request package has no fixed price, so omit the Offer block
+  // rather than emit an invalid price-less Offer.
+  if (pkg.priceOnRequest) return base;
+  return {
+    ...base,
     offers: {
       "@type": "Offer",
       price: pkg.fromPrice,

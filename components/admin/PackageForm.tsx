@@ -49,6 +49,7 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
   const [duration, setDuration] = useState(initial?.duration ?? "");
   const [nights, setNights] = useState(initial?.nights ?? 3);
   const [fromPrice, setFromPrice] = useState(initial?.fromPrice ?? 0);
+  const [priceOnRequest, setPriceOnRequest] = useState(initial?.priceOnRequest ?? false);
   const [heroImage, setHeroImage] = useState(initial?.heroImage ?? "");
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
   const [hotel, setHotel] = useState(initial?.hotel ?? "");
@@ -73,6 +74,7 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
       duration,
       nights: Number(nights),
       fromPrice: Number(fromPrice),
+      priceOnRequest,
       heroImage,
       gallery,
       hotel,
@@ -185,7 +187,16 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
                 className="form-input"
                 value={fromPrice}
                 onChange={(e) => setFromPrice(Number(e.target.value))}
+                disabled={priceOnRequest}
               />
+              <label className={styles.featuredRow} style={{ marginTop: 10 }}>
+                <input
+                  type="checkbox"
+                  checked={priceOnRequest}
+                  onChange={(e) => setPriceOnRequest(e.target.checked)}
+                />
+                <span>Price on request (hide the price, show “On Request”)</span>
+              </label>
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="pkg-badge">Badge</label>

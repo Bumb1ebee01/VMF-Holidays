@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import styles from "./Navbar.module.css";
@@ -17,6 +17,19 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+// Pages shown in the "Plan My Trip" dropdown so visitors can jump straight to
+// any section instead of having to start in the Trip Builder.
+const PLAN_LINKS = [
+  { href: "/trip-builder", label: "Build My Trip", primary: true },
+  { href: "/packages", label: "Browse Packages" },
+  { href: "/destinations", label: "Destinations" },
+  { href: "/offers", label: "Offers & Deals" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/blog", label: "Travel Blog" },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Contact / Enquire" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
@@ -26,6 +39,36 @@ export default function Navbar() {
 
   const [scrolled, setScrolled] = useState(!isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [planOpen, setPlanOpen] = useState(false);
+  const [canHover, setCanHover] = useState(false);
+  const planRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCanHover(window.matchMedia("(hover: hover)").matches);
+  }, []);
+
+  // Close the Plan dropdown on outside click, Escape, or route change.
+  useEffect(() => {
+    if (!planOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (planRef.current && !planRef.current.contains(e.target as Node)) setPlanOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPlanOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [planOpen]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setPlanOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!isHome) {
@@ -80,9 +123,44 @@ export default function Navbar() {
 
         <div className={styles.actions}>
           <ThemeToggle onLight={isLight} />
-          <Link href="/trip-builder" className="btn btn-primary btn--sm">
-            Plan My Trip
-          </Link>
+          <div
+            ref={planRef}
+            className={styles.planWrap}
+            onMouseEnter={canHover ? () => setPlanOpen(true) : undefined}
+            onMouseLeave={canHover ? () => setPlanOpen(false) : undefined}
+          >
+            <button
+              type="button"
+              className={`btn btn-primary btn--sm ${styles.planBtn}`}
+              aria-haspopup="menu"
+              aria-expanded={planOpen}
+              onClick={() => setPlanOpen((o) => !o)}
+            >
+              Plan My Trip
+              <svg
+                className={`${styles.planCaret} ${planOpen ? styles.planCaretOpen : ""}`}
+                width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </button>
+            {planOpen && (
+              <div className={styles.planMenu} role="menu">
+                {PLAN_LINKS.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    role="menuitem"
+                    className={link.primary ? styles.planPrimary : ""}
+                    onClick={() => setPlanOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           <button
             className={styles.hamburger}
             onClick={() => setMobileOpen(!mobileOpen)}

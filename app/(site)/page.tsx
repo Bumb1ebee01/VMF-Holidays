@@ -24,6 +24,7 @@ export default async function HomePage() {
     destination: p.destination,
     heroImage: p.heroImage,
     fromPrice: p.fromPrice,
+    priceOnRequest: p.priceOnRequest,
     duration: p.duration,
   }));
 

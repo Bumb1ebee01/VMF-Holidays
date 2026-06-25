@@ -526,6 +526,27 @@
   flex-shrink: 0;
 }
 
+/* Cover-photo swipe dots — phones only (the glass slider is hidden there) */
+.bgDots {
+  display: none;
+}
+
+.bgDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.bgDotActive {
+  width: 22px;
+  background: var(--orange);
+}
+
 /* Scroll indicator */
 .scrollIndicator {
   position: absolute;
@@ -615,8 +636,25 @@
   .hero { min-height: 640px; }
 
   .content {
-    padding-top: calc(var(--nav-h) + 20px);
-    padding-bottom: 80px;
+    padding-top: calc(var(--nav-h) + 4px);
+    padding-bottom: 88px;
+    align-items: flex-start;
+  }
+
+  .left { gap: 16px; }
+
+  /* Pull the headline up so it sits near the top, as requested */
+  .heroBadge { margin-top: 4px; }
+
+  .bgDots {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    z-index: 3;
   }
 
   .searchBar {

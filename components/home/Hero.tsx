@@ -15,6 +15,7 @@ interface Suggestion {
   destination: string;
   heroImage?: string;
   fromPrice?: number;
+  priceOnRequest?: boolean;
   duration?: string;
 }
 
@@ -61,9 +62,12 @@ export default function Hero({
     const fromDest = destinations
       .map((d) => d.heroImage)
       .filter((src) => src.startsWith("https://"));
-    return Array.from(new Set([KERALA, ...fromDest])).slice(0, 6);
+    return Array.from(new Set([KERALA, ...fromDest])).slice(0, 10);
   }, [destinations]);
   const [bgIndex, setBgIndex] = useState(0);
+  // Bumped on manual swipe/tap so the auto-advance interval restarts and doesn't
+  // immediately pull the photo away from the one the visitor just chose.
+  const [bgManualTick, setBgManualTick] = useState(0);
 
   useEffect(() => {
     if (bgImages.length < 2) return;
@@ -71,7 +75,24 @@ export default function Hero({
     if (reduce) return;
     const id = setInterval(() => setBgIndex((i) => (i + 1) % bgImages.length), 4500);
     return () => clearInterval(id);
-  }, [bgImages.length]);
+  }, [bgImages.length, bgManualTick]);
+
+  const goBg = (dir: 1 | -1) => {
+    setBgIndex((i) => (i + dir + bgImages.length) % bgImages.length);
+    setBgManualTick((t) => t + 1);
+  };
+
+  // Swipe the cover photos on touch devices.
+  const touchStartX = useRef<number | null>(null);
+  const onHeroTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onHeroTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || bgImages.length < 2) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(dx) > 50) goBg(dx < 0 ? 1 : -1);
+    touchStartX.current = null;
+  };
 
   // Gate the big reveals so they animate in as the intro curtain lifts.
   useEffect(() => {
@@ -114,7 +135,12 @@ export default function Hero({
 
   return (
     <>
-      <section className={styles.hero} ref={heroRef}>
+      <section
+        className={styles.hero}
+        ref={heroRef}
+        onTouchStart={onHeroTouchStart}
+        onTouchEnd={onHeroTouchEnd}
+      >
         {/* Parallax photo plate */}
         <motion.div className={styles.heroPlate} style={{ y: plateY }} aria-hidden="true">
           {bgImages.map((src, i) => (
@@ -215,11 +241,13 @@ export default function Hero({
                                   {s.destination}{s.duration ? ` · ${s.duration}` : ""}
                                 </span>
                               </span>
-                              {typeof s.fromPrice === "number" && (
+                              {s.priceOnRequest ? (
+                                <span className={styles.dropdownPrice}>On Request</span>
+                              ) : typeof s.fromPrice === "number" ? (
                                 <span className={styles.dropdownPrice}>
                                   ₹{(s.fromPrice / 1000).toFixed(0)}k
                                 </span>
-                              )}
+                              ) : null}
                             </button>
                           </li>
                         ))}
@@ -282,6 +310,21 @@ export default function Hero({
             <MembersCard ready={ready} />
           </div>
         </div>
+
+        {bgImages.length > 1 && (
+          <div className={styles.bgDots} aria-label="Cover photos">
+            {bgImages.map((src, i) => (
+              <button
+                key={src}
+                type="button"
+                className={`${styles.bgDot} ${i === bgIndex ? styles.bgDotActive : ""}`}
+                aria-label={`Show cover photo ${i + 1}`}
+                aria-current={i === bgIndex}
+                onClick={() => { setBgIndex(i); setBgManualTick((t) => t + 1); }}
+              />
+            ))}
+          </div>
+        )}
 
         <div className={styles.scrollIndicator}>
           <div className={styles.scrollLine} />

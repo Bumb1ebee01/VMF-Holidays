@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 
 export default async function ContactPage(props: PageProps<"/contact">) {
   const sp = await props.searchParams;
-  const packageTitle = typeof sp.title === "string" ? sp.title : undefined;
+  const packageTitle =
+    (typeof sp.title === "string" ? sp.title : undefined) ??
+    (typeof sp.service === "string" ? sp.service : undefined);
 
   return (
     <div className={styles.page}>
@@ -72,8 +74,10 @@ export default async function ContactPage(props: PageProps<"/contact">) {
                 </svg>
               </div>
               <div>
-                <p className={styles.detailLabel}>Address</p>
+                <p className={styles.detailLabel}>Goa — Head Office</p>
                 <p className={styles.detailValue}>Mendes Vaddo, H. No 128/3/A,<br />Calangute, Nagva, Goa 403516</p>
+                <p className={styles.detailLabel} style={{ marginTop: 12 }}>Mangalore — Branch Office</p>
+                <p className={styles.detailValue}>First Floor, Lotus Paradise Plaza,<br />Shop No. 116, Door No. 15, 23-1429/43,<br />near St. Theresa&apos;s School &amp; Cognizant,<br />Bendoorwell, Mangaluru, Karnataka 575001</p>
               </div>
             </div>
 

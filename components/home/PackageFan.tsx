@@ -90,7 +90,7 @@ export default function PackageFan({ packages }: { packages: Package[] }) {
         alt: p.title,
         linkUrl: `/packages/${p.slug}`,
         title: p.title,
-        meta: `${p.duration} · from ₹${(p.fromPrice / 1000).toFixed(0)}k`,
+        meta: `${p.duration} · ${p.priceOnRequest ? "On Request" : `from ₹${(p.fromPrice / 1000).toFixed(0)}k`}`,
         note: p.highlights?.[0] ?? "",
       })),
     [packages]
@@ -387,6 +387,28 @@ export default function PackageFan({ packages }: { packages: Package[] }) {
           </div>
         </div>
 
+        {/* Mobile: the fan can't be hovered, so swipe through cards and tap to
+            open the same detail splash. Hidden on desktop via CSS. */}
+        <div className={styles.mobileRow}>
+          {cards.map((card, index) => (
+            <button
+              key={index}
+              type="button"
+              className={styles.mobileCard}
+              onClick={() => setPreview(index)}
+              aria-label={`View ${card.title}`}
+            >
+              <Image src={card.imgUrl} alt={card.alt} fill sizes="68vw" className={styles.mobileCardImg} />
+              <div className={styles.mobileCardOverlay} />
+              <div className={styles.mobileCardCaption}>
+                <span className={styles.mobileCardTitle}>{card.title}</span>
+                <span className={styles.mobileCardMeta}>{card.meta}</span>
+                <span className={styles.mobileCardTap}>Tap for details</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
         {needsPagination && (
           <div className={styles.controls}>
             <button className={styles.arrow} onClick={() => cycle("left")} aria-label="Previous">
@@ -446,7 +468,9 @@ export default function PackageFan({ packages }: { packages: Package[] }) {
                 <h3 className={styles.splashTitle}>{activePkg.title}</h3>
                 <div className={styles.splashMeta}>
                   <span>{activePkg.duration}</span>
-                  <span className={styles.splashPrice}>from ₹{activePkg.fromPrice.toLocaleString("en-IN")}</span>
+                  <span className={styles.splashPrice}>
+                    {activePkg.priceOnRequest ? "On Request" : `from ₹${activePkg.fromPrice.toLocaleString("en-IN")}`}
+                  </span>
                 </div>
                 {activePkg.highlights.length > 0 && (
                   <ul className={styles.splashHighlights}>

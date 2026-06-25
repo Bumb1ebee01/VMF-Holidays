@@ -20,6 +20,7 @@ export interface PackagePayload {
   duration: string;
   nights: number;
   fromPrice: number;
+  priceOnRequest: boolean;
   heroImage: string;
   gallery: string[];
   hotel: string;
@@ -60,6 +61,7 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
     duration: payload.duration.trim(),
     nights: Math.floor(payload.nights),
     fromPrice: Math.floor(payload.fromPrice),
+    priceOnRequest: payload.priceOnRequest,
     heroImage: payload.heroImage.trim(),
     gallery: payload.gallery.map((g) => g.trim()).filter(Boolean),
     hotel: payload.hotel.trim() || null,

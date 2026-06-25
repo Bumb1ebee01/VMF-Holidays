@@ -1,9 +1,44 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { createElement, useRef, type ReactNode, type ElementType } from "react";
+import { motion, useInView, useReducedMotion, type UseInViewOptions } from "framer-motion";
+import { createElement, useEffect, useRef, useState, type ReactNode, type ElementType } from "react";
+
+type RevealMargin = UseInViewOptions["margin"];
 
 const EASE_OUT = [0.16, 1, 0.3, 1] as const;
+
+/**
+ * Scroll-reveal trigger with a fail-safe. Normally reveals when the element
+ * scrolls into view (preserving the scroll animation). But if hydration is
+ * slow on mobile or the observer misses, content can sit at opacity:0 and
+ * render as a blank gap. So shortly after mount we force-reveal any element
+ * that's already in/above the viewport (it should have shown by now) while
+ * leaving genuinely below-fold elements to animate normally on scroll.
+ * Reduced-motion users skip the wait and see content immediately.
+ */
+function useReveal<T extends Element>(margin: RevealMargin) {
+  const ref = useRef<T>(null);
+  const inView = useInView(ref, { once: true, margin });
+  const reduced = useReducedMotion();
+  const [failSafe, setFailSafe] = useState(false);
+
+  useEffect(() => {
+    if (reduced) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFailSafe(true);
+      return;
+    }
+    const t = setTimeout(() => {
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) setFailSafe(true);
+    }, 1200);
+    return () => clearTimeout(t);
+  }, [reduced]);
+
+  return { ref, show: inView || failSafe };
+}
 
 /**
  * Clip-mask slide-up reveal for a stack of lines.
@@ -28,8 +63,7 @@ export function LineReveal({
   stagger?: number;
   duration?: number;
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
+  const { ref, show: inView } = useReveal<HTMLElement>("-12% 0px");
   const show = play && inView;
 
   return createElement(
@@ -70,8 +104,7 @@ export function WordReveal({
   stagger?: number;
   duration?: number;
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
+  const { ref, show: inView } = useReveal<HTMLElement>("-12% 0px");
   const show = play && inView;
   const words = text.split(" ");
 
@@ -110,8 +143,7 @@ export function FadeIn({
   y?: number;
   className?: string;
 }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-64px 0px" });
+  const { ref, show: inView } = useReveal<HTMLDivElement>("-64px 0px");
 
   return (
     <motion.div
@@ -137,8 +169,7 @@ export function Stagger({
   stagger?: number;
   delay?: number;
 }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-64px 0px" });
+  const { ref, show: inView } = useReveal<HTMLDivElement>("-64px 0px");
 
   return (
     <motion.div

@@ -26,7 +26,9 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
       <div className="container">
         <section className="section">
           <h2 className={styles.sectionTitle}>
-            {pkgs.length} Package{pkgs.length !== 1 ? "s" : ""} Available
+            {pkgs.length > 0
+              ? `${pkgs.length} Package${pkgs.length !== 1 ? "s" : ""} Available`
+              : `Tailor-Made ${category.label} Trips`}
           </h2>
           {pkgs.length > 0 ? (
             <div className="grid-3">
@@ -36,8 +38,17 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
             </div>
           ) : (
             <div className={styles.empty}>
-              <p>No packages listed yet — but we can craft one just for you!</p>
-              <Link href="/contact" className="btn btn-primary btn--lg">Enquire Now</Link>
+              <p>
+                We don&apos;t have ready-made {category.label.toLowerCase()} packages listed right now —
+                and that&apos;s on purpose. Every one of these trips is planned around you. Tell us what
+                you have in mind and we&apos;ll build a personalised itinerary, with a transparent quote.
+              </p>
+              <Link
+                href={`/contact?service=${encodeURIComponent(category.label)}`}
+                className="btn btn-primary btn--lg"
+              >
+                Plan My {category.label} Trip
+              </Link>
             </div>
           )}
         </section>
