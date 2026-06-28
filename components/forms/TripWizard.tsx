@@ -257,6 +257,14 @@ export default function TripWizard({ destinations }: Props) {
     setEndDate(end);
   }, [startDate, tripDays]);
 
+  // On each step change, jump back to the top so every step starts at its
+  // heading instead of wherever the previous one was scrolled to.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [step]);
+
   const waOpened = useRef(false);
   useEffect(() => {
     if (status === "success" && contactMode === "WhatsApp" && !waOpened.current) {

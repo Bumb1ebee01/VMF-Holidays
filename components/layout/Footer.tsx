@@ -73,11 +73,15 @@ export default function Footer() {
             <ul className={styles.contact}>
               <li>
                 <span className={styles.contactIcon}>📍</span>
-                <span><strong>Goa (Head Office):</strong> Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Calangute,+Nagva,+Goa+403516" target="_blank" rel="noopener noreferrer">
+                  <strong>Goa (Head Office):</strong> Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516
+                </a>
               </li>
               <li>
                 <span className={styles.contactIcon}>📍</span>
-                <span><strong>Mangalore (Branch):</strong> First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, near St. Theresa&apos;s School &amp; Cognizant, Bendoorwell, Mangaluru, Karnataka 575001</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=Lotus+Paradise+Plaza,+Bendoorwell,+Mangaluru,+Karnataka+575001" target="_blank" rel="noopener noreferrer">
+                  <strong>Mangalore (Branch):</strong> First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, near St. Theresa&apos;s School &amp; Cognizant, Bendoorwell, Mangaluru, Karnataka 575001
+                </a>
               </li>
               <li>
                 <span className={styles.contactIcon}>📞</span>
@@ -86,6 +90,10 @@ export default function Footer() {
               <li>
                 <span className={styles.contactIcon}>📞</span>
                 <a href="tel:+918788324054">+91 8788324054</a>
+              </li>
+              <li>
+                <span className={styles.contactIcon}>📞</span>
+                <a href="tel:+919481384953">+91 94813 84953</a>
               </li>
               <li>
                 <span className={styles.contactIcon}>✉️</span>

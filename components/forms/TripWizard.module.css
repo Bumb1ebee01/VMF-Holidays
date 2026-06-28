@@ -752,6 +752,10 @@
 :global([data-theme="dark"]) .calDate,
 :global([data-theme="dark"]) .calFooter { color: var(--text); }
 
+/* The calendar sits on a hard-white card; in dark mode the day numbers turn
+   light, so the card must turn dark too or the numbers vanish into the white. */
+:global([data-theme="dark"]) .calendarWrap { background: #0d1b33; }
+
 /* Traveler counters */
 .travelerCard {
   background: white;

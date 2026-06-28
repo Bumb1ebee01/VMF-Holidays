@@ -92,9 +92,57 @@ export async function POST(request: Request) {
 
   try {
     await resend.emails.send({ from: FROM, to: TO, subject, html });
-    return Response.json({ ok: true });
   } catch (err) {
     console.error("[enquiry] Resend error:", err);
     return Response.json({ ok: false, whatsappFallback: true }, { status: 500 });
   }
+
+  // Best-effort thank-you to the customer (only when they shared an email).
+  // Never blocks or fails the request — the business notification above is what
+  // the enquiry depends on; this is a courtesy auto-reply.
+  if (email) {
+    const enquiryAbout =
+      body.packageTitle && body.packageTitle !== "Custom Itinerary"
+        ? String(body.packageTitle)
+        : body.destination
+          ? String(body.destination)
+          : null;
+    const thankYouHtml = `
+      <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;color:#1A1F36">
+        <div style="background:#002464;padding:26px 32px;border-radius:14px 14px 0 0">
+          <h1 style="margin:0;color:#ffffff;font-size:20px;letter-spacing:-0.01em">VMF Holidays</h1>
+          <p style="margin:6px 0 0;color:#FFA333;font-size:11px;letter-spacing:1.5px">DISCOVER YOUR WORLD, YOUR WAY</p>
+        </div>
+        <div style="border:1px solid #E2E6EF;border-top:none;border-radius:0 0 14px 14px;padding:28px 32px">
+          <h2 style="margin:0 0 14px;color:#002464;font-size:18px">Thank you, ${name}!</h2>
+          <p style="font-size:14px;line-height:1.7;margin:0 0 16px">
+            We've received your enquiry${enquiryAbout ? ` about <strong>${enquiryAbout}</strong>` : ""} and our
+            travel experts are already on it. You can expect a personalised reply within <strong>24 hours</strong>.
+          </p>
+          <p style="font-size:14px;line-height:1.7;margin:0 0 18px">Need us sooner? Reach out any time:</p>
+          <p style="font-size:14px;line-height:1.9;margin:0 0 24px">
+            Phone: <a href="tel:+917499322412" style="color:#002464;font-weight:600;text-decoration:none">+91 74993 22412</a><br/>
+            WhatsApp: <a href="https://wa.me/917499322412" style="color:#002464;font-weight:600;text-decoration:none">chat with us</a><br/>
+            Email: <a href="mailto:info@vmfholidays.com" style="color:#002464;font-weight:600;text-decoration:none">info@vmfholidays.com</a>
+          </p>
+          <a href="https://wa.me/917499322412" style="display:inline-block;background:#FE5C10;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:10px">Chat on WhatsApp</a>
+        </div>
+        <p style="font-size:11px;color:#7B8298;text-align:center;margin:18px 0 0">
+          VMF Holidays Pvt. Ltd. — Calangute, Goa 403516, India
+        </p>
+      </div>
+    `;
+    try {
+      await resend.emails.send({
+        from: FROM,
+        to: String(email),
+        subject: "Thanks for your enquiry — VMF Holidays",
+        html: thankYouHtml,
+      });
+    } catch (err) {
+      console.error("[enquiry] Customer thank-you email failed:", err);
+    }
+  }
+
+  return Response.json({ ok: true });
 }

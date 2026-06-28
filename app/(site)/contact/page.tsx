@@ -50,6 +50,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
                 <p className={styles.detailLabel}>Phone</p>
                 <a href="tel:+917499322412" className={styles.detailValue}>+91 7499322412</a>
                 <a href="tel:+918788324054" className={styles.detailValue}>+91 8788324054</a>
+                <a href="tel:+919481384953" className={styles.detailValue}>+91 94813 84953</a>
               </div>
             </div>
 
@@ -75,9 +76,9 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </div>
               <div>
                 <p className={styles.detailLabel}>Goa — Head Office</p>
-                <p className={styles.detailValue}>Mendes Vaddo, H. No 128/3/A,<br />Calangute, Nagva, Goa 403516</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Calangute,+Nagva,+Goa+403516" target="_blank" rel="noopener noreferrer" className={styles.detailValue}>Mendes Vaddo, H. No 128/3/A,<br />Calangute, Nagva, Goa 403516</a>
                 <p className={styles.detailLabel} style={{ marginTop: 12 }}>Mangalore — Branch Office</p>
-                <p className={styles.detailValue}>First Floor, Lotus Paradise Plaza,<br />Shop No. 116, Door No. 15, 23-1429/43,<br />near St. Theresa&apos;s School &amp; Cognizant,<br />Bendoorwell, Mangaluru, Karnataka 575001</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Lotus+Paradise+Plaza,+Bendoorwell,+Mangaluru,+Karnataka+575001" target="_blank" rel="noopener noreferrer" className={styles.detailValue}>First Floor, Lotus Paradise Plaza,<br />Shop No. 116, Door No. 15, 23-1429/43,<br />near St. Theresa&apos;s School &amp; Cognizant,<br />Bendoorwell, Mangaluru, Karnataka 575001</a>
               </div>
             </div>
 

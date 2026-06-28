@@ -131,6 +131,13 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* Range middle days keep navy text in light mode (rule above); in dark mode
+   that's unreadable, so lighten the text and strengthen the orange tint. */
+:global([data-theme="dark"]) .wrapper :global(.rdp-range_middle) :global(.rdp-day_button) {
+  color: var(--text);
+  background: rgba(254, 92, 16, 0.22);
+}
+
 @media (max-width: 560px) {
   .wrapper :global(.rdp-months) { gap: 12px; }
   .select { min-width: 104px; }

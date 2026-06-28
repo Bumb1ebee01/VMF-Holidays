@@ -3,7 +3,7 @@ import CategoryLanding from "@/components/categories/CategoryLanding";
 
 export const metadata: Metadata = {
   title: "Pilgrimage Packages",
-  description: "Sacred journeys to India's holiest sites — Char Dham, Vaishno Devi, Tirupati and more.",
+  description: "Pilgrimage tours to India's most revered temples and holy sites — comfortable travel and trusted, devotion-first planning by VMF Holidays.",
   alternates: { canonical: "/pilgrimage" },
 };
 

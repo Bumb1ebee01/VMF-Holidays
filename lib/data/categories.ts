@@ -34,7 +34,7 @@ export const categories: TripCategory[] = [
     label: "Pilgrimage",
     icon: "🙏",
     image: "https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/categories/pilgrimage.jpg",
-    blurb: "Sacred journeys to India's holiest sites — Char Dham, Vaishno Devi, Tirupati and more.",
+    blurb: "Sacred journeys to India's most revered temples and holy sites — planned with care, comfort and devotion at every step.",
   },
   {
     slug: "college",
