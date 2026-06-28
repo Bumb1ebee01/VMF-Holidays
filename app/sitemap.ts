@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { getAllDestinations } from "@/lib/queries";
-
-const BASE = "https://vmfholidays.com";
+import { SITE_URL as BASE } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [packages, destinations, posts] = await Promise.all([

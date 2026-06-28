@@ -1,4 +1,6 @@
-import type { Package, BlogPost } from "@/lib/types";
+import type { Metadata } from "next";
+import type { Package, BlogPost, TripCategorySlug } from "@/lib/types";
+import { getCategoryBySlug } from "@/lib/data/categories";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Central SEO source of truth — site URL, business identity, and JSON-LD
@@ -107,6 +109,51 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
       name: item.name,
       item: absoluteUrl(item.path),
     })),
+  };
+}
+
+/** ItemList schema for a listing page (helps Google understand a set of links). */
+export function itemListJsonLd(items: { name: string; path: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((it, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: it.name,
+      url: absoluteUrl(it.path),
+    })),
+  };
+}
+
+/** Full Metadata for a trip-category landing page — keeps the page's tailored copy
+ *  but adds canonical, OpenGraph and Twitter cards (using the category's photo). */
+export function categoryMetadata(opts: {
+  slug: TripCategorySlug;
+  title: string;
+  description: string;
+}): Metadata {
+  const category = getCategoryBySlug(opts.slug);
+  const url = `/${opts.slug}`;
+  const ogTitle = `${opts.title} | ${SITE_NAME}`;
+  const image = category?.image;
+  return {
+    title: opts.title,
+    description: opts.description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      title: ogTitle,
+      description: opts.description,
+      images: image ? [{ url: image, width: 1200, height: 630, alt: opts.title }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: ogTitle,
+      description: opts.description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 

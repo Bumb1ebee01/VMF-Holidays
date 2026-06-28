@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import CategoryLanding from "@/components/categories/CategoryLanding";
+import { categoryMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = categoryMetadata({
+  slug: "family",
   title: "Family Tour Packages",
   description: "Kid-friendly family holiday packages with the perfect mix of fun, culture and relaxation for all ages.",
-  alternates: { canonical: "/family" },
-};
+});
 
 export default function FamilyPage() {
   return <CategoryLanding slug="family" />;

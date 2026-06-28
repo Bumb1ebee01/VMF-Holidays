@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
 import CategoryLanding from "@/components/categories/CategoryLanding";
+import { categoryMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata = categoryMetadata({
+  slug: "corporate",
   title: "Corporate & MICE Travel",
   description: "End-to-end MICE solutions — conferences, incentive trips, team outings and corporate retreats.",
-  alternates: { canonical: "/corporate" },
-};
+});
 
 export default function CorporatePage() {
   return <CategoryLanding slug="corporate" />;

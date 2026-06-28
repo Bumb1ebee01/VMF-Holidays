@@ -3,6 +3,7 @@ import Link from "next/link";
 import PackageCard from "@/components/ui/PackageCard";
 import { getPackagesByCategory } from "@/lib/queries";
 import { getCategoryBySlug } from "@/lib/data/categories";
+import { JsonLd, breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 import type { TripCategorySlug } from "@/lib/types";
 import styles from "./CategoryLanding.module.css";
 
@@ -13,6 +14,17 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
 
   return (
     <div className={styles.page}>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: category.label, path: `/${slug}` },
+          ]),
+          ...(pkgs.length > 0
+            ? [itemListJsonLd(pkgs.map((p) => ({ name: p.title, path: `/packages/${p.slug}` })))]
+            : []),
+        ]}
+      />
       <div className={styles.hero}>
         <Image src={category.image} alt={category.label} fill priority sizes="100vw" className={styles.heroImg} />
         <div className={styles.heroOverlay} />
