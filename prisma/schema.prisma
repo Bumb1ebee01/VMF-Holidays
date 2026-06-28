@@ -210,3 +210,39 @@ model GalleryPhoto {
 
   @@index([published, sortOrder])
 }
+
+// Trip Builder geography — countries, their cities/places and each place's
+// activities. Editable from the admin CMS; the public Trip Builder falls back to
+// the bundled lib/data/geography.ts when these tables are empty or not migrated.
+model GeoCountry {
+  id        String     @id @default(cuid())
+  code      String     @unique
+  name      String
+  flag      String     @default("")
+  continent String
+  region    Region
+  heroImage String
+  sortOrder Int        @default(0)
+  places    GeoPlace[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model GeoPlace {
+  id              String     @id @default(cuid())
+  country         GeoCountry @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryId       String
+  slug            String
+  name            String
+  destinationSlug String?
+  image           String?
+  lat             Float?
+  lng             Float?
+  activities      String[]   @default([])
+  sortOrder       Int        @default(0)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@unique([countryId, slug])
+  @@index([countryId])
+}

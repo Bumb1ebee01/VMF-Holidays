@@ -30,6 +30,8 @@ export interface GeoPlace {
   name: string;
   destinationSlug?: string;
   image?: string;
+  lat?: number;
+  lng?: number;
   activities: string[];
 }
 

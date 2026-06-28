@@ -12,6 +12,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:admin": "tsx prisma/reset-admin.ts",
     "db:places": "tsx prisma/import-places.ts",
+    "db:geo": "tsx prisma/seed-geography.ts",
     "db:studio": "prisma studio"
   },
   "dependencies": {

@@ -4,21 +4,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Destination, Package } from "@/lib/types";
-import {
-  geography,
-  CONTINENT_ORDER,
-  placeCoords,
-  type Continent,
-  type GeoCountry,
-  type GeoPlace,
-} from "@/lib/data/geography";
+import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar, type DateRange } from "@/components/ui/MultiMonthCalendar";
 import RouteMap, { type RoutePoint } from "@/components/ui/RouteMap";
 import styles from "./TripWizard.module.css";
 
+// The Trip Builder data now arrives from the DB-backed loader (with a static
+// fallback), so we only need the canonical continent order here — not the heavy
+// geography module in the client bundle.
+const CONTINENT_ORDER: Continent[] = ["Asia", "Europe", "Africa", "North America", "South America"];
+
 interface Props {
   destinations: Destination[];
   packages: Package[];
+  geography: GeoCountry[];
 }
 
 const CONTACT_MODES = [
@@ -71,7 +70,7 @@ function formatDate(d: Date) {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default function TripWizard({ destinations }: Props) {
+export default function TripWizard({ destinations, geography }: Props) {
   const [step, setStep] = useState(0);
 
   // Step 0 — countries
@@ -164,8 +163,9 @@ export default function TripWizard({ destinations }: Props) {
   const routePoints = useMemo<RoutePoint[]>(
     () =>
       places
-        .map(({ country, place }) => {
-          const coords = placeCoords(country.code, place.slug);
+        .map(({ place }) => {
+          const coords: [number, number] | null =
+            place.lat != null && place.lng != null ? [place.lat, place.lng] : null;
           return coords ? { name: place.name, coords } : null;
         })
         .filter((p): p is RoutePoint => p !== null),
