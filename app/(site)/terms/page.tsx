@@ -33,7 +33,7 @@ export default function TermsPage() {
         <p>VMF Holidays strongly recommends purchasing comprehensive travel insurance. We are not liable for losses arising from medical emergencies, cancellations, lost luggage or other unforeseen events that travel insurance typically covers.</p>
 
         <h2>6. Passports, Visas &amp; Health Requirements</h2>
-        <p>It is the traveller's responsibility to ensure their passport is valid for at least six months beyond the travel date and to obtain any required visas. VMF Holidays provides general visa assistance but cannot guarantee visa approval.</p>
+        <p>It is the traveller&apos;s responsibility to ensure their passport is valid for at least six months beyond the travel date and to obtain any required visas. VMF Holidays provides general visa assistance but cannot guarantee visa approval.</p>
 
         <h2>7. Liability</h2>
         <p>VMF Holidays acts as an agent for airlines, hotels and other service providers. We are not liable for any injury, loss or damage caused by the negligence of third-party providers. Our liability is limited to the total cost of the package booked.</p>

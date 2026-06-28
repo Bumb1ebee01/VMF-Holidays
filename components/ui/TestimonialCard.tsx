@@ -6,7 +6,7 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
   return (
     <div className={styles.card}>
       <StarRating rating={testimonial.rating} />
-      <p className={styles.quote}>"{testimonial.quote}"</p>
+      <p className={styles.quote}>&ldquo;{testimonial.quote}&rdquo;</p>
       <div className={styles.reviewer}>
         <div className={styles.avatar}>
           {testimonial.name.charAt(0)}

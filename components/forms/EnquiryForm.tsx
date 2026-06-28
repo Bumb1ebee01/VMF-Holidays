@@ -6,10 +6,9 @@ import styles from "./EnquiryForm.module.css";
 
 interface Props {
   packageTitle?: string;
-  packageSlug?: string;
 }
 
-export default function EnquiryForm({ packageTitle, packageSlug }: Props) {
+export default function EnquiryForm({ packageTitle }: Props) {
   const [form, setForm] = useState({
     name: "",
     phone: "",

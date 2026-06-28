@@ -15,6 +15,9 @@ export default function ThemeToggle({ onLight = false }: Props) {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
     const saved = localStorage.getItem("vmf-theme");
     const isDark = saved ? saved === "dark" : mq.matches;
+    // Theme depends on browser-only state (localStorage / matchMedia), so it can
+    // only be resolved after mount — the placeholder below avoids a hydration flash.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDark(isDark);
     document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
     setMounted(true);

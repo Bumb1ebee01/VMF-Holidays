@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { Destination, Package } from "@/lib/types";
+import type { Destination } from "@/lib/types";
 import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar, type DateRange } from "@/components/ui/MultiMonthCalendar";
 import RouteMap, { type RoutePoint } from "@/components/ui/RouteMap";
@@ -16,7 +16,6 @@ const CONTINENT_ORDER: Continent[] = ["Asia", "Europe", "Africa", "North America
 
 interface Props {
   destinations: Destination[];
-  packages: Package[];
   geography: GeoCountry[];
 }
 

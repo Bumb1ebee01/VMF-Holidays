@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllDestinations, getAllPackages } from "@/lib/queries";
+import { getAllDestinations } from "@/lib/queries";
 import { loadGeography } from "@/lib/data/geography-db";
 import TripWizard from "@/components/forms/TripWizard";
 
@@ -10,11 +10,10 @@ export const metadata: Metadata = {
 };
 
 export default async function TripBuilderPage() {
-  const [destinations, packages, geography] = await Promise.all([
+  const [destinations, geography] = await Promise.all([
     getAllDestinations(),
-    getAllPackages(),
     loadGeography(),
   ]);
 
-  return <TripWizard destinations={destinations} packages={packages} geography={geography} />;
+  return <TripWizard destinations={destinations} geography={geography} />;
 }
