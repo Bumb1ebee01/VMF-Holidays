@@ -73,7 +73,6 @@ export default async function PackagesPage(props: PageProps<"/packages">) {
         <div className={styles.results}>
           {filtered.length === 0 ? (
             <div className={styles.empty}>
-              <div className={styles.emptyIcon}>🔍</div>
               <h3>No packages found{q.trim() ? ` for “${q.trim()}”` : ""}</h3>
               <p>Try adjusting your filters, or tell us where you want to go — we build custom trips too.</p>
               <div className={styles.emptyActions}>

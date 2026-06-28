@@ -48,7 +48,6 @@ export type TripCategorySlug =
 export interface TripCategory {
   slug: TripCategorySlug;
   label: string;
-  icon: string;
   image: string;
   blurb: string;
 }

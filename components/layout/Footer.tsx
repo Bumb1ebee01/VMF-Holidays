@@ -96,7 +96,7 @@ export default function Footer() {
                 <a href="tel:+919481384953">+91 94813 84953</a>
               </li>
               <li>
-                <span className={styles.contactIcon}>✉️</span>
+                <span className={styles.contactIcon} aria-hidden="true" />
                 <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>
               </li>
             </ul>

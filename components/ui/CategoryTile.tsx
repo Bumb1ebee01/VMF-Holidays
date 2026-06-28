@@ -15,7 +15,6 @@ export default function CategoryTile({ category }: { category: TripCategory }) {
       />
       <div className={styles.overlay} />
       <div className={styles.content}>
-        <span className={styles.icon}>{category.icon}</span>
         <h3 className={styles.label}>{category.label}</h3>
         <p className={styles.blurb}>{category.blurb}</p>
       </div>

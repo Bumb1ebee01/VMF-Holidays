@@ -17,7 +17,6 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
         <Image src={category.image} alt={category.label} fill priority sizes="100vw" className={styles.heroImg} />
         <div className={styles.heroOverlay} />
         <div className={`container ${styles.heroContent}`}>
-          <span className={styles.heroIcon}>{category.icon}</span>
           <h1 className={styles.heroTitle}>{category.label}</h1>
           <p className={styles.heroBlurb}>{category.blurb}</p>
         </div>

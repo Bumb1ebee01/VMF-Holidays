@@ -141,7 +141,7 @@
 
 .contact a:hover { color: var(--orange-lt); }
 
-.contactIcon { flex-shrink: 0; font-size: 13px; }
+.contactIcon { flex-shrink: 0; display: inline-block; width: 18px; text-align: center; font-size: 13px; }
 
 .waBtn { margin-top: 4px; }
 

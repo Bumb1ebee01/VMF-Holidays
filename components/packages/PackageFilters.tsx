@@ -113,7 +113,7 @@ export default function PackageFilters({
               className={`${styles.pill} ${activeCategory === cat.slug ? styles.pillActive : ""}`}
               onClick={() => toggle("category", activeCategory, cat.slug)}
             >
-              {cat.icon} {cat.label}
+              {cat.label}
             </button>
           ))}
         </div>

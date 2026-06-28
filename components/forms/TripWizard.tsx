@@ -22,9 +22,9 @@ interface Props {
 }
 
 const CONTACT_MODES = [
-  { label: "WhatsApp", sub: "Fastest reply", emoji: "💬" },
-  { label: "Phone Call", sub: "Talk to an expert", emoji: "📞" },
-  { label: "Email", sub: "Detailed itinerary", emoji: "✉️" },
+  { label: "WhatsApp", sub: "Fastest reply" },
+  { label: "Phone Call", sub: "Talk to an expert" },
+  { label: "Email", sub: "Detailed itinerary" },
 ];
 
 const CONTACT_TIMES = [
@@ -35,15 +35,15 @@ const CONTACT_TIMES = [
 ];
 
 const HOTEL_CATEGORIES = [
-  { label: "3 Star", sub: "Comfortable & great value", emoji: "⭐⭐⭐" },
-  { label: "4 Star", sub: "Premium comfort", emoji: "⭐⭐⭐⭐" },
-  { label: "5 Star", sub: "Luxury all the way", emoji: "⭐⭐⭐⭐⭐" },
+  { label: "3 Star", sub: "Comfortable & great value" },
+  { label: "4 Star", sub: "Premium comfort" },
+  { label: "5 Star", sub: "Luxury all the way" },
 ];
 
 const MEAL_PLANS = [
-  { label: "Breakfast Only", sub: "Daily breakfast", emoji: "🍳" },
-  { label: "Half Board", sub: "Breakfast + lunch or dinner", emoji: "🥗" },
-  { label: "Full Board", sub: "Breakfast, lunch & dinner", emoji: "🍽️" },
+  { label: "Breakfast Only", sub: "Daily breakfast" },
+  { label: "Half Board", sub: "Breakfast + lunch or dinner" },
+  { label: "Full Board", sub: "Breakfast, lunch & dinner" },
 ];
 
 const STEPS = [
@@ -229,7 +229,7 @@ export default function TripWizard({ destinations }: Props) {
 
   const waText = useMemo(() => {
     const lines = [
-      "Hi VMF Holidays! I've just planned a trip 🌴",
+      "Hi VMF Holidays! I've just planned a trip.",
       form.name ? `Name: ${form.name}` : "",
       form.phone ? `Phone: ${form.phone}` : "",
       destinationStr ? `Itinerary: ${destinationStr}` : "",
@@ -285,12 +285,12 @@ export default function TripWizard({ destinations }: Props) {
             Thanks, {form.name}! Our travel experts will reach out within 24 hours with a personalised itinerary{destinationStr ? ` for ${destinationStr}` : ""}.
           </p>
           <div className={styles.successDetails}>
-            {destinationStr && <span>📍 {destinationStr}</span>}
-            {startDate && <span>📅 {formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</span>}
-            <span>👥 {travelersLabel}</span>
+            {destinationStr && <span>{destinationStr}</span>}
+            {startDate && <span>{formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</span>}
+            <span>{travelersLabel}</span>
           </div>
           {contactMode === "WhatsApp" && (
-            <p className={styles.waAutoNote}>WhatsApp should have opened with your details ready to send. If it didn&apos;t, tap below 👇</p>
+            <p className={styles.waAutoNote}>WhatsApp should have opened with your details ready to send. If it didn&apos;t, tap below.</p>
           )}
           <a href={waHref} target="_blank" rel="noopener noreferrer" className={styles.waBtn}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12 0C5.373 0 0 5.373 0 12c0 2.121.554 4.112 1.523 5.836L.057 23.571a.5.5 0 0 0 .617.609l5.878-1.543A11.944 11.944 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.69-.501-5.232-1.376l-.374-.216-3.878 1.018 1.037-3.788-.236-.386A9.944 9.944 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" /></svg>
@@ -548,7 +548,6 @@ export default function TripWizard({ destinations }: Props) {
                       className={`${styles.contactModeCard} ${hotelCategory === h.label ? styles.contactModeCardActive : ""}`}
                       onClick={() => setHotelCategory(h.label)}
                     >
-                      <span className={styles.contactModeEmoji}>{h.emoji}</span>
                       <span className={styles.contactModeLabel}>{h.label}</span>
                       <span className={styles.contactModeSub}>{h.sub}</span>
                     </button>
@@ -565,7 +564,6 @@ export default function TripWizard({ destinations }: Props) {
                       className={`${styles.contactModeCard} ${mealPlan === m.label ? styles.contactModeCardActive : ""}`}
                       onClick={() => setMealPlan(m.label)}
                     >
-                      <span className={styles.contactModeEmoji}>{m.emoji}</span>
                       <span className={styles.contactModeLabel}>{m.label}</span>
                       <span className={styles.contactModeSub}>{m.sub}</span>
                     </button>
@@ -596,7 +594,6 @@ export default function TripWizard({ destinations }: Props) {
                   <div className={styles.contactModeGrid}>
                     {CONTACT_MODES.map((m) => (
                       <button key={m.label} type="button" className={`${styles.contactModeCard} ${contactMode === m.label ? styles.contactModeCardActive : ""}`} onClick={() => setContactMode(m.label)}>
-                        <span className={styles.contactModeEmoji}>{m.emoji}</span>
                         <span className={styles.contactModeLabel}>{m.label}</span>
                         <span className={styles.contactModeSub}>{m.sub}</span>
                       </button>
@@ -627,20 +624,20 @@ export default function TripWizard({ destinations }: Props) {
                 <div className={styles.tripSummary}>
                   <div className={styles.summaryHead}>Your Itinerary</div>
                   {places.length > 0 && (
-                    <div className={styles.summaryItem}><span className={styles.summaryIcon}>📍</span><div><div className={styles.summaryLabel}>Cities</div><div className={styles.summaryVal}>{destinationStr}</div></div></div>
+                    <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Cities</div><div className={styles.summaryVal}>{destinationStr}</div></div></div>
                   )}
                   {allExperiences.length > 0 && (
-                    <div className={styles.summaryItem}><span className={styles.summaryIcon}>🎯</span><div><div className={styles.summaryLabel}>Experiences</div><div className={styles.summaryVal}>{allExperiences.slice(0, 6).join(", ")}{allExperiences.length > 6 ? "…" : ""}</div></div></div>
+                    <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Experiences</div><div className={styles.summaryVal}>{allExperiences.slice(0, 6).join(", ")}{allExperiences.length > 6 ? "…" : ""}</div></div></div>
                   )}
-                  <div className={styles.summaryItem}><span className={styles.summaryIcon}>🗓</span><div><div className={styles.summaryLabel}>Approx. Length</div><div className={styles.summaryVal}>{tripDays} Days / {tripNights} Nights</div></div></div>
+                  <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Approx. Length</div><div className={styles.summaryVal}>{tripDays} Days / {tripNights} Nights</div></div></div>
                   {startDate && (
-                    <div className={styles.summaryItem}><span className={styles.summaryIcon}>📅</span><div><div className={styles.summaryLabel}>Travel Dates</div><div className={styles.summaryVal}>{formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</div></div></div>
+                    <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Travel Dates</div><div className={styles.summaryVal}>{formatDate(startDate)}{endDate ? ` – ${formatDate(endDate)}` : ""}</div></div></div>
                   )}
-                  <div className={styles.summaryItem}><span className={styles.summaryIcon}>👥</span><div><div className={styles.summaryLabel}>Travellers</div><div className={styles.summaryVal}>{travelersLabel}</div></div></div>
+                  <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Travellers</div><div className={styles.summaryVal}>{travelersLabel}</div></div></div>
                   {(hotelCategory || mealPlan) && (
-                    <div className={styles.summaryItem}><span className={styles.summaryIcon}>🏨</span><div><div className={styles.summaryLabel}>Preferences</div><div className={styles.summaryVal}>{[hotelCategory, mealPlan].filter(Boolean).join(" · ")}</div></div></div>
+                    <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Preferences</div><div className={styles.summaryVal}>{[hotelCategory, mealPlan].filter(Boolean).join(" · ")}</div></div></div>
                   )}
-                  <div className={styles.summaryItem}><span className={styles.summaryIcon}>📞</span><div><div className={styles.summaryLabel}>Contact Preference</div><div className={styles.summaryVal}>{contactMode} · {contactTime}</div></div></div>
+                  <div className={styles.summaryItem}><div><div className={styles.summaryLabel}>Contact Preference</div><div className={styles.summaryVal}>{contactMode} · {contactTime}</div></div></div>
                 </div>
               </div>
             </div>
