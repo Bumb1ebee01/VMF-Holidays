@@ -123,8 +123,9 @@ export default function Hero({
   function handleSearch(e: React.SyntheticEvent) {
     e.preventDefault();
     setShowDropdown(false);
-    if (query.trim()) router.push(`/packages?q=${encodeURIComponent(query.trim())}`);
-    else router.push("/packages");
+    // The standalone packages page was merged into Destinations; type-ahead
+    // suggestions (below) jump straight to a package, and submitting browses all.
+    router.push("/destinations");
   }
 
   function pickSuggestion(s: Suggestion) {
@@ -284,11 +285,11 @@ export default function Hero({
               animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ ...SPRING, delay: 0.4 }}
             >
-              <Link href="/packages" className={styles.btnPrimary}>
+              <Link href="/destinations" className={styles.btnPrimary}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                   <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
                 </svg>
-                Browse Packages
+                Explore Destinations
               </Link>
               <a
                 href="https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20to%20plan%20a%20trip."
@@ -381,7 +382,7 @@ function CollectionSlider({
           exit={{ opacity: 0, y: -12, scale: 0.97 }}
           transition={SPRING}
         >
-          <Link href={`/packages?destination=${active.slug}`} className={styles.slideCard}>
+          <Link href="/destinations" className={styles.slideCard}>
             <span className={styles.slideThumb} style={{ backgroundImage: `url(${active.heroImage})` }} />
             <span className={styles.slideMeta}>
               <span className={styles.slideBrand}>

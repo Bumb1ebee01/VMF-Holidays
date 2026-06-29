@@ -210,3 +210,86 @@
   .reveal { animation: none; }
   .moreBtn:hover { transform: none; }
 }
+
+/* ── Active place tile + inline packages panel ────────── */
+.tileActive {
+  box-shadow: 0 0 0 2px var(--orange), 0 16px 44px rgba(254, 92, 16, 0.2);
+}
+
+.panel {
+  margin-top: 24px;
+  padding: 26px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid rgba(0, 36, 100, 0.08);
+  box-shadow: 0 18px 50px rgba(0, 36, 100, 0.1);
+  animation: explorerFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.panelTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.panelCount {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.panelClose {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(0, 36, 100, 0.15);
+  background: #fff;
+  color: var(--navy);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.panelClose:hover { background: var(--navy); color: #fff; }
+
+.panelGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.panelEmpty {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 20px;
+  max-width: 620px;
+}
+
+.panelCta {
+  margin-top: 22px;
+  display: flex;
+}
+
+:global([data-theme="dark"]) .panel {
+  background: #0d1b33;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+:global([data-theme="dark"]) .panelTitle { color: var(--text); }
+:global([data-theme="dark"]) .panelClose {
+  background: #0d1b33;
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text);
+}

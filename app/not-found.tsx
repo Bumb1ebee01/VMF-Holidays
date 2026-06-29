@@ -12,7 +12,7 @@ export default function NotFound() {
         </p>
         <div className={styles.actions}>
           <Link href="/" className="btn btn-primary btn--lg">Back to Homepage</Link>
-          <Link href="/packages" className="btn btn-outline btn--lg">Browse Packages</Link>
+          <Link href="/destinations" className="btn btn-outline btn--lg">Browse Destinations</Link>
         </div>
       </div>
     </div>

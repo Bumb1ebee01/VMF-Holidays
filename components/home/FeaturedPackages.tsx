@@ -31,8 +31,8 @@ export default async function FeaturedPackages() {
           ))}
         </div>
         <div className={styles.viewAll}>
-          <Link href="/packages" className={styles.viewAllBtn}>
-            View All Packages →
+          <Link href="/destinations" className={styles.viewAllBtn}>
+            Explore Destinations →
           </Link>
         </div>
       </div>

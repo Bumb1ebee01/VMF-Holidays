@@ -1,19 +1,16 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
-import { getAllDestinations } from "@/lib/queries";
 import { SITE_URL as BASE } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [packages, destinations, posts] = await Promise.all([
+  const [packages, posts] = await Promise.all([
     db.package.findMany({ select: { slug: true, updatedAt: true } }),
-    getAllDestinations(),
     db.post.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
   ]);
 
   const staticPages = [
     { url: BASE, priority: 1.0 },
-    { url: `${BASE}/packages`, priority: 0.9 },
-    { url: `${BASE}/destinations`, priority: 0.8 },
+    { url: `${BASE}/destinations`, priority: 0.9 },
     { url: `${BASE}/trip-builder`, priority: 0.8 },
     { url: `${BASE}/blog`, priority: 0.7 },
     { url: `${BASE}/offers`, priority: 0.7 },
@@ -42,13 +39,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const destinationPages = destinations.map((d) => ({
-    url: `${BASE}/packages?destination=${d.slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
   const postPages = posts.map((p) => ({
     url: `${BASE}/blog/${p.slug}`,
     lastModified: p.updatedAt,
@@ -56,5 +46,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...packagePages, ...destinationPages, ...postPages];
+  return [...staticPages, ...packagePages, ...postPages];
 }

@@ -44,7 +44,6 @@ export default function Footer() {
           <div className={styles.col}>
             <h4 className={styles.colTitle}>Explore</h4>
             <ul className={styles.colLinks}>
-              <li><Link href="/packages">All Packages</Link></li>
               <li><Link href="/destinations">Destinations</Link></li>
               <li><Link href="/offers">Offers &amp; Deals</Link></li>
               <li><Link href="/gallery">Gallery</Link></li>

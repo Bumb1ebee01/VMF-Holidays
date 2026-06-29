@@ -31,6 +31,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // The standalone packages listing was merged into Destinations.
+      { source: "/packages", destination: "/destinations", permanent: false },
+    ];
+  },
   async headers() {
     return [
       {

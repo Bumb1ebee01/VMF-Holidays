@@ -8,7 +8,6 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
-  { href: "/packages", label: "Packages" },
   { href: "/destinations", label: "Destinations" },
   { href: "/offers", label: "Offers" },
   { href: "/gallery", label: "Gallery" },
@@ -21,8 +20,7 @@ const NAV_LINKS = [
 // any section instead of having to start in the Trip Builder.
 const PLAN_LINKS = [
   { href: "/trip-builder", label: "Build My Trip", primary: true },
-  { href: "/packages", label: "Browse Packages" },
-  { href: "/destinations", label: "Destinations" },
+  { href: "/destinations", label: "Browse Destinations" },
   { href: "/offers", label: "Offers & Deals" },
   { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Travel Blog" },

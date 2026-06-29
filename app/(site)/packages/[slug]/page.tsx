@@ -68,8 +68,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
           packageJsonLd(pkg),
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Packages", path: "/packages" },
-            { name: pkg.destination, path: `/packages?destination=${pkg.destinationSlug}` },
+            { name: "Destinations", path: "/destinations" },
             { name: pkg.title, path: `/packages/${pkg.slug}` },
           ]),
         ]}
@@ -87,7 +86,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
         <div className={styles.heroOverlay} />
         <div className={`container ${styles.heroContent}`}>
           <div className={styles.breadcrumb}>
-            <Link href="/packages">Packages</Link>
+            <Link href="/destinations">Destinations</Link>
             <span>/</span>
             <span>{pkg.destination}</span>
           </div>
