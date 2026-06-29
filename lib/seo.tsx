@@ -77,7 +77,8 @@ export function organizationJsonLd() {
   };
 }
 
-/** WebSite schema with a sitewide search action (enables the search box in SERPs). */
+/** WebSite schema linking the site to its publishing organisation. (No SearchAction:
+ *  Google retired the sitelinks searchbox, so it would have no effect.) */
 export function websiteJsonLd() {
   return {
     "@context": "https://schema.org",

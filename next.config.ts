@@ -1,5 +1,32 @@
 import type { NextConfig } from "next";
 
+const isDev = process.env.NODE_ENV === "development";
+
+// Content-Security-Policy. We keep 'unsafe-inline' for scripts/styles because the
+// site uses static rendering (a nonce-based CSP would force every page to render
+// dynamically, killing SSG/CDN caching) and relies on inline JSON-LD + inline
+// styles from framer-motion/React. The real value here is locking down which
+// *external* origins may load: only the hosts we actually use. Update this list
+// when adding a new third-party (e.g. an analytics or maps provider).
+//   - unpkg.com .................. Leaflet JS/CSS (Trip Builder route map)
+//   - *.tile.openstreetmap.org ... map tiles
+//   - res.cloudinary.com / images.unsplash.com / upload.wikimedia.org … photos
+//   - www.google.com / maps.google.com … embedded Google Map (Contact page)
+const csp = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline' https://unpkg.com${isDev ? " 'unsafe-eval'" : ""}`,
+  `style-src 'self' 'unsafe-inline' https://unpkg.com`,
+  `img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://upload.wikimedia.org https://*.tile.openstreetmap.org https://unpkg.com`,
+  `font-src 'self'`,
+  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `frame-src 'self' https://www.google.com https://maps.google.com`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
+  `frame-ancestors 'self'`,
+  ...(isDev ? [] : [`upgrade-insecure-requests`]),
+].join("; ");
+
 const nextConfig: NextConfig = {
   experimental: {
     cpus: 4,
@@ -33,8 +60,9 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // The standalone packages listing was merged into Destinations.
-      { source: "/packages", destination: "/destinations", permanent: false },
+      // The standalone packages listing was permanently merged into Destinations;
+      // use a 308 so search engines transfer ranking signals and drop the old URL.
+      { source: "/packages", destination: "/destinations", permanent: true },
     ];
   },
   async headers() {
@@ -43,6 +71,7 @@ const nextConfig: NextConfig = {
         // Baseline security headers across the whole site.
         source: "/:path*",
         headers: [
+          { key: "Content-Security-Policy", value: csp },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },

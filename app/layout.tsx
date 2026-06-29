@@ -5,7 +5,10 @@ import "./globals.css";
 
 const roboto = Roboto({
   subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
+  // Weights actually used across the stylesheets. (Previously 100 was loaded but
+  // never used, while 600/800 were used but not loaded — so the browser was
+  // faux-synthesising them. This list matches the real font-weight declarations.)
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-roboto",
   display: "swap",
 });
