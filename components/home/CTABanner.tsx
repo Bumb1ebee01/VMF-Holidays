@@ -9,7 +9,7 @@ const DESTINATIONS = [
 ];
 
 export default function CTABanner() {
-  const [form, setForm] = useState({ name: "", phone: "", destination: "", message: "" });
+  const [form, setForm] = useState({ name: "", phone: "", destination: "", message: "", company: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
@@ -56,6 +56,16 @@ export default function CTABanner() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className={styles.form}>
+                <input
+                  type="text"
+                  name="company"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={form.company}
+                  onChange={handleChange}
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
                     <label className={styles.label}>Your Name</label>

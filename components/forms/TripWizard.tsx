@@ -99,7 +99,7 @@ export default function TripWizard({ destinations, geography }: Props) {
   // Step 5 — contact
   const [contactMode, setContactMode] = useState("WhatsApp");
   const [contactTime, setContactTime] = useState("Anytime");
-  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "", company: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const placeKey = (c: GeoCountry, p: GeoPlace) => `${c.code}:${p.slug}`;
@@ -218,6 +218,7 @@ export default function TripWizard({ destinations, geography }: Props) {
           contactTime,
           interests: allExperiences,
           message: form.message,
+          company: form.company,
           packageTitle: "Custom Itinerary",
         }),
       });
@@ -577,6 +578,16 @@ export default function TripWizard({ destinations, geography }: Props) {
           {step === 5 && (
             <div className={styles.contactGrid}>
               <div className={styles.contactLeft}>
+                <input
+                  type="text"
+                  name="company"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  value={form.company}
+                  onChange={(e) => setForm((f) => ({ ...f, company: e.target.value }))}
+                  style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+                />
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Full Name *</label>
                   <input type="text" className={styles.formInput} placeholder="e.g. Rahul Sharma" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />

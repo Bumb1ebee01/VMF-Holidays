@@ -68,6 +68,12 @@ export async function POST(request: Request) {
     return Response.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Honeypot: a hidden "company" field that real users never see. If it's filled,
+  // the submitter is a bot — pretend success so it moves on, but drop it entirely.
+  if (typeof body.company === "string" && body.company.trim() !== "") {
+    return Response.json({ ok: true });
+  }
+
   // Validate + normalise the required fields.
   const name = clip(body.name, 100);
   const phone = clip(body.phone, 25);

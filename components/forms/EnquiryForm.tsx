@@ -17,6 +17,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
     dates: "",
     travelers: "2",
     message: "",
+    company: "", // honeypot — must stay empty
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [waLink, setWaLink] = useState("");
@@ -38,6 +39,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
       travelers: form.travelers,
       message: form.message,
       packageTitle: packageTitle,
+      company: form.company,
     };
 
     const wa = buildWhatsAppLink(payload);
@@ -75,6 +77,16 @@ export default function EnquiryForm({ packageTitle }: Props) {
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        value={form.company}
+        onChange={(e) => set("company", e.target.value)}
+        style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+      />
       <div className={styles.row}>
         <div className="form-group">
           <label className="form-label">Full Name *</label>
