@@ -8,6 +8,15 @@ WhatsApp integration, economics, anti-fraud, KPIs, and a phased plan.
 > Decisions locked with the owner: **reward = two-sided travel credit**;
 > **moat = community + compounding credit**; **build = schema now, feature next**.
 
+> **Build status:** the program is now **implemented** (lint-clean, committed) —
+> customer accounts (signup / login / dashboard), referral attribution via `?ref`,
+> the two-sided credit engine, admin Members + credit ledger, and the
+> lead-manager booking→credit flow. **To go live:** run `npm run db:push` (creates
+> the Member / Referral / CreditEntry tables; the Prisma client regenerates on
+> build), set `WHATSAPP_COMMUNITY_URL` for the community button, and confirm
+> `AUTH_SECRET` is set. Remaining (Phase 3): automated WhatsApp messages, a
+> self-serve redemption UI at checkout, and members-only group trips.
+
 ---
 
 ## 1. Goal & moat
@@ -162,14 +171,18 @@ add a `club_join` and `referral_booked` event.
 
 ## 9. Phased build
 
-- **Phase 0 — schema (DONE here):** models in `prisma/schema.prisma`.
-- **Phase 1 — MVP:** `/travellers-club` join page + `POST /api/club/join` + referral
-  capture on enquiry + admin Members/Referrals + WhatsApp community link + welcome
-  message. Manual reward approval.
-- **Phase 2 — credit & tiers:** credit ledger redemption on quotes, automated
-  tier upgrades, WhatsApp reward/upgrade templates, referral leaderboard.
-- **Phase 3 — community flywheel:** members-only group trips, scheduled community
-  posts, win-back nudges, `aggregateRating` once reviews flow in.
+- **Phase 0 — schema ✅:** `Member` / `Referral` / `CreditEntry` in `prisma/schema.prisma`.
+- **Phase 1 — accounts & referral ✅:** `/travellers-club` landing + signup (server
+  action, captures `?ref`) + login + member **dashboard** (balance, referral link +
+  share, referred friends, ledger, tier, community CTA). `lib/auth/member.ts` session.
+- **Phase 2 — credit engine & admin ✅:** transactional two-sided credit
+  (`lib/referral-credit.ts`), auto tier on booked referrals, admin **Members** list +
+  detail with manual credit and "Confirm booking & credit", and the **lead manager**
+  (manual add + mark-booked→credit).
+- **Phase 3 — flywheel (TODO):** automated WhatsApp welcome/reward templates, a
+  self-serve **redemption** UI at checkout (currently admin-applied via a negative
+  ledger entry), members-only group trips, referral leaderboard, and
+  `aggregateRating` once reviews flow in.
 
 ---
 
