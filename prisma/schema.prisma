@@ -283,11 +283,14 @@ model Member {
   id               String        @id @default(cuid())
   name             String
   phone            String        @unique
-  email            String?
+  email            String        @unique
+  passwordHash     String
   referralCode     String        @unique
   tier             MemberTier    @default(EXPLORER)
   creditBalance    Int           @default(0) // travel credit balance, INR
   whatsappJoinedAt DateTime?
+  firstBookingAt   DateTime? // set on their first booking (gates the welcome bonus)
+  lastLoginAt      DateTime?
   active           Boolean       @default(true)
   // Self-relation: which member referred this member (if any).
   referredBy       Member?       @relation("MemberReferrals", fields: [referredById], references: [id], onDelete: SetNull)

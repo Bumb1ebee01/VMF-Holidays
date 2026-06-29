@@ -1,0 +1,92 @@
+.page {
+  background: #fff;
+}
+
+.hero {
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: calc(var(--nav-h) + 56px) 0 72px;
+  color: #fff;
+}
+
+.heroInner {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 14px 0 0;
+}
+
+.sub {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 16px 0 0;
+  max-width: 30rem;
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+.benefit {
+  border-left: 3px solid var(--orange);
+  padding-left: 14px;
+}
+
+.benefitTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 2px;
+}
+
+.benefitText {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.78);
+  margin: 0;
+}
+
+.formCard {
+  background: #fff;
+  color: var(--text);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.formTitle {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 6px 0 4px;
+}
+
+.formSub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+
+.loginWrap {
+  max-width: 460px;
+}
+
+@media (max-width: 860px) {
+  .heroInner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .formCard {
+    padding: 24px;
+  }
+}

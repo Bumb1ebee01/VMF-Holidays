@@ -1,0 +1,225 @@
+.page {
+  background: var(--bg-soft, #f6f7fb);
+  min-height: 100vh;
+  padding: calc(var(--nav-h) + 32px) 0 64px;
+}
+
+.shell {
+  max-width: 860px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.hello {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin: 6px 0 8px;
+}
+
+.tierBadge {
+  display: inline-block;
+  background: var(--navy);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.logoutBtn {
+  flex-shrink: 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.statCard {
+  background: #fff;
+  border: 1px solid var(--border, #e2e6ef);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statPrimary {
+  background: linear-gradient(150deg, var(--navy) 0%, var(--navy-mid) 100%);
+  border: none;
+  color: #fff;
+}
+
+.statLabel {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.statPrimary .statLabel {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.statValue {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.1;
+}
+
+.statPrimary .statValue {
+  color: #fff;
+}
+
+.statHint {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 2px;
+}
+
+.sectionCard {
+  background: #fff;
+  border: 1px solid var(--border, #e2e6ef);
+  border-radius: 14px;
+  padding: 22px;
+  margin-top: 16px;
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--navy);
+  margin: 0 0 6px;
+}
+
+.sectionSub {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0 0 16px;
+}
+
+.codeLine {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+.community {
+  display: block;
+  background: rgba(254, 92, 16, 0.08);
+  border: 1px solid rgba(254, 92, 16, 0.3);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-top: 16px;
+  text-decoration: none;
+  color: var(--navy);
+}
+
+.community strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.community span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.empty {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.listRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border, #e2e6ef);
+}
+
+.listRow:first-child {
+  border-top: none;
+}
+
+.rowName {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.rowMeta {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.status {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.statusBooked {
+  background: rgba(22, 163, 74, 0.12);
+  color: #15803d;
+}
+
+.statusPending {
+  background: rgba(123, 130, 152, 0.14);
+  color: var(--muted);
+}
+
+.amount {
+  font-size: 0.95rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.pos {
+  color: #15803d;
+}
+
+.neg {
+  color: #c0341d;
+}
+
+.fineprint {
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 18px 2px 0;
+}
+
+@media (max-width: 640px) {
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .statPrimary {
+    grid-column: 1 / -1;
+  }
+}

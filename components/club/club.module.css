@@ -1,0 +1,51 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error {
+  color: #c0341d;
+  font-size: 14px;
+  margin: 0;
+}
+
+.refNote {
+  background: rgba(254, 92, 16, 0.08);
+  border: 1px solid rgba(254, 92, 16, 0.25);
+  color: var(--navy);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.switch {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 4px 0 0;
+}
+
+.switch a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.shareRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.shareInput {
+  flex: 1 1 240px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 560px) {
+  .shareRow :global(.btn) {
+    flex: 1 1 auto;
+  }
+}
