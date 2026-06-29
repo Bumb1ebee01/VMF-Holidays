@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackLead } from "@/lib/analytics";
 import styles from "./CTABanner.module.css";
 
 const DESTINATIONS = [
@@ -26,8 +27,10 @@ export default function CTABanner() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...form, email: "" }),
       });
-      if (res.ok) setStatus("sent");
-      else setStatus("error");
+      if (res.ok) {
+        setStatus("sent");
+        trackLead({ source: "cta_banner", destination: form.destination || undefined });
+      } else setStatus("error");
     } catch {
       setStatus("error");
     }

@@ -7,6 +7,7 @@ import type { Destination } from "@/lib/types";
 import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar } from "@/components/ui/MultiMonthCalendar";
 import RouteMap, { type RoutePoint } from "@/components/ui/RouteMap";
+import { trackLead } from "@/lib/analytics";
 import styles from "./TripWizard.module.css";
 
 // The Trip Builder data now arrives from the DB-backed loader (with a static
@@ -222,7 +223,13 @@ export default function TripWizard({ destinations, geography }: Props) {
           packageTitle: "Custom Itinerary",
         }),
       });
-      if (res.ok) { setStatus("success"); return; }
+      if (res.ok) {
+        setStatus("success");
+        // Note: keep this independent of `destinationStr` — referencing that
+        // memoised value here makes the React Compiler bail on the waText useMemo.
+        trackLead({ source: "trip_wizard" });
+        return;
+      }
     } catch { /* fall through */ }
     setStatus("error");
   }

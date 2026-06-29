@@ -1,3 +1,6 @@
+"use client";
+
+import { trackWhatsAppClick } from "@/lib/analytics";
 import styles from "./WhatsAppFloat.module.css";
 
 export default function WhatsAppFloat() {
@@ -8,6 +11,7 @@ export default function WhatsAppFloat() {
       rel="noopener noreferrer"
       className={styles.btn}
       aria-label="Chat on WhatsApp"
+      onClick={() => trackWhatsAppClick({ location: "float" })}
     >
       <div className={styles.pulse} />
       <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
