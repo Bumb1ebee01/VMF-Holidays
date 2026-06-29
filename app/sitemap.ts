@@ -18,6 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/about`, priority: 0.7 },
     { url: `${BASE}/contact`, priority: 0.7 },
     { url: `${BASE}/travellers-club`, priority: 0.6 },
+    { url: `${BASE}/compare`, priority: 0.5 },
     { url: `${BASE}/faq`, priority: 0.5 },
     { url: `${BASE}/honeymoon`, priority: 0.7 },
     { url: `${BASE}/family`, priority: 0.7 },
