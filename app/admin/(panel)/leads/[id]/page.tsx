@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
 import StatusBadge, { type LeadStatusValue } from "@/components/admin/StatusBadge";
 import LeadControls from "@/components/admin/LeadControls";
+import LeadBookingPanel from "@/components/admin/LeadBookingPanel";
 import { addLeadNote } from "../actions";
 import { formatDateTime } from "@/lib/utils";
 import shared from "@/components/admin/shared.module.css";
@@ -48,6 +49,12 @@ export default async function LeadDetailPage({
   ]);
 
   if (!lead) notFound();
+
+  // Link the lead to a Travellers Club member by email, so marking it booked can
+  // award the referral credit.
+  const clubMember = lead.email
+    ? await db.member.findUnique({ where: { email: lead.email.toLowerCase() }, select: { name: true } })
+    : null;
 
   const addNote = addLeadNote.bind(null, lead.id);
 
@@ -144,6 +151,11 @@ export default async function LeadDetailPage({
               canDelete={can(me, "leads:delete")}
             />
           </div>
+          {can(me, "leads:edit") && (
+            <div className={`${shared.panel} ${shared.panelPad}`}>
+              <LeadBookingPanel leadId={lead.id} memberName={clubMember?.name ?? null} />
+            </div>
+          )}
           <a
             href={`https://wa.me/91${lead.phone.replace(/\D/g, "").slice(-10)}`}
             target="_blank"

@@ -6,6 +6,8 @@ import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/user";
 import { logActivity } from "@/lib/activity";
 import { LEAD_STATUSES, type LeadStatusValue } from "@/components/admin/StatusBadge";
+import { awardBookingCredits } from "@/lib/referral-credit";
+import { creditsToRupees } from "@/lib/referral";
 
 export async function updateLeadStatus(leadId: string, status: string) {
   const actor = await requirePermission("leads:edit");
@@ -71,4 +73,96 @@ export async function deleteLead(leadId: string) {
   });
   revalidatePath("/admin/leads");
   redirect("/admin/leads");
+}
+
+export type NewLeadState = { error?: string };
+
+/** Manually add a lead (e.g. a walk-in or phone enquiry). */
+export async function createLead(_prev: NewLeadState, formData: FormData): Promise<NewLeadState> {
+  const actor = await requirePermission("leads:edit");
+  const name = String(formData.get("name") ?? "").trim().slice(0, 100);
+  const phone = String(formData.get("phone") ?? "").trim().slice(0, 25);
+  const email = String(formData.get("email") ?? "").trim().slice(0, 200);
+  const destination = String(formData.get("destination") ?? "").trim().slice(0, 200);
+  const message = String(formData.get("message") ?? "").trim().slice(0, 4000);
+
+  if (!name || !phone) return { error: "Name and phone are required." };
+
+  const lead = await db.lead.create({
+    data: {
+      name,
+      phone,
+      email,
+      source: "OTHER",
+      destination: destination || null,
+      message: message || null,
+    },
+  });
+  await logActivity(actor, {
+    action: "lead.create",
+    entity: "Lead",
+    entityId: lead.id,
+    detail: `Added lead ${name}`,
+  });
+  revalidatePath("/admin/leads");
+  redirect(`/admin/leads/${lead.id}`);
+}
+
+export type BookedState = { error?: string; success?: string };
+
+/**
+ * Mark a lead as booked (status WON) and, if the lead matches a Travellers Club
+ * member by email, award the two-sided referral credit. Admin-initiated, so it
+ * doubles as the "confirm they receive their credits" step.
+ */
+export async function markLeadBooked(_prev: BookedState, formData: FormData): Promise<BookedState> {
+  const actor = await requirePermission("leads:edit");
+  const leadId = String(formData.get("leadId") ?? "");
+  const raw = String(formData.get("bookingValue") ?? "").trim();
+  if (!leadId) return { error: "Missing lead." };
+
+  let bookingValue: number | null = null;
+  if (raw) {
+    const n = Math.round(Number(raw));
+    if (!Number.isFinite(n) || n < 0) return { error: "Enter a valid booking value (or leave it blank)." };
+    bookingValue = n;
+  }
+
+  const lead = await db.lead.findUnique({
+    where: { id: leadId },
+    select: { id: true, name: true, email: true },
+  });
+  if (!lead) return { error: "Lead not found." };
+
+  await db.lead.update({ where: { id: leadId }, data: { status: "WON" } });
+
+  let creditMsg = "No matching club member — booking recorded, no credit awarded.";
+  if (lead.email) {
+    const member = await db.member.findUnique({
+      where: { email: lead.email.toLowerCase() },
+      select: { id: true },
+    });
+    if (member) {
+      const result = await awardBookingCredits(member.id, bookingValue);
+      if (result.alreadyBooked) {
+        creditMsg = "Club member matched, but their first booking was already recorded.";
+      } else if (result.referrerReward) {
+        creditMsg = `Credited ${creditsToRupees(result.welcomeBonus)} welcome + ${creditsToRupees(result.referrerReward)} to their referrer.`;
+      } else {
+        creditMsg = "Club member matched (no referrer to reward).";
+      }
+      revalidatePath(`/admin/members/${member.id}`);
+      if (result.referrerId) revalidatePath(`/admin/members/${result.referrerId}`);
+    }
+  }
+
+  await logActivity(actor, {
+    action: "lead.booked",
+    entity: "Lead",
+    entityId: leadId,
+    detail: `Marked ${lead.name} booked. ${creditMsg}`,
+  });
+  revalidatePath(`/admin/leads/${leadId}`);
+  revalidatePath("/admin/leads");
+  return { success: `Marked as booked. ${creditMsg}` };
 }

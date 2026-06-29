@@ -116,6 +116,7 @@ export default async function LeadsPage({
               Board
             </Link>
           </div>
+          <Link href="/admin/leads/new" className="btn btn-primary btn--sm">New Lead</Link>
           <a href={`/admin/leads/export${buildHref({}).replace("/admin/leads", "")}`} className="btn btn-outline btn--sm">
             Export CSV
           </a>
