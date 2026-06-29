@@ -102,4 +102,120 @@ Avoid Christmas, New Year and Easter and the same villa can cost half as much.
 # 7. Let us negotiate
 We hold rates with Maldivian resorts that rarely appear online. Tell us your budget and we'll build the trip around it — not the other way round.`,
   },
+  {
+    slug: "vietnam-package-from-india",
+    title: "Vietnam Package from India: Cost, Visa & 6-Day Plan",
+    excerpt:
+      "What a Vietnam trip really costs from India — the e-visa, a 6-day Hanoi to Hoi An plan, and package prices from ₹24,500. Get a free custom quote.",
+    coverImage: "/images/destinations/vietnam.jpg",
+    author: "VMF Holidays",
+    tags: ["Vietnam", "Vietnam package from India", "Visa", "Itinerary", "International"],
+    content: `Vietnam has quietly become one of the best-value international trips from India — long beaches, limestone bays, lantern-lit old towns and food you'll think about for years, often for less than a domestic Himalayan holiday. Here's what it costs, how the visa works, and a route we book again and again.
+
+# What a Vietnam trip costs from India
+Our Vietnam packages start from around ₹24,500 per person on a land-only, twin-sharing basis, with international flights on top depending on your city and season. A typical six-day trip falls into three brackets:
+
+- Smart value: 3-star stays, group transfers and the key sightseeing
+- Comfort: 4-star central hotels, a private cab and a Ha Long Bay cruise
+- Premium: 5-star resorts, a private guide and business-class flight options
+
+# Do Indians need a visa for Vietnam?
+Yes — most Indian travellers use the Vietnam e-visa, applied for online before you fly. It's straightforward, but the portal and document rules change often. We handle the application, the photo spec and the timing as part of your package, so it's one less thing to get wrong.
+
+# A 6-day Vietnam itinerary
+- Day 1–2: Hanoi — the Old Quarter, Hoan Kiem Lake and a street-food walk
+- Day 3: Ha Long Bay — an overnight cruise among the limestone karsts
+- Day 4: Fly to Da Nang — My Khe beach and the Marble Mountains
+- Day 5: Hoi An — the lantern-lit ancient town and a tailor visit
+- Day 6: Departure, or extend with Ho Chi Minh City and the Mekong Delta
+
+# What's included in a VMF Vietnam package
+- Accommodation, daily breakfast and the listed meals
+- Airport and intercity transfers, plus a Ha Long Bay cruise
+- e-visa assistance and 24/7 on-trip support
+- A dedicated planner who tailors the route to you
+
+# Best time to visit
+Vietnam is long, so the weather varies from north to south. February to April and August to October are the safest all-country windows. Tell us your dates and we'll route around the rain.
+
+# Plan your customised Vietnam trip
+Every itinerary we sell is built around you — your dates, your pace, your budget. Start with our [trip builder](/trip-builder), [browse destinations](/destinations), or [talk to our team](/contact) for a free quote.`,
+  },
+  {
+    slug: "travel-agency-in-goa",
+    title: "Travel Agency in Goa: Why Plan With a Local Expert",
+    excerpt:
+      "A Goa-based travel agency planning honeymoons, family, group and corporate trips across India and abroad — transparent pricing and 24/7 support.",
+    coverImage: C("goa"),
+    author: "VMF Holidays",
+    tags: ["Goa", "Travel Agency", "Customised Packages", "About VMF"],
+    content: `Booking through a faceless website is easy — until a flight shifts, a hotel disappoints, or you want to change plans mid-trip. That's where a local travel agency earns its keep. VMF Holidays is based in Goa and plans trips for travellers across India and beyond.
+
+# Why use a local Goa travel agency
+- A real, dedicated human plans your trip and stays reachable before, during and after it
+- Transparent pricing with a full cost breakdown — no hidden charges and no fake deals
+- Supplier relationships that unlock rates and rooms you won't find online
+- On-ground know-how for both Goa and the destinations we send you to
+
+# What we plan
+We don't do one-size-fits-all. We design:
+
+- [Honeymoon packages](/honeymoon) — romantic escapes built for two
+- [Family tour packages](/family) — paced for kids and grandparents alike
+- [Adventure tours](/adventure) — trek, raft, paraglide and dive
+- [Corporate & MICE travel](/corporate) — offsites, incentives and conferences
+- [Pilgrimage tours](/pilgrimage) and [college group trips](/college)
+
+# How we build your trip
+Tell us where you want to go, when, and your budget — then we tailor the route, stays, transfers and experiences to match. The fastest way to start is our [trip builder](/trip-builder), where you pick destinations and dates and we take it from there.
+
+# Transparent pricing, no booking fees
+Every quote is itemised so you can see exactly what you're paying for — no surprise markups and no pressure to commit.
+
+# Our offices
+- Goa (head office): Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516
+- Mangalore (branch): Bendoorwell, Mangaluru, Karnataka
+
+# Talk to us
+Ready to plan something? [Contact our team](/contact) or message us on WhatsApp — we usually reply within a few hours.`,
+  },
+  {
+    slug: "bali-honeymoon-package-cost-from-india",
+    title: "Bali Honeymoon Package Cost from India (2026 Guide)",
+    excerpt:
+      "What a Bali honeymoon really costs from India in 2026 — villas, a romantic 6-night plan and package prices from ₹31,999. Get a free custom quote.",
+    coverImage: C("bali"),
+    author: "VMF Holidays",
+    tags: ["Bali", "Honeymoon", "Bali honeymoon package", "International"],
+    content: `Bali is the rare honeymoon that's genuinely romantic and genuinely good value. Private-pool villas, rice-terrace mornings and clifftop sunsets cost far less here than in most overwater destinations. Here's what to budget and how we'd plan it.
+
+# What a Bali honeymoon costs from India
+Our Bali honeymoon packages start from around ₹31,999 per person on a land-only, twin-sharing basis, with flights on top. Roughly:
+
+- Smart value: 3 to 4-star stays, shared transfers and the key sights
+- Comfort: a private-pool villa split between Ubud and the beach
+- Premium: luxury clifftop resorts in Uluwatu with a private guide
+
+# A romantic 6-night plan
+- Nights 1–2: Seminyak or Canggu — beach clubs and sunset dinners
+- Nights 3–4: Ubud — rice terraces, a couples' spa and waterfalls
+- Nights 5–6: Uluwatu — clifftop villas and the Kecak fire dance
+
+# Where to stay
+- Ubud for greenery, spas and that classic jungle-villa view
+- Seminyak for beaches, dining and shopping
+- Uluwatu and Nusa Dua for dramatic cliffs and calm beaches
+
+# What's included
+- Villa and hotel stays with daily breakfast
+- Private transfers and a honeymoon candlelight dinner
+- Curated experiences, plus visa-on-arrival guidance
+- 24/7 support from your dedicated planner
+
+# Best time for a Bali honeymoon
+April to October is the dry season and the safest bet. May, June and September hit the sweet spot of good weather and softer rates.
+
+# Plan your customised Bali honeymoon
+We tailor every honeymoon to the couple. See our [honeymoon packages](/honeymoon), start a [custom trip](/trip-builder), or [get a free quote](/contact).`,
+  },
 ];
