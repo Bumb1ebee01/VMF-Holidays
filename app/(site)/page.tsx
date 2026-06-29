@@ -45,8 +45,8 @@ export default async function HomePage() {
       <TripCategories />
       <TripBuilderCTA />
       <FeaturedPackages />
-      <WhyChooseVMF />
       <Testimonials />
+      <WhyChooseVMF />
       <HowItWorks />
       <CTABanner />
     </main>

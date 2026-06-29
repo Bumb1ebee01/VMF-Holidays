@@ -22,153 +22,53 @@
 
 :global([data-theme="dark"]) .title { color: var(--text); }
 
-/* ── Fan stage ────────────────────────────────────────── */
-.stage {
-  position: relative;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.fanLayout {
-  position: relative;
-  width: 100%;
-  max-width: 80rem;
-  min-height: 34rem;
-  /* Card dimensions referenced by .fanCard centring math */
-  --card-w: 18rem;
-  --card-h: 24rem;
-}
-
-.fanCard {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--card-w);
-  height: var(--card-h);
-  margin-left: calc(var(--card-w) / -2);
-  margin-top: calc(var(--card-h) / -2);
-  border-radius: 20px;
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 18px 50px rgba(0, 36, 100, 0.22);
-  will-change: transform;
-  opacity: 0;
-}
-
-/* Static fallback if the GSAP CDN can't load — never leave the section empty */
-.fallback {
-  display: flex;
-  flex-wrap: wrap;
+/* ── Tiles: a grid on desktop, a swipe row on mobile ──── */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
   gap: 18px;
-  justify-content: center;
-  min-height: 0;
 }
 
-.fallback .fanCard {
-  position: static;
-  left: auto;
-  top: auto;
-  margin: 0;
-  opacity: 1;
-}
-
-.cardInner {
+.tile {
   position: relative;
+  display: block;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.cardImage {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 0;
-}
-
-.cardOverlay {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(to top, rgba(0, 10, 44, 0.92) 0%, rgba(0, 10, 44, 0.25) 55%, rgba(0, 10, 44, 0) 100%);
-}
-
-.caption {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 18px 16px;
-  text-align: left;
-}
-
-.cardTitle {
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #fff;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-
-.cardMeta {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--orange-lt);
-}
-
-.cardNote {
-  font-size: 11.5px;
-  color: rgba(255, 255, 255, 0.72);
-  line-height: 1.45;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ── Mobile swipe row (replaces the fan on phones) ────── */
-.mobileRow {
-  display: none;
-}
-
-.mobileCard {
-  position: relative;
-  flex: 0 0 68%;
-  max-width: 280px;
   aspect-ratio: 3 / 4;
-  scroll-snap-align: center;
   border: none;
   padding: 0;
   border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 14px 36px rgba(0, 36, 100, 0.20);
   background: var(--navy);
+  box-shadow: 0 14px 36px rgba(0, 36, 100, 0.18);
+  transition: box-shadow 0.4s ease;
 }
 
-.mobileCardImg {
+.tile:hover {
+  box-shadow: 0 28px 64px rgba(0, 36, 100, 0.28);
+}
+
+.tileImg {
   object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mobileCardOverlay {
+.tile:hover .tileImg {
+  transform: scale(1.07);
+}
+
+.tileOverlay {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(0, 10, 44, 0.92) 0%, rgba(0, 10, 44, 0.25) 55%, rgba(0, 10, 44, 0) 100%);
 }
 
-.mobileCardCaption {
+.tileCaption {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -176,7 +76,7 @@
   text-align: left;
 }
 
-.mobileCardTitle {
+.tileTitle {
   font-size: 1.1rem;
   font-weight: 800;
   color: #fff;
@@ -184,13 +84,13 @@
   letter-spacing: -0.01em;
 }
 
-.mobileCardMeta {
+.tileMeta {
   font-size: 12px;
   font-weight: 600;
   color: var(--orange-lt);
 }
 
-.mobileCardTap {
+.tileTap {
   margin-top: 6px;
   font-size: 10.5px;
   font-weight: 700;
@@ -199,10 +99,12 @@
   color: rgba(255, 255, 255, 0.78);
 }
 
+@media (max-width: 1100px) {
+  .tiles { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 768px) {
-  .stage { display: none; }
-  .controls { display: none; }
-  .mobileRow {
+  .tiles {
     display: flex;
     gap: 16px;
     overflow-x: auto;
@@ -212,84 +114,14 @@
     margin: 0 -4px;
     scrollbar-width: thin;
   }
+  .tile {
+    flex: 0 0 68%;
+    max-width: 280px;
+    scroll-snap-align: center;
+  }
 }
 
-/* ── Controls ─────────────────────────────────────────── */
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-top: 28px;
-  position: relative;
-  z-index: 5;
-}
-
-.arrow {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(0, 36, 100, 0.12);
-  background: rgba(0, 36, 100, 0.04);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  color: var(--navy);
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
-}
-
-.arrow:hover {
-  border-color: rgba(0, 36, 100, 0.3);
-  background: var(--navy);
-  color: #fff;
-}
-
-.arrow:active { opacity: 0.7; }
-
-.chevron {
-  width: 18px;
-  height: 18px;
-}
-
-.dots {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(0, 36, 100, 0.15);
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.dotActive {
-  background: var(--orange);
-  transform: scale(1.35);
-}
-
-:global([data-theme="dark"]) .arrow {
-  border-color: rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.8);
-}
-
-:global([data-theme="dark"]) .arrow:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
-}
-
-:global([data-theme="dark"]) .dot { background: rgba(255, 255, 255, 0.15); }
-
-/* ── Hover splash (big detail preview) ────────────────── */
+/* ── Detail splash (opens on tap/click) ───────────────── */
 .splashBackdrop {
   position: fixed;
   inset: 0;
@@ -473,20 +305,4 @@
 @media (prefers-reduced-motion: reduce) {
   .splashBackdrop, .splash { animation: none; }
   .splashCta:hover { transform: none; }
-}
-
-@media (max-width: 1024px) {
-  .fanLayout { --card-w: 16rem; --card-h: 21rem; min-height: 30rem; }
-}
-
-@media (max-width: 768px) {
-  .fanLayout { --card-w: 13rem; --card-h: 18rem; min-height: 26rem; }
-}
-
-@media (max-width: 640px) {
-  .fanLayout { --card-w: 11rem; --card-h: 15rem; min-height: 22rem; }
-}
-
-@media (max-width: 480px) {
-  .fanLayout { --card-w: 9.5rem; --card-h: 13rem; min-height: 18rem; }
 }
