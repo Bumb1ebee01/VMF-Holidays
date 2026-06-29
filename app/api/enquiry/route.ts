@@ -1,33 +1,17 @@
 import { Resend } from "resend";
 import { db } from "@/lib/db";
 import { sendEnquiryWhatsApp } from "@/lib/whatsapp";
+import { isRateLimited } from "@/lib/ratelimit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
 const FROM = process.env.ENQUIRY_FROM ?? "VMF Holidays <enquiries@vmfholidays.com>";
 
-// ── Abuse protection ─────────────────────────────────────────────────────────
 // This is a public, unauthenticated endpoint that writes a DB row and sends
-// emails/WhatsApp messages, so it's a spam/cost-abuse target. A lightweight
-// per-IP fixed-window limiter throttles bursts from a single source. (Best-effort:
-// state is per serverless instance — for hard guarantees add a shared store or a
-// CAPTCHA such as Cloudflare Turnstile, see the rate-limit note in the README.)
-const RATE_LIMIT = 5; // max submissions …
-const RATE_WINDOW_MS = 60_000; // … per IP per minute
-const hits = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  // Bound memory: drop the table wholesale if it grows unexpectedly large.
-  if (hits.size > 10_000) hits.clear();
-  const entry = hits.get(ip);
-  if (!entry || now > entry.resetAt) {
-    hits.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return false;
-  }
-  entry.count += 1;
-  return entry.count > RATE_LIMIT;
-}
+// emails/WhatsApp, so it's a spam/cost-abuse target. Defences applied below: a
+// per-IP rate limiter (shared Upstash store when configured, else in-memory), a
+// honeypot, and optional Cloudflare Turnstile.
 
 function clientIp(request: Request): string {
   const fwd = request.headers.get("x-forwarded-for");
@@ -54,7 +38,8 @@ function clip(value: unknown, max: number): string {
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: Request) {
-  if (isRateLimited(clientIp(request))) {
+  const ip = clientIp(request);
+  if (await isRateLimited(ip)) {
     return Response.json(
       { error: "Too many requests — please try again in a minute or message us on WhatsApp.", whatsappFallback: true },
       { status: 429 }
@@ -72,6 +57,18 @@ export async function POST(request: Request) {
   // the submitter is a bot — pretend success so it moves on, but drop it entirely.
   if (typeof body.company === "string" && body.company.trim() !== "") {
     return Response.json({ ok: true });
+  }
+
+  // CAPTCHA (Cloudflare Turnstile) — only enforced when TURNSTILE_SECRET_KEY is set.
+  const captchaOk = await verifyTurnstile(
+    typeof body.turnstileToken === "string" ? body.turnstileToken : "",
+    ip
+  );
+  if (!captchaOk) {
+    return Response.json(
+      { error: "Verification failed — please retry.", whatsappFallback: true },
+      { status: 400 }
+    );
   }
 
   // Validate + normalise the required fields.

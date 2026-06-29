@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { trackLead, trackWhatsAppClick } from "@/lib/analytics";
+import Turnstile from "@/components/ui/Turnstile";
 import styles from "./EnquiryForm.module.css";
 
 interface Props {
@@ -22,6 +23,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
   });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [waLink, setWaLink] = useState("");
+  const [captcha, setCaptcha] = useState("");
 
   function set(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -41,6 +43,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
       message: form.message,
       packageTitle: packageTitle,
       company: form.company,
+      turnstileToken: captcha,
     };
 
     const wa = buildWhatsAppLink(payload);
@@ -179,6 +182,8 @@ export default function EnquiryForm({ packageTitle }: Props) {
           Couldn&apos;t send — please try WhatsApp below or email us at info@vmfholidays.com
         </div>
       )}
+
+      <Turnstile onVerify={setCaptcha} />
 
       <button
         type="submit"

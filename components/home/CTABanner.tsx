@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { trackLead } from "@/lib/analytics";
+import Turnstile from "@/components/ui/Turnstile";
 import styles from "./CTABanner.module.css";
 
 const DESTINATIONS = [
@@ -12,6 +13,7 @@ const DESTINATIONS = [
 export default function CTABanner() {
   const [form, setForm] = useState({ name: "", phone: "", destination: "", message: "", company: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
+  const [captcha, setCaptcha] = useState("");
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -25,7 +27,7 @@ export default function CTABanner() {
       const res = await fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, email: "" }),
+        body: JSON.stringify({ ...form, email: "", turnstileToken: captcha }),
       });
       if (res.ok) {
         setStatus("sent");
@@ -128,6 +130,7 @@ export default function CTABanner() {
                   <p className={styles.errorMsg}>Something went wrong. Please try WhatsApp instead.</p>
                 )}
 
+                <Turnstile onVerify={setCaptcha} />
                 <button type="submit" className={styles.submitBtn} disabled={status === "loading"}>
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" />

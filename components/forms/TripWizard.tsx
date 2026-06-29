@@ -8,6 +8,7 @@ import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar } from "@/components/ui/MultiMonthCalendar";
 import RouteMap, { type RoutePoint } from "@/components/ui/RouteMap";
 import { trackLead } from "@/lib/analytics";
+import Turnstile from "@/components/ui/Turnstile";
 import styles from "./TripWizard.module.css";
 
 // The Trip Builder data now arrives from the DB-backed loader (with a static
@@ -101,6 +102,7 @@ export default function TripWizard({ destinations, geography }: Props) {
   const [contactMode, setContactMode] = useState("WhatsApp");
   const [contactTime, setContactTime] = useState("Anytime");
   const [form, setForm] = useState({ name: "", phone: "", email: "", message: "", company: "" });
+  const [captcha, setCaptcha] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const placeKey = (c: GeoCountry, p: GeoPlace) => `${c.code}:${p.slug}`;
@@ -220,6 +222,7 @@ export default function TripWizard({ destinations, geography }: Props) {
           interests: allExperiences,
           message: form.message,
           company: form.company,
+          turnstileToken: captcha,
           packageTitle: "Custom Itinerary",
         }),
       });
@@ -633,6 +636,7 @@ export default function TripWizard({ destinations, geography }: Props) {
                   <label className={styles.formLabel}>Anything else? <span className={styles.optionalTag}>(optional)</span></label>
                   <textarea className={`${styles.formInput} ${styles.formTextarea}`} placeholder="Special requests, dietary needs, room preferences…" rows={3} value={form.message} onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))} />
                 </div>
+                <Turnstile onVerify={setCaptcha} />
                 {status === "error" && (
                   <p className={styles.errorMsg}>Something went wrong. <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer">Try WhatsApp instead →</a></p>
                 )}
