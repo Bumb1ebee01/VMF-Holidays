@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 const STATS = [
   { value: "200+", label: "Trips Planned" },
-  { value: "8+", label: "Years Experience" },
+  { value: "24/7", label: "Support" },
   { value: "20+", label: "Destinations" },
   { value: "98%", label: "Happy Clients" },
 ];

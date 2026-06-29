@@ -42,7 +42,7 @@ export default function TermsPage() {
         <p>These terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of the courts of Goa, India.</p>
 
         <h2>9. Contact</h2>
-        <p>VMF Holidays Pvt. Ltd., Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516, India<br />Email: info@vmfholidays.com · Phone: +91 7499322412</p>
+        <p>VMF Holidays Pvt. Ltd., Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India<br />Email: info@vmfholidays.com · Phone: +91 7499322412</p>
       </div>
     </div>
   );

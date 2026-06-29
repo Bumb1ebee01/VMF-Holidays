@@ -165,7 +165,7 @@ export async function POST(request: Request) {
       ${row("Message", f.message)}
     </table>
     <hr style="border:none;border-top:1px solid #E2E6EF;margin:24px 0"/>
-    <p style="font-size:12px;color:#7B8298">VMF Holidays Pvt. Ltd. — Mendes Vaddo, Calangute, Nagva, Goa 403516</p>
+    <p style="font-size:12px;color:#7B8298">VMF Holidays Pvt. Ltd. — Mendes Vaddo, Nagoa, Bardez, Goa 403516</p>
   `;
 
   if (!resend) {
@@ -209,7 +209,7 @@ export async function POST(request: Request) {
           <a href="https://wa.me/917499322412" style="display:inline-block;background:#FE5C10;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:10px">Chat on WhatsApp</a>
         </div>
         <p style="font-size:11px;color:#7B8298;text-align:center;margin:18px 0 0">
-          VMF Holidays Pvt. Ltd. — Calangute, Goa 403516, India
+          VMF Holidays Pvt. Ltd. — Nagoa, Bardez, Goa 403516, India
         </p>
       </div>
     `;

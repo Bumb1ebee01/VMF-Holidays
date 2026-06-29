@@ -76,7 +76,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </div>
               <div>
                 <p className={styles.detailLabel}>Goa — Head Office</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Calangute,+Nagva,+Goa+403516" target="_blank" rel="noopener noreferrer" className={styles.detailValue}>Mendes Vaddo, H. No 128/3/A,<br />Calangute, Nagva, Goa 403516</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Nagoa,+Bardez,+Goa+403516" target="_blank" rel="noopener noreferrer" className={styles.detailValue}>Mendes Vaddo, H. No 128/3/A,<br />Nagoa, Bardez, Goa 403516</a>
                 <p className={styles.detailLabel} style={{ marginTop: 12 }}>Mangalore — Branch Office</p>
                 <a href="https://www.google.com/maps/search/?api=1&query=Lotus+Paradise+Plaza,+Bendoorwell,+Mangaluru,+Karnataka+575001" target="_blank" rel="noopener noreferrer" className={styles.detailValue}>First Floor, Lotus Paradise Plaza,<br />Shop No. 116, Door No. 15, 23-1429/43,<br />near St. Theresa&apos;s School &amp; Cognizant,<br />Bendoorwell, Mangaluru, Karnataka 575001</a>
               </div>
@@ -98,7 +98,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
           {/* Map */}
           <div className={styles.mapWrap}>
             <iframe
-              src="https://maps.google.com/maps?q=HQ4H%2BWH+Calangute,+Goa,+India&z=16&output=embed"
+              src="https://maps.google.com/maps?q=HQ4H%2BWH+Nagoa,+Bardez,+Goa,+India&z=16&output=embed"
               width="100%"
               height="240"
               style={{ border: 0 }}

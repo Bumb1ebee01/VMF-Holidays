@@ -39,7 +39,7 @@ export default function PrivacyPage() {
         <p>We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated date.</p>
 
         <h2>8. Contact Us</h2>
-        <p>VMF Holidays Pvt. Ltd., Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516, India<br />Email: info@vmfholidays.com · Phone: +91 7499322412</p>
+        <p>VMF Holidays Pvt. Ltd., Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India<br />Email: info@vmfholidays.com · Phone: +91 7499322412</p>
       </div>
     </div>
   );

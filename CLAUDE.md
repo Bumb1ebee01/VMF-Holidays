@@ -16,8 +16,13 @@ See `PLAN.md` for the full phased build plan.
 | Phone 1 | +91 7499322412 |
 | Phone 2 | +91 8788324054 |
 | Email | info@vmfholidays.com |
-| Address | Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516, India |
+| Address | Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India |
+| Founded | 3 July 2025 |
 | WhatsApp | https://wa.me/917499322412 |
+
+> NAP note: use the address above **verbatim** everywhere (site, schema, emails,
+> Google Business Profile). Do not reintroduce "Calangute" / "Nagva". The company
+> was founded 3 July 2025 — never claim tenure beyond that ("Since 2016" etc.).
 
 ## What's Already Built (Phase 1 ✅)
 

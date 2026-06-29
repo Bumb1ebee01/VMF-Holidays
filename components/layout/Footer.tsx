@@ -72,8 +72,8 @@ export default function Footer() {
             <ul className={styles.contact}>
               <li>
                 <span className={styles.contactIcon}>📍</span>
-                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Calangute,+Nagva,+Goa+403516" target="_blank" rel="noopener noreferrer">
-                  <strong>Goa (Head Office):</strong> Mendes Vaddo, H. No 128/3/A, Calangute, Nagva, Goa 403516
+                <a href="https://www.google.com/maps/search/?api=1&query=Mendes+Vaddo,+Nagoa,+Bardez,+Goa+403516" target="_blank" rel="noopener noreferrer">
+                  <strong>Goa (Head Office):</strong> Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516
                 </a>
               </li>
               <li>
