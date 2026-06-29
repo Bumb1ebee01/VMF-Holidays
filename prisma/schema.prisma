@@ -90,6 +90,7 @@ model Lead {
   packageTitle String?
   hotelCategory String?
   mealPlan      String?
+  referralCode String?    // Travellers Club code the enquiry was attributed to
   assignedTo   User?      @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
   assignedToId String?
   notes        LeadNote[]
@@ -245,4 +246,87 @@ model GeoPlace {
 
   @@unique([countryId, slug])
   @@index([countryId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VMF Holidays Travellers Club — referral program (see docs/REFERRAL-PROGRAM.md).
+// Two-sided travel-credit referrals + a WhatsApp community. These models define
+// the schema; the public/admin/API code is built in a follow-up phase. Apply with
+// `npm run db:push`. Nothing queries these tables yet, so they're inert until then.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum MemberTier {
+  EXPLORER
+  VOYAGER
+  GLOBETROTTER
+  AMBASSADOR
+}
+
+enum ReferralStatus {
+  PENDING // friend referred, not yet enquired
+  ENQUIRED // friend submitted an enquiry
+  BOOKED // friend completed a paid booking (reward due)
+  REWARDED // referrer credited
+  EXPIRED // lapsed without booking
+  REJECTED // disqualified (self-referral / fraud)
+}
+
+enum CreditReason {
+  REFERRAL_REWARD // earned for referring a booked friend
+  WELCOME_BONUS // friend's first-trip welcome credit
+  REDEMPTION // spent against a booking
+  ADJUSTMENT // manual admin correction
+  EXPIRY // credit expired
+}
+
+model Member {
+  id               String        @id @default(cuid())
+  name             String
+  phone            String        @unique
+  email            String?
+  referralCode     String        @unique
+  tier             MemberTier    @default(EXPLORER)
+  creditBalance    Int           @default(0) // travel credit balance, INR
+  whatsappJoinedAt DateTime?
+  active           Boolean       @default(true)
+  // Self-relation: which member referred this member (if any).
+  referredBy       Member?       @relation("MemberReferrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referredById     String?
+  referredMembers  Member[]      @relation("MemberReferrals")
+  // Referral events where this member is the referrer.
+  referrals        Referral[]
+  credits          CreditEntry[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([referredById])
+}
+
+model Referral {
+  id           String         @id @default(cuid())
+  referrer     Member         @relation(fields: [referrerId], references: [id], onDelete: Cascade)
+  referrerId   String
+  refereeName  String?
+  refereePhone String?
+  status       ReferralStatus @default(PENDING)
+  bookingValue Int? // INR, set when the friend books
+  rewardAmount Int? // INR credited to the referrer on reward
+  leadId       String? // attribution to a Lead (loose link, no FK)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  @@index([referrerId])
+  @@index([status])
+}
+
+model CreditEntry {
+  id        String       @id @default(cuid())
+  member    Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId  String
+  amount    Int // +earned / -redeemed, INR
+  reason    CreditReason
+  note      String?
+  createdAt DateTime     @default(now())
+
+  @@index([memberId])
 }
