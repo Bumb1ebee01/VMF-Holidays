@@ -3,9 +3,17 @@ import EnquiryForm from "@/components/forms/EnquiryForm";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch with VMF Holidays. Plan your next trip or ask us anything — we respond fast.",
+  title: "Contact Us — Goa Travel Agency",
+  description:
+    "Contact VMF Holidays — Goa head office & Mangalore branch. Call, WhatsApp or send an enquiry for a free, customised holiday quote. We reply within 24 hours.",
   alternates: { canonical: "/contact" },
+  openGraph: {
+    type: "website",
+    url: "/contact",
+    title: "Contact VMF Holidays — Goa Travel Agency",
+    description:
+      "Call, WhatsApp or enquire for a free, customised holiday quote. Offices in Goa & Mangalore.",
+  },
 };
 
 export default async function ContactPage(props: PageProps<"/contact">) {

@@ -3,8 +3,8 @@ import { categoryMetadata } from "@/lib/seo";
 
 export const metadata = categoryMetadata({
   slug: "college",
-  title: "College Tours",
-  description: "Budget-friendly group tours for students — educational, adventurous and unforgettable.",
+  title: "College Trip Packages",
+  description: "Budget-friendly college trip & student group tour packages — educational, adventurous and unforgettable, planned end-to-end by VMF Holidays.",
 });
 
 export default function CollegePage() {

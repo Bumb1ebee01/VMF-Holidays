@@ -3,8 +3,8 @@ import { categoryMetadata } from "@/lib/seo";
 
 export const metadata = categoryMetadata({
   slug: "adventure",
-  title: "Adventure Packages",
-  description: "Trek, raft, paraglide and dive — curated adventure holidays for thrill-seekers.",
+  title: "Adventure Tour Packages",
+  description: "Trek, raft, paraglide and dive — curated adventure tour packages and holidays for thrill-seekers, across India and beyond.",
 });
 
 export default function AdventurePage() {

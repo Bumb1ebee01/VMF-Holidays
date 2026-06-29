@@ -7,9 +7,17 @@ import type { Destination, Package } from "@/lib/types";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
-  title: "Destinations",
-  description: "Explore our handpicked domestic and international destinations — and the holiday packages for each — from Kerala backwaters to Bali temples.",
+  title: "Holiday Destinations & Tour Packages",
+  description:
+    "Explore handpicked domestic & international destinations and the holiday packages for each — Kerala backwaters to Bali beaches, Goa to Dubai. Customised tours, transparent pricing.",
   alternates: { canonical: "/destinations" },
+  openGraph: {
+    type: "website",
+    url: "/destinations",
+    title: "Holiday Destinations & Tour Packages | VMF Holidays",
+    description:
+      "Handpicked domestic & international destinations with customised holiday packages and transparent pricing.",
+  },
 };
 
 function placeImages(p: GeoPlace, c: GeoCountry, destinations: Destination[], packages: Package[]): string[] {
