@@ -10,7 +10,7 @@ VMF converts leads offline. Items are grouped by theme; status reflects this bui
 - ⛔ ~~Online deposit/payment gateway (Razorpay)~~ — out of scope; leads convert offline.
 - ⬜ **Group-departures calendar** (L) — fixed-date trips with seat counts; recurring
   revenue + feeds the Travellers Club group trips.
-- ⬜ **Package comparison** (M) — compare 2–3 packages side by side.
+- ✅ **Package comparison** (M) — `/compare` page, up to 3 packages side by side.
 - ⬜ **Download itinerary as PDF** (M) — gated by email = lead capture.
 - ⬜ **Newsletter / email capture** (S) — store as a lead source; drip via Resend.
 - ⬜ **Sticky quote CTA / exit-intent** (S) — note: a WhatsApp float already exists.
@@ -42,7 +42,8 @@ VMF converts leads offline. Items are grouped by theme; status reflects this bui
 - ⬜ **Trim framer-motion/Lenis on low-end mobile + lazy-load below-fold** (M).
 
 ## Backend / security / ops
-- ⬜ **Cloudflare Turnstile** (S, keys) + **distributed rate-limit (Upstash)** (M, keys).
+- ✅ **Cloudflare Turnstile** + **distributed rate-limit (Upstash)** — built env-gated
+  (add the keys in `.env.example` to activate; inert until then).
 - ⬜ **Staff lead alerts to WhatsApp/Slack** (S) — currently email only.
 - ⬜ **Admin analytics dashboard** (M) — lead source → conversion.
 - ⬜ **Error monitoring (Sentry)** (S, keys) + **automated email drip** (M).
