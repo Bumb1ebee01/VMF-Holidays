@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import { JsonLd, organizationJsonLd, websiteJsonLd, SITE_URL } from "@/lib/seo";
+import Analytics from "@/components/analytics/Analytics";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -34,6 +35,9 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
   category: "travel",
+  // Emits <meta name="google-site-verification"> only when the token is set, so
+  // you can verify the domain in Google Search Console without a code change.
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
   openGraph: {
     type: "website",
     locale: "en_IN",
@@ -82,6 +86,7 @@ export default function RootLayout({
       <body>
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
         {children}
+        <Analytics />
       </body>
     </html>
   );

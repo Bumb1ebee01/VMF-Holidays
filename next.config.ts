@@ -12,13 +12,15 @@ const isDev = process.env.NODE_ENV === "development";
 //   - *.tile.openstreetmap.org ... map tiles
 //   - res.cloudinary.com / images.unsplash.com / upload.wikimedia.org … photos
 //   - www.google.com / maps.google.com … embedded Google Map (Contact page)
+//   - googletagmanager.com / *.google-analytics.com … GA4 (loads only if
+//     NEXT_PUBLIC_GA_ID is set — see components/analytics/Analytics.tsx)
 const csp = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' https://unpkg.com${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' https://unpkg.com https://www.googletagmanager.com${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline' https://unpkg.com`,
-  `img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://upload.wikimedia.org https://*.tile.openstreetmap.org https://unpkg.com`,
+  `img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://upload.wikimedia.org https://*.tile.openstreetmap.org https://unpkg.com https://www.googletagmanager.com https://*.google-analytics.com`,
   `font-src 'self'`,
-  `connect-src 'self'${isDev ? " ws: wss:" : ""}`,
+  `connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com${isDev ? " ws: wss:" : ""}`,
   `frame-src 'self' https://www.google.com https://maps.google.com`,
   `object-src 'none'`,
   `base-uri 'self'`,
