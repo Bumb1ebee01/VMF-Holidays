@@ -54,6 +54,12 @@
   text-transform: uppercase;
   padding: 5px 12px;
   border-radius: 100px;
+  /* Stay clear of the duration pill on the right so a long badge can't wrap
+     under it / collide on narrow cards. */
+  max-width: calc(100% - 108px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .durationPill {

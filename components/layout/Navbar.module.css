@@ -181,6 +181,17 @@
   animation: planMenuIn 0.18s var(--ease) both;
 }
 
+/* Invisible bridge over the 10px gap between the button and the menu so moving
+   the cursor across it doesn't fire mouseleave and close the menu mid-hover. */
+.planMenu::before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
 @keyframes planMenuIn {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }

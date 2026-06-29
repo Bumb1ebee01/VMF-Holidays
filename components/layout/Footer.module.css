@@ -130,12 +130,17 @@
   gap: var(--sp-3);
   font-size: var(--text-sm);
   font-weight: var(--fw-light);
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
   line-height: var(--leading-relaxed);
 }
 
+.contact strong {
+  color: var(--white);
+  font-weight: var(--fw-medium);
+}
+
 .contact a {
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.85);
   transition: color var(--dur-fast) var(--ease);
 }
 
@@ -186,5 +191,8 @@
     flex-direction: column;
     gap: var(--sp-3);
     text-align: center;
+    /* Clear the floating WhatsApp / Instagram buttons so they never cover the
+       legal links at the very bottom of the page. */
+    padding-bottom: 84px;
   }
 }
