@@ -163,6 +163,8 @@ export default function Navbar() {
             className={styles.hamburger}
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
           >
             <span />
             <span />
@@ -172,7 +174,7 @@ export default function Navbar() {
       </div>
 
       {mobileOpen && (
-        <div className={styles.mobileMenu}>
+        <div className={styles.mobileMenu} id="mobile-menu">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}

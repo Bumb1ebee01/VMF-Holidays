@@ -234,6 +234,37 @@ export function faqJsonLd(faqs: { q: string; a: string }[]) {
   };
 }
 
+/** AggregateRating + Review fragment for the TravelAgency entity, built from real
+ *  published testimonials. Merged into the organisation node by @id. (Whether
+ *  Google shows stars for a first-party business rating is up to Google; this still
+ *  helps it understand the entity and is honest markup of genuine reviews.) */
+export function reviewsJsonLd(
+  testimonials: { name: string; location?: string; trip?: string; rating: number; quote: string }[]
+) {
+  const rated = testimonials.filter((t) => t.rating > 0);
+  if (rated.length === 0) return null;
+  const avg = rated.reduce((sum, t) => sum + t.rating, 0) / rated.length;
+  return {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "@id": `${SITE_URL}/#organization`,
+    name: SITE_NAME,
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: avg.toFixed(1),
+      reviewCount: rated.length,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: rated.slice(0, 10).map((t) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: t.name },
+      reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5, worstRating: 1 },
+      reviewBody: t.quote,
+    })),
+  };
+}
+
 /** BlogPosting schema for a blog article (rich result eligible). */
 export function postJsonLd(post: BlogPost) {
   return {
