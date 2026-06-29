@@ -16,17 +16,23 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: {
-    default: "VMF Holidays — Discover Your World, Your Way",
+    // Search title leads with the terms people actually search ("travel agency",
+    // "customised holiday packages"); the brand tagline lives in the OG/Twitter
+    // titles below for social shares.
+    default: "Goa Travel Agency & Customised Holiday Packages | VMF Holidays",
     template: "%s | VMF Holidays",
   },
   description:
-    "VMF Holidays offers curated domestic and international holiday packages with transparent pricing, full itineraries, and personalised service. Based in Goa, India.",
+    "VMF Holidays is a Goa travel agency crafting customised, tailor-made holiday packages — honeymoon, family, group & corporate tours across India and worldwide. Transparent pricing, full itineraries, 24/7 support.",
   keywords: [
-    "holiday packages india",
     "goa travel agency",
-    "international tour packages",
+    "travel agency in calangute",
+    "customised holiday packages",
+    "tailor-made tour packages india",
+    "personalised itineraries",
     "honeymoon packages",
-    "kerala tour",
+    "family tour packages",
+    "international tour packages from india",
     "vmf holidays",
   ],
   authors: [{ name: "VMF Holidays Pvt. Ltd." }],

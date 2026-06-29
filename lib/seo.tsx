@@ -74,7 +74,48 @@ export function organizationJsonLd() {
       areaServed: "IN",
       availableLanguage: ["en", "hi"],
     },
+    areaServed: { "@type": "Country", name: "India" },
+    knowsAbout: [
+      "Customised holiday packages",
+      "Tailor-made tours",
+      "Honeymoon packages",
+      "Family holidays",
+      "Corporate & MICE travel",
+      "Pilgrimage tours",
+      "College & group tours",
+      "International tour packages",
+    ],
+    // Advertise the services the agency offers, so search engines understand what
+    // VMF does beyond just "a business" — helps for "customised packages" / "travel
+    // agency" style queries.
+    makesOffer: [
+      "Customised Holiday Packages",
+      "Honeymoon Packages",
+      "Family Holiday Packages",
+      "Adventure Tours",
+      "Corporate & MICE Travel",
+      "Pilgrimage Tours",
+      "College & Group Tours",
+    ].map((name) => ({
+      "@type": "Offer",
+      itemOffered: { "@type": "Service", name, provider: { "@id": `${SITE_URL}/#organization` } },
+    })),
     sameAs: [BUSINESS.instagram, BUSINESS.facebook],
+  };
+}
+
+/** Service schema for a specific offering (e.g. the Trip Builder's customised
+ *  packages) — ties the service to the TravelAgency entity. */
+export function serviceJsonLd(opts: { name: string; description: string; path: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: opts.name,
+    serviceType: opts.name,
+    description: opts.description,
+    provider: { "@id": `${SITE_URL}/#organization` },
+    areaServed: { "@type": "Country", name: "India" },
+    url: absoluteUrl(opts.path),
   };
 }
 
