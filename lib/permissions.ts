@@ -15,6 +15,8 @@ export type PermissionKey =
   | "posts:manage"
   | "offers:manage"
   | "gallery:manage"
+  | "members:view"
+  | "members:manage"
   | "activity:view-all";
 
 export interface PermissionDef {
@@ -35,6 +37,8 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "posts:manage", label: "Manage blog", group: "Content", hint: "Write, edit and delete blog posts" },
   { key: "offers:manage", label: "Manage offers", group: "Content", hint: "Post and remove offer flyers" },
   { key: "gallery:manage", label: "Manage gallery", group: "Content", hint: "Add and remove gallery photos" },
+  { key: "members:view", label: "View club members", group: "Travellers Club", hint: "See members, credit balances and referrals" },
+  { key: "members:manage", label: "Manage club credit", group: "Travellers Club", hint: "Adjust credit and confirm referral rewards on booking" },
   { key: "activity:view-all", label: "View everyone's activity", group: "Oversight", hint: "See the full team activity log, not just their own" },
 ];
 
