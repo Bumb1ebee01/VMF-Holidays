@@ -17,8 +17,8 @@ VMF converts leads offline. Items are grouped by theme; status reflects this bui
 
 ## SEO / traffic
 - ✅ **Reviews + `aggregateRating` schema** (S) — mark up real testimonials (this build).
-- ⬜ **Programmatic SEO pages** (M) — destination × category landing pages
-  ("Bali Honeymoon Packages", "Kerala Family Tours") from package data.
+- ✅ **Programmatic SEO pages** (M) — `/holidays/[destination]-[category]` landing
+  pages + a `/holidays` hub, auto-generated from package data.
 - ⬜ **Destination guide pages** (M) — things-to-do/best-time content per destination.
 - ⬜ **`TouristTrip` schema** on packages (S) — richer than the current Product schema.
 - ✅ **General FAQ page + `FAQPage` schema** (S) — this build.
