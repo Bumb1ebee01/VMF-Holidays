@@ -85,6 +85,59 @@ export async function getPackagesByCategory(category: string): Promise<Package[]
   return rows.map(toPackage);
 }
 
+// ── Programmatic SEO: destination × category landing pages ────────────────────
+// One landing per (destination, category) combo that actually has packages, e.g.
+// "bali-honeymoon" → /holidays/bali-honeymoon. Targets high-intent searches like
+// "Bali honeymoon packages".
+export type HolidayLanding = {
+  slug: string;
+  destinationSlug: string;
+  destinationName: string;
+  category: TripCategorySlug;
+  fromPrice: number;
+  count: number;
+};
+
+export const getHolidayLandings = cache(async (): Promise<HolidayLanding[]> => {
+  const rows = await db.package.findMany({
+    select: { destinationSlug: true, destination: true, category: true, fromPrice: true },
+  });
+  const map = new Map<string, HolidayLanding>();
+  for (const r of rows) {
+    const slug = `${r.destinationSlug}-${r.category}`;
+    const existing = map.get(slug);
+    if (existing) {
+      existing.count += 1;
+      existing.fromPrice = Math.min(existing.fromPrice, r.fromPrice);
+    } else {
+      map.set(slug, {
+        slug,
+        destinationSlug: r.destinationSlug,
+        destinationName: r.destination,
+        category: r.category as TripCategorySlug,
+        fromPrice: r.fromPrice,
+        count: 1,
+      });
+    }
+  }
+  return [...map.values()].sort((a, b) => a.slug.localeCompare(b.slug));
+});
+
+export const getHolidayLanding = cache(async (slug: string): Promise<HolidayLanding | null> => {
+  return (await getHolidayLandings()).find((h) => h.slug === slug) ?? null;
+});
+
+export async function getPackagesForLanding(landing: HolidayLanding): Promise<Package[]> {
+  const rows = await db.package.findMany({
+    where: {
+      destinationSlug: landing.destinationSlug,
+      category: landing.category as TripCategorySlug,
+    },
+    orderBy: { fromPrice: "asc" },
+  });
+  return rows.map(toPackage);
+}
+
 export async function getPublishedTestimonials(): Promise<Testimonial[]> {
   const rows = await db.testimonial.findMany({
     where: { published: true },
