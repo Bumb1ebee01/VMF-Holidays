@@ -140,5 +140,52 @@
   .hero { padding: 72px 0 60px; }
 }
 
+.guideIntro {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 46rem;
+  margin: 0 0 28px;
+}
+
+.guideChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.guideChip,
+.guideChipAll {
+  display: inline-block;
+  padding: 9px 18px;
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+
+.guideChip {
+  border: 1px solid var(--border);
+  color: var(--navy);
+  background: var(--card-bg);
+}
+
+.guideChip:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.guideChipAll {
+  border: 1px solid var(--orange);
+  color: var(--orange);
+}
+
+.guideChipAll:hover {
+  background: var(--orange);
+  color: #fff;
+}
+
 /* Dark mode — navy section titles need to be readable on the dark page bg */
 :global([data-theme="dark"]) .sectionTitle { color: var(--text); }
+:global([data-theme="dark"]) .guideChip { color: var(--text); }

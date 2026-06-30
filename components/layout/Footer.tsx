@@ -49,6 +49,7 @@ export default function Footer() {
               <li><Link href="/offers">Offers &amp; Deals</Link></li>
               <li><Link href="/gallery">Gallery</Link></li>
               <li><Link href="/blog">Travel Blog</Link></li>
+              <li><Link href="/guides">Travel Guides</Link></li>
               <li><Link href="/trip-builder">Trip Builder</Link></li>
               <li><Link href="/travellers-club">Travellers Club</Link></li>
               <li><Link href="/compare">Compare Packages</Link></li>

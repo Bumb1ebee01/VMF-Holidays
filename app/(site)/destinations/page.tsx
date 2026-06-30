@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import DestinationExplorer, { type ExplorerCountry } from "@/components/ui/DestinationExplorer";
 import { type GeoCountry, type GeoPlace } from "@/lib/data/geography";
 import { loadGeography } from "@/lib/data/geography-db";
@@ -97,6 +98,25 @@ export default async function DestinationsPage() {
             <h2 className={styles.sectionTitle}>International Destinations</h2>
           </div>
           <DestinationExplorer countries={international} />
+        </div>
+
+        <div className={styles.sectionBlock}>
+          <div className={styles.sectionHead}>
+            <span className={styles.sectionEyebrow}>Before you go</span>
+            <h2 className={styles.sectionTitle}>Destination Travel Guides</h2>
+          </div>
+          <p className={styles.guideIntro}>
+            New to a destination? Our free travel guides cover the best time to visit, the top things to do and
+            tailor-made packages — read up, then plan your trip.
+          </p>
+          <div className={styles.guideChips}>
+            {destinations.map((d) => (
+              <Link key={d.slug} href={`/guides/${d.slug}`} className={styles.guideChip}>
+                {d.name}
+              </Link>
+            ))}
+            <Link href="/guides" className={styles.guideChipAll}>View all guides →</Link>
+          </div>
         </div>
       </div>
     </div>

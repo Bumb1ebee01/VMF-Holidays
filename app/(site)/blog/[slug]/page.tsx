@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { getPostBySlug, getPublishedPosts } from "@/lib/queries";
+import { getPostBySlug, getPublishedPosts, getAllDestinations } from "@/lib/queries";
 import { formatDate } from "@/lib/utils";
 import { JsonLd, postJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import PostBody from "@/components/blog/PostBody";
@@ -49,7 +49,10 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
   const post = await getPostBySlug(slug);
   if (!post) notFound();
 
-  const related = (await getPublishedPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
+  const [allPosts, dests] = await Promise.all([getPublishedPosts(), getAllDestinations()]);
+  const related = allPosts.filter((p) => p.slug !== post.slug).slice(0, 3);
+  const haystack = `${post.title} ${post.tags.join(" ")}`.toLowerCase();
+  const guideMatches = dests.filter((d) => haystack.includes(d.name.toLowerCase())).slice(0, 3);
 
   return (
     <article className={styles.page}>
@@ -105,6 +108,29 @@ export default async function BlogPostPage(props: { params: Promise<{ slug: stri
             ))}
           </div>
         )}
+
+        <div className={styles.guideBlock}>
+          <h3 className={styles.guideBlockTitle}>Plan this trip</h3>
+          {guideMatches.length > 0 ? (
+            <>
+              <p className={styles.guideBlockSub}>
+                Read our destination guides for the best time to visit and the top things to do:
+              </p>
+              <div className={styles.guideLinks}>
+                {guideMatches.map((d) => (
+                  <Link key={d.slug} href={`/guides/${d.slug}`} className={styles.guideLink}>
+                    {d.name} Travel Guide →
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p className={styles.guideBlockSub}>
+              Browse our <Link href="/guides" className={styles.guideInline}>destination travel guides</Link> for the
+              best time to visit and top things to do, then build your itinerary.
+            </p>
+          )}
+        </div>
 
         <div className={styles.cta}>
           <div>

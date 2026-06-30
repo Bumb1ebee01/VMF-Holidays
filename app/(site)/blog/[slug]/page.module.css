@@ -84,6 +84,49 @@
   border-radius: 999px;
 }
 
+.guideBlock {
+  margin-top: var(--sp-10);
+  padding: var(--sp-6) var(--sp-7);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg, 18px);
+  background: var(--off-white);
+}
+
+.guideBlockTitle {
+  font-size: var(--text-lg, 1.15rem);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  margin-bottom: var(--sp-2);
+}
+
+.guideBlockSub {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin-bottom: var(--sp-4);
+}
+
+.guideInline {
+  color: var(--orange);
+  font-weight: var(--fw-bold);
+}
+
+.guideLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.guideLink {
+  font-size: var(--text-base);
+  font-weight: var(--fw-bold);
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.guideLink:hover {
+  color: var(--orange);
+}
+
 .cta {
   margin-top: var(--sp-12);
   padding: var(--sp-8);
@@ -158,7 +201,9 @@
 
 [data-theme="dark"] .title,
 [data-theme="dark"] .relatedTitle,
-[data-theme="dark"] .relatedCardTitle {
+[data-theme="dark"] .relatedCardTitle,
+[data-theme="dark"] .guideBlockTitle,
+[data-theme="dark"] .guideLink {
   color: var(--text);
 }
 

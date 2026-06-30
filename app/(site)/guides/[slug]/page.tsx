@@ -70,6 +70,7 @@ export default async function DestinationGuidePage({
     guide?.bestTime ?? `Tell us your dates and we'll advise the best time to visit ${dest.name} for your trip.`;
   const thingsToDo = guide?.thingsToDo ?? dest.tags.map((t) => `Experience the ${t.toLowerCase()} of ${dest.name}`);
   const landings = allLandings.filter((l) => l.destinationSlug === slug);
+  const moreGuides = dests.filter((d) => d.slug !== slug);
 
   const faqs = [
     { q: `What is the best time to visit ${dest.name}?`, a: bestTime },
@@ -89,7 +90,7 @@ export default async function DestinationGuidePage({
         data={[
           breadcrumbJsonLd([
             { name: "Home", path: "/" },
-            { name: "Destinations", path: "/destinations" },
+            { name: "Travel Guides", path: "/guides" },
             { name: `${dest.name} Guide`, path: `/guides/${slug}` },
           ]),
           faqJsonLd(faqs),
@@ -102,7 +103,11 @@ export default async function DestinationGuidePage({
         )}
         <div className={styles.heroOverlay} />
         <div className={`container ${styles.heroContent}`}>
-          <span className={styles.kicker}>Travel Guide</span>
+          <div className={styles.breadcrumb}>
+            <Link href="/guides">Travel Guides</Link>
+            <span>/</span>
+            <span>{dest.name}</span>
+          </div>
           <h1 className={styles.title}>{dest.name} Travel Guide</h1>
           <p className={styles.sub}>
             {dest.country} · packages from {formatINR(dest.fromPrice)} per person
@@ -153,6 +158,24 @@ export default async function DestinationGuidePage({
           ))}
         </div>
       </section>
+
+      {moreGuides.length > 0 && (
+        <section className={`section ${styles.moreSection}`}>
+          <div className="container">
+            <div className={styles.moreHead}>
+              <h2 className={styles.moreTitle}>More destination guides</h2>
+              <Link href="/guides" className={styles.moreAll}>View all guides →</Link>
+            </div>
+            <div className={styles.moreGrid}>
+              {moreGuides.map((d) => (
+                <Link key={d.slug} href={`/guides/${d.slug}`} className={styles.moreChip}>
+                  {d.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className={styles.ctaWrap}>
         <div className="container">
