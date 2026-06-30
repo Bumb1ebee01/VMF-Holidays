@@ -127,3 +127,36 @@
 @media (max-width: 640px) {
   .hero { height: 380px; }
 }
+
+.destSection {
+  padding-top: 0;
+}
+
+.destLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.destChip {
+  display: inline-block;
+  padding: 9px 18px;
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--navy);
+  background: var(--card-bg);
+  text-decoration: none;
+  transition: all 0.18s ease;
+}
+
+.destChip:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+:global([data-theme="dark"]) .destChip {
+  color: var(--text);
+}

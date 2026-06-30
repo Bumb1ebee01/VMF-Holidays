@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import PackageCard from "@/components/ui/PackageCard";
-import { getPackagesByCategory } from "@/lib/queries";
+import { getPackagesByCategory, getHolidayLandings } from "@/lib/queries";
 import { getCategoryBySlug } from "@/lib/data/categories";
 import { JsonLd, breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
 import type { TripCategorySlug } from "@/lib/types";
@@ -11,6 +11,7 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
   const category = getCategoryBySlug(slug);
   if (!category) return null;
   const pkgs = await getPackagesByCategory(slug);
+  const landings = (await getHolidayLandings()).filter((l) => l.category === slug);
 
   return (
     <div className={styles.page}>
@@ -64,6 +65,21 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
           )}
         </section>
       </div>
+
+      {landings.length > 0 && (
+        <div className="container">
+          <section className={styles.destSection}>
+            <h2 className={styles.sectionTitle}>Popular {category.label} Destinations</h2>
+            <div className={styles.destLinks}>
+              {landings.map((l) => (
+                <Link key={l.slug} href={`/holidays/${l.slug}`} className={styles.destChip}>
+                  {l.destinationName}
+                </Link>
+              ))}
+            </div>
+          </section>
+        </div>
+      )}
 
       <div className={styles.cta}>
         <div className="container">
