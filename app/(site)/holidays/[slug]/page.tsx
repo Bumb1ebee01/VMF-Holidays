@@ -131,6 +131,10 @@ export default async function HolidayLandingPage({
             tailor-made to your dates, budget and travel style, with transparent pricing and a dedicated planner
             from enquiry to return.
           </p>
+          <p className={styles.guideLink}>
+            First time? Read our <Link href={`/guides/${landing.destinationSlug}`}>{dest} travel guide</Link> for the
+            best time to visit and top things to do.
+          </p>
           {packages.length > 0 ? (
             <div className="grid-3">
               {packages.map((p) => (

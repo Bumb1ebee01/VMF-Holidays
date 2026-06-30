@@ -68,7 +68,18 @@
   line-height: 1.7;
   color: var(--text);
   max-width: 62rem;
+  margin: 0 0 12px;
+}
+
+.guideLink {
+  font-size: 0.98rem;
+  color: var(--muted);
   margin: 0 0 32px;
+}
+
+.guideLink a {
+  color: var(--orange);
+  font-weight: 600;
 }
 
 .faqSection {

@@ -1,13 +1,14 @@
 import type { MetadataRoute } from "next";
 import { db } from "@/lib/db";
 import { SITE_URL as BASE } from "@/lib/seo";
-import { getHolidayLandings } from "@/lib/queries";
+import { getHolidayLandings, getAllDestinations } from "@/lib/queries";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [packages, posts, landings] = await Promise.all([
+  const [packages, posts, landings, dests] = await Promise.all([
     db.package.findMany({ select: { slug: true, updatedAt: true } }),
     db.post.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
     getHolidayLandings(),
+    getAllDestinations(),
   ]);
 
   const staticPages = [
@@ -59,5 +60,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...packagePages, ...postPages, ...holidayPages];
+  const guidePages = dests.map((d) => ({
+    url: `${BASE}/guides/${d.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...packagePages, ...postPages, ...holidayPages, ...guidePages];
 }
