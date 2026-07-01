@@ -305,10 +305,9 @@ export default function Hero({
             </motion.div>
           </div>
 
-          {/* Glass card cluster — featured destination slider + members card */}
+          {/* Glass card cluster — featured destination slider */}
           <div className={styles.cardCluster}>
             <CollectionSlider destinations={destinations} ready={ready} />
-            <MembersCard ready={ready} />
           </div>
         </div>
 
@@ -409,34 +408,5 @@ function CollectionSlider({
         ))}
       </div>
     </motion.div>
-  );
-}
-
-function MembersCard({ ready }: { ready: boolean }) {
-  const AVATARS = ["#5790e6", "#FFA333", "#0b6e97", "#FE5C10"];
-  return (
-    <motion.article
-      className={styles.membersCard}
-      initial={{ opacity: 0, y: 28 }}
-      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.78 }}
-    >
-      <div className={styles.membersInfo}>
-        <span className={styles.membersValue}>200+</span>
-        <div className={styles.avatars}>
-          {AVATARS.map((c, i) => (
-            <span key={i} className={styles.avatar} style={{ background: c }} />
-          ))}
-        </div>
-        <span className={styles.membersLabel}>Travellers served</span>
-      </div>
-      <span
-        className={styles.membersThumb}
-        style={{
-          backgroundImage:
-            "url(https://res.cloudinary.com/dhmmvsjim/image/upload/vmf-holidays/images/destinations/maldives.jpg)",
-        }}
-      />
-    </motion.article>
   );
 }
