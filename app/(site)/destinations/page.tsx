@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import DestinationExplorer, { type ExplorerCountry } from "@/components/ui/DestinationExplorer";
+import PackageCard from "@/components/ui/PackageCard";
 import { type GeoCountry, type GeoPlace } from "@/lib/data/geography";
 import { loadGeography } from "@/lib/data/geography-db";
 import { getAllDestinations, getAllPackages } from "@/lib/queries";
@@ -64,11 +65,14 @@ export default async function DestinationsPage() {
     destinations,
     packages
   );
-  const international = toExplorer(
-    geo.filter((c) => c.region === "international"),
-    destinations,
-    packages
+
+  // International destinations lead to the packages we build and publish — not the
+  // Trip Builder's activities. Show every package whose destination is
+  // international; each card opens that package.
+  const internationalSlugs = new Set(
+    destinations.filter((d) => d.region === "international").map((d) => d.slug)
   );
+  const internationalPackages = packages.filter((p) => internationalSlugs.has(p.destinationSlug));
 
   return (
     <div className={styles.page}>
@@ -95,9 +99,20 @@ export default async function DestinationsPage() {
         <div className={styles.sectionBlock}>
           <div className={styles.sectionHead}>
             <span className={styles.sectionEyebrow}>Around the World</span>
-            <h2 className={styles.sectionTitle}>International Destinations</h2>
+            <h2 className={styles.sectionTitle}>International Holiday Packages</h2>
           </div>
-          <DestinationExplorer countries={international} />
+          {internationalPackages.length > 0 ? (
+            <div className={styles.pkgGrid}>
+              {internationalPackages.map((pkg) => (
+                <PackageCard key={pkg.slug} pkg={pkg} />
+              ))}
+            </div>
+          ) : (
+            <p className={styles.guideIntro}>
+              New international packages are on the way. Tell us where you&apos;d like to go and
+              we&apos;ll build the trip around you — <Link href="/contact">get in touch</Link>.
+            </p>
+          )}
         </div>
 
         <div className={styles.sectionBlock}>

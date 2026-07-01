@@ -140,6 +140,21 @@
   .hero { padding: 72px 0 60px; }
 }
 
+/* International packages grid — richer package cards, so fewer columns. */
+.pkgGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 1024px) {
+  .pkgGrid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .pkgGrid { grid-template-columns: 1fr; }
+}
+
 .guideIntro {
   font-size: 1rem;
   line-height: 1.7;
