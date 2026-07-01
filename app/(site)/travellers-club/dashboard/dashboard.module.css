@@ -1,5 +1,5 @@
 .page {
-  background: var(--bg-soft, #f6f7fb);
+  background: var(--bg);
   min-height: 100vh;
   padding: calc(var(--nav-h) + 32px) 0 64px;
 }
@@ -48,7 +48,7 @@
 }
 
 .statCard {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border, #e2e6ef);
   border-radius: 14px;
   padding: 20px;
@@ -90,7 +90,7 @@
 }
 
 .sectionCard {
-  background: #fff;
+  background: var(--card-bg);
   border: 1px solid var(--border, #e2e6ef);
   border-radius: 14px;
   padding: 22px;
@@ -222,4 +222,18 @@
   .statPrimary {
     grid-column: 1 / -1;
   }
+}
+
+/* Dark mode: cards + navy headings were authored with light-only colours
+   (#fff, var(--navy)) and don't invert on their own — redirect them to the
+   semantic tokens the rest of the site uses. */
+[data-theme="dark"] .hello,
+[data-theme="dark"] .sectionTitle,
+[data-theme="dark"] .statValue,
+[data-theme="dark"] .community {
+  color: var(--text);
+}
+
+[data-theme="dark"] .statPrimary .statValue {
+  color: #fff;
 }
