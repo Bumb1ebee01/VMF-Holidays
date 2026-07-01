@@ -25,6 +25,7 @@ const PLAN_LINKS = [
   { href: "/offers", label: "Offers & Deals" },
   { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Travel Blog" },
+  { href: "/travellers-club", label: "Travellers Club" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact / Enquire" },
 ];
