@@ -26,7 +26,7 @@ export default async function ComparePage({
     duration: pk.duration,
     nights: pk.nights,
     fromPrice: pk.fromPrice,
-    priceOnRequest: pk.priceOnRequest,
+    priceOnRequest: pk.priceOnRequest ?? false,
     heroImage: pk.heroImage,
     hotel: pk.hotel ?? null,
     highlights: pk.highlights,
