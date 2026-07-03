@@ -9,6 +9,12 @@ import { getCategoryBySlug } from "@/lib/data/categories";
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const SITE_URL = "https://vmfholidays.com";
+// Public URL of the LIVE app, used for CLICKABLE share links (e.g. referral links).
+// vmfholidays.com is still the eventual SEO canonical, but until its DNS is cut over
+// to Vercel it serves the old PHP site — so links people actually click must point at
+// the live Vercel app. After the cutover, set APP_URL=https://vmfholidays.com in the
+// environment (or update this default).
+export const APP_URL = (process.env.APP_URL || "https://new-vmf-holidays.vercel.app").replace(/\/+$/, "");
 export const SITE_NAME = "VMF Holidays";
 export const SITE_TAGLINE = "Discover Your World, Your Way";
 export const SITE_DESCRIPTION =

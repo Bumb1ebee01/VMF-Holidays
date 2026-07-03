@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import { requireMember } from "@/lib/auth/member";
-import { SITE_URL } from "@/lib/seo";
+import { APP_URL } from "@/lib/seo";
 import { formatDate } from "@/lib/utils";
 import {
   creditsToRupees,
@@ -47,7 +47,7 @@ export default async function ClubDashboardPage() {
     }),
   ]);
 
-  const link = referralLink(SITE_URL, member.referralCode);
+  const link = referralLink(APP_URL, member.referralCode);
   const successful = referred.filter((r) => r.firstBookingAt).length;
   const tier = tierProgress(successful, member.completedTrips);
   const canRedeem = member.creditBalance >= MIN_REDEMPTION;
