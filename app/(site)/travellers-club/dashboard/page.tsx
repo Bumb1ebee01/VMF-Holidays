@@ -23,21 +23,35 @@ export const metadata: Metadata = {
 };
 
 const REASON_LABEL: Record<string, string> = {
+  JOIN_BONUS: "Join bonus",
   REFERRAL_REWARD: "Referral reward",
   WELCOME_BONUS: "Welcome bonus",
+  ENGAGEMENT: "Engagement",
   REDEMPTION: "Redeemed on booking",
   ADJUSTMENT: "Adjustment",
   EXPIRY: "Expired",
 };
 
+const REFERRAL_STATUS_LABEL: Record<string, string> = {
+  PENDING: "Joined",
+  ENQUIRED: "Enquired",
+  BOOKED: "Booked",
+  WELCOME_PAID: "Travelled",
+  REWARDED: "Rewarded",
+  REJECTED_MARGIN: "Travelled",
+  NEEDS_DATA: "In review",
+  EXPIRED: "Expired",
+  REJECTED: "Closed",
+};
+
 export default async function ClubDashboardPage() {
   const member = await requireMember();
 
-  const [referred, ledger] = await Promise.all([
+  const [referred, ledger, referrals] = await Promise.all([
     db.member.findMany({
       where: { referredById: member.id },
       orderBy: { createdAt: "desc" },
-      select: { id: true, name: true, createdAt: true, firstBookingAt: true },
+      select: { id: true, name: true, createdAt: true },
     }),
     db.creditEntry.findMany({
       where: { memberId: member.id },
@@ -45,10 +59,17 @@ export default async function ClubDashboardPage() {
       take: 12,
       select: { id: true, amount: true, reason: true, note: true, createdAt: true },
     }),
+    db.referral.findMany({
+      where: { referrerId: member.id },
+      select: { refereeMemberId: true, status: true },
+    }),
   ]);
 
   const link = referralLink(APP_URL, member.referralCode);
-  const successful = referred.filter((r) => r.firstBookingAt).length;
+  const statusByReferee = new Map(
+    referrals.filter((r) => r.refereeMemberId).map((r) => [r.refereeMemberId as string, r.status])
+  );
+  const successful = referrals.filter((r) => r.status === "REWARDED").length;
   const tier = tierProgress(successful, member.completedTrips);
   const canRedeem = member.creditBalance >= MIN_REDEMPTION;
   const toRedeem = Math.max(MIN_REDEMPTION - member.creditBalance, 0);
@@ -83,7 +104,7 @@ export default async function ClubDashboardPage() {
             <span className={styles.statValue}>{referred.length}</span>
           </div>
           <div className={styles.statCard}>
-            <span className={styles.statLabel}>Successful bookings</span>
+            <span className={styles.statLabel}>Rewarded referrals</span>
             <span className={styles.statValue}>{successful}</span>
           </div>
         </div>
@@ -153,9 +174,9 @@ export default async function ClubDashboardPage() {
                     <span className={styles.rowMeta}>Joined {formatDate(r.createdAt)}</span>
                   </div>
                   <span
-                    className={`${styles.status} ${r.firstBookingAt ? styles.statusBooked : styles.statusPending}`}
+                    className={`${styles.status} ${statusByReferee.get(r.id) === "REWARDED" ? styles.statusBooked : styles.statusPending}`}
                   >
-                    {r.firstBookingAt ? "Booked" : "Pending"}
+                    {REFERRAL_STATUS_LABEL[statusByReferee.get(r.id) ?? "PENDING"] ?? "Joined"}
                   </span>
                 </div>
               ))}

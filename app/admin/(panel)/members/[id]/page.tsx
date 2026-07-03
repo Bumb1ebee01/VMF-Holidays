@@ -12,11 +12,26 @@ import styles from "./member.module.css";
 export const dynamic = "force-dynamic";
 
 const REASON_LABEL: Record<string, string> = {
+  JOIN_BONUS: "Join bonus",
   REFERRAL_REWARD: "Referral reward",
   WELCOME_BONUS: "Welcome bonus",
+  ENGAGEMENT: "Engagement",
   REDEMPTION: "Redeemed on booking",
   ADJUSTMENT: "Adjustment",
   EXPIRY: "Expired",
+};
+
+// Maps a Referral's lifecycle status to a plain label for the admin table.
+const REF_STATUS_LABEL: Record<string, string> = {
+  PENDING: "Joined",
+  ENQUIRED: "Enquired",
+  BOOKED: "Booked",
+  WELCOME_PAID: "Travelled",
+  REWARDED: "Rewarded",
+  REJECTED_MARGIN: "Travelled",
+  NEEDS_DATA: "Needs data",
+  EXPIRED: "Expired",
+  REJECTED: "Rejected",
 };
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -29,15 +44,21 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
       referredBy: { select: { id: true, name: true } },
       referredMembers: {
         orderBy: { createdAt: "desc" },
-        select: { id: true, name: true, firstBookingAt: true, createdAt: true },
+        select: { id: true, name: true, createdAt: true },
       },
+      referrals: { select: { refereeMemberId: true, status: true } },
       credits: { orderBy: { createdAt: "desc" }, take: 25 },
     },
   });
   if (!member) notFound();
 
   const canManage = can(actor, "members:manage");
-  const booked = member.referredMembers.filter((r) => r.firstBookingAt).length;
+  const rewardedCount = member.referrals.filter((r) => r.status === "REWARDED").length;
+  const statusByReferee = new Map(
+    member.referrals
+      .filter((r) => r.refereeMemberId)
+      .map((r) => [r.refereeMemberId as string, r.status])
+  );
 
   return (
     <div>
@@ -63,8 +84,8 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
           <div className={shared.statLabel}>Referred</div>
         </div>
         <div className={shared.statCard}>
-          <div className={shared.statValue}>{booked}</div>
-          <div className={shared.statLabel}>Referrals booked</div>
+          <div className={shared.statValue}>{rewardedCount}</div>
+          <div className={shared.statLabel}>Rewarded referrals</div>
         </div>
       </div>
 
@@ -83,14 +104,14 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
           </span>
         </div>
         <div className={styles.metaItem}>
-          <span className={styles.metaLabel}>First booking</span>
-          <span>{member.firstBookingAt ? formatDate(member.firstBookingAt) : "Not yet"}</span>
+          <span className={styles.metaLabel}>Trips completed</span>
+          <span>{member.completedTrips}</span>
         </div>
       </div>
 
       {canManage && (
         <div className={styles.section}>
-          <MemberCreditForms memberId={member.id} alreadyBooked={!!member.firstBookingAt} />
+          <MemberCreditForms memberId={member.id} />
         </div>
       )}
 
@@ -110,7 +131,7 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
                     <Link href={`/admin/members/${r.id}`} className={shared.rowLink}>{r.name}</Link>
                   </td>
                   <td>{formatDate(r.createdAt)}</td>
-                  <td>{r.firstBookingAt ? "Booked" : "Pending"}</td>
+                  <td>{REF_STATUS_LABEL[statusByReferee.get(r.id) ?? "PENDING"] ?? "Joined"}</td>
                 </tr>
               ))}
             </tbody>

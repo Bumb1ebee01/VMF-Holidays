@@ -1,113 +1,181 @@
 import { db } from "@/lib/db";
-import { WELCOME_BONUS, tierForMember, maxTier, referrerRewardForTier } from "@/lib/referral";
+import {
+  WELCOME_BONUS,
+  MIN_WELCOME_BOOKING,
+  MIN_QUALIFYING_BOOKING,
+  MARGIN_GUARD_PCT,
+  tierForMember,
+  maxTier,
+  referrerRewardForTier,
+} from "@/lib/referral";
 
 // Server-only credit engine for the Travellers Club. Awards happen inside a
 // transaction so the ledger entries and the cached balances never drift.
 
-export type AwardResult = {
-  alreadyBooked: boolean;
-  welcomeBonus: number; // credited to the referee (this member)
-  referrerReward: number; // credited to the referrer
+export type TripOutcome =
+  | "NOT_REFERRED" // member wasn't referred — trip recorded, no referral credit
+  | "ALREADY_REWARDED" // this referral already paid out; nothing to do
+  | "BELOW_FLOOR" // booking under ₹5,000 — no welcome
+  | "NEEDS_DATA" // missing booking value / trip margin — can't finish the decision
+  | "WELCOME_PAID" // friend's ₹1,000 welcome paid; trip didn't clear the ₹25k referrer gate
+  | "REJECTED_MARGIN" // referrer reward blocked by the margin guard (welcome still paid)
+  | "REWARDED"; // full payout — welcome + referrer reward
+
+export type TripCompletionResult = {
+  outcome: TripOutcome;
+  welcomePaid: number; // credited to the referee on this run (0 if already paid / n/a)
+  referrerReward: number; // credited to the referrer on this run
   referrerId: string | null;
 };
 
 /**
- * Record a member's first booking and pay out the two-sided credit:
- *  - the referee (this member) gets the welcome bonus (only if they were referred),
- *  - their referrer gets the referral reward, and the referrer's tier is recomputed.
- * Idempotent per member: only the FIRST booking triggers credit (gated on
- * firstBookingAt), so calling it twice is safe.
+ * Mark that a member completed a trip (WI-4 / WI-14a). This — NOT booking — is the
+ * event that fires the referral reward chain. It:
+ *  - counts the member's completed trip (once) and re-evaluates their own tier;
+ *  - if they were referred, runs the auto-decision on their inbound referral:
+ *      • ₹1,000 welcome to the friend once the booking is ≥ ₹5,000,
+ *      • the tier-based referrer reward once the booking is ≥ ₹25,000 AND that
+ *        reward is ≤ 20% of the trip margin (the margin guard),
+ *      • otherwise WELCOME_PAID / REJECTED_MARGIN / NEEDS_DATA (all overridable).
+ * Idempotent: a paid welcome never pays twice and a REWARDED referral is left
+ * alone, so re-submitting to fill in missing margin data is safe.
  */
-export async function awardBookingCredits(
+export async function completeMemberTrip(
   memberId: string,
-  bookingValue: number | null
-): Promise<AwardResult> {
+  input: { bookingValue: number | null; tripMargin: number | null }
+): Promise<TripCompletionResult> {
+  const { bookingValue, tripMargin } = input;
   return db.$transaction(async (tx) => {
     const member = await tx.member.findUnique({
       where: { id: memberId },
-      select: { id: true, name: true, firstBookingAt: true, referredById: true },
+      select: { id: true, name: true, completedTrips: true, tier: true, referredById: true },
     });
     if (!member) throw new Error("Member not found");
 
-    if (member.firstBookingAt) {
-      return { alreadyBooked: true, welcomeBonus: 0, referrerReward: 0, referrerId: member.referredById };
+    // The referral that brought THIS member in (they are the referee).
+    const inbound = await tx.referral.findFirst({ where: { refereeMemberId: member.id } });
+
+    // Count a newly-completed trip once (not on a re-run to correct margin data).
+    const firstCompletion = inbound ? inbound.travelCompletedAt === null : true;
+    if (firstCompletion) {
+      await tx.member.update({
+        where: { id: member.id },
+        data: { completedTrips: { increment: 1 }, lastActivityAt: new Date() },
+      });
+    }
+    const newTrips = member.completedTrips + (firstCompletion ? 1 : 0);
+
+    let outcome: TripOutcome = "NOT_REFERRED";
+    let welcomePaid = 0;
+    let referrerReward = 0;
+    const resultReferrerId = inbound?.referrerId ?? member.referredById ?? null;
+
+    if (inbound && inbound.status === "REWARDED") {
+      outcome = "ALREADY_REWARDED";
+    } else if (inbound) {
+      const referrerId = inbound.referrerId;
+
+      // Persist the completion inputs on the canonical referral row.
+      await tx.referral.update({
+        where: { id: inbound.id },
+        data: {
+          travelCompletedAt: inbound.travelCompletedAt ?? new Date(),
+          bookingValue,
+          tripMargin,
+          rewardEligible: true,
+        },
+      });
+
+      if (bookingValue === null) {
+        outcome = "NEEDS_DATA";
+        await tx.referral.update({ where: { id: inbound.id }, data: { status: "NEEDS_DATA" } });
+      } else if (bookingValue < MIN_WELCOME_BOOKING) {
+        outcome = "BELOW_FLOOR"; // travelled, but the booking is too small to earn a welcome
+      } else {
+        // ── Friend's welcome — one per person, ever ──
+        const alreadyWelcomed =
+          (await tx.creditEntry.count({ where: { memberId: member.id, reason: "WELCOME_BONUS" } })) > 0;
+        if (!alreadyWelcomed) {
+          await tx.creditEntry.create({
+            data: {
+              memberId: member.id,
+              amount: WELCOME_BONUS,
+              reason: "WELCOME_BONUS",
+              note: "Referred-friend welcome",
+              approvedBy: "SYSTEM_AUTO",
+            },
+          });
+          await tx.member.update({
+            where: { id: member.id },
+            data: { creditBalance: { increment: WELCOME_BONUS }, lastActivityAt: new Date() },
+          });
+          welcomePaid = WELCOME_BONUS;
+        }
+        outcome = "WELCOME_PAID";
+        await tx.referral.update({ where: { id: inbound.id }, data: { status: "WELCOME_PAID" } });
+
+        // ── Referrer reward — ₹25k floor + margin guard (WI-14a auto-decision) ──
+        if (bookingValue >= MIN_QUALIFYING_BOOKING) {
+          if (tripMargin === null || tripMargin <= 0) {
+            outcome = "NEEDS_DATA";
+            await tx.referral.update({ where: { id: inbound.id }, data: { status: "NEEDS_DATA" } });
+          } else {
+            const referrer = await tx.member.findUnique({
+              where: { id: referrerId },
+              select: { id: true, tier: true, completedTrips: true },
+            });
+            const reward = referrerRewardForTier(referrer?.tier ?? "EXPLORER");
+            const guardCap = (MARGIN_GUARD_PCT / 100) * tripMargin;
+            if (reward <= guardCap) {
+              await tx.creditEntry.create({
+                data: {
+                  memberId: referrerId,
+                  amount: reward,
+                  reason: "REFERRAL_REWARD",
+                  note: `${member.name} completed their trip`,
+                  approvedBy: "SYSTEM_AUTO",
+                },
+              });
+              await tx.member.update({
+                where: { id: referrerId },
+                data: { creditBalance: { increment: reward }, lastActivityAt: new Date() },
+              });
+              await tx.referral.update({
+                where: { id: inbound.id },
+                data: { status: "REWARDED", rewardAmount: reward },
+              });
+              referrerReward = reward;
+              outcome = "REWARDED";
+              // This referral now counts toward the referrer's tier.
+              const referrerRewarded = await tx.referral.count({
+                where: { referrerId, status: "REWARDED" },
+              });
+              await tx.member.update({
+                where: { id: referrerId },
+                data: {
+                  tier: maxTier(
+                    referrer?.tier ?? "EXPLORER",
+                    tierForMember(referrerRewarded, referrer?.completedTrips ?? 0)
+                  ),
+                },
+              });
+            } else {
+              outcome = "REJECTED_MARGIN";
+              await tx.referral.update({ where: { id: inbound.id }, data: { status: "REJECTED_MARGIN" } });
+            }
+          }
+        }
+      }
     }
 
-    await tx.member.update({ where: { id: member.id }, data: { firstBookingAt: new Date() } });
-
-    if (!member.referredById) {
-      return { alreadyBooked: false, welcomeBonus: 0, referrerReward: 0, referrerId: null };
+    // Re-evaluate the member's OWN tier (their completed-trip count may have grown).
+    const ownRewarded = await tx.referral.count({ where: { referrerId: member.id, status: "REWARDED" } });
+    const newOwnTier = maxTier(member.tier, tierForMember(ownRewarded, newTrips));
+    if (newOwnTier !== member.tier) {
+      await tx.member.update({ where: { id: member.id }, data: { tier: newOwnTier } });
     }
 
-    // Welcome bonus → the referee (this member).
-    await tx.creditEntry.create({
-      data: { memberId: member.id, amount: WELCOME_BONUS, reason: "WELCOME_BONUS", note: "First-booking welcome bonus" },
-    });
-    await tx.member.update({
-      where: { id: member.id },
-      data: { creditBalance: { increment: WELCOME_BONUS } },
-    });
-
-    // Referral reward → the referrer. The amount escalates with the referrer's
-    // CURRENT tier (§4), and is stamped SYSTEM_AUTO for the reconciliation report.
-    const referrer = await tx.member.findUnique({
-      where: { id: member.referredById },
-      select: { id: true, tier: true, completedTrips: true },
-    });
-    const reward = referrerRewardForTier(referrer?.tier ?? "EXPLORER");
-
-    await tx.creditEntry.create({
-      data: {
-        memberId: member.referredById,
-        amount: reward,
-        reason: "REFERRAL_REWARD",
-        note: `${member.name} booked`,
-        approvedBy: "SYSTEM_AUTO",
-      },
-    });
-    await tx.member.update({
-      where: { id: member.referredById },
-      data: { creditBalance: { increment: reward } },
-    });
-
-    // Advance the referee's canonical referral row to REWARDED (it was created at
-    // signup / enquiry), or create it if this member predates referral tracking —
-    // so there's exactly one Referral per referee. Then re-evaluate the referrer's
-    // tier from BOTH successful referrals and completed trips, never downgrading
-    // (maxTier keeps the highest tier they've ever reached).
-    const existingReferral = await tx.referral.findFirst({
-      where: { referrerId: member.referredById, refereeMemberId: member.id },
-      select: { id: true },
-    });
-    const rewardData = {
-      status: "REWARDED" as const,
-      refereeMemberId: member.id,
-      refereeName: member.name,
-      bookingValue: bookingValue ?? null,
-      rewardAmount: reward,
-      rewardEligible: true,
-    };
-    if (existingReferral) {
-      await tx.referral.update({ where: { id: existingReferral.id }, data: rewardData });
-    } else {
-      await tx.referral.create({ data: { referrerId: member.referredById, ...rewardData } });
-    }
-    const booked = await tx.member.count({
-      where: { referredById: member.referredById, firstBookingAt: { not: null } },
-    });
-    await tx.member.update({
-      where: { id: member.referredById },
-      data: {
-        tier: maxTier(referrer?.tier ?? "EXPLORER", tierForMember(booked, referrer?.completedTrips ?? 0)),
-      },
-    });
-
-    return {
-      alreadyBooked: false,
-      welcomeBonus: WELCOME_BONUS,
-      referrerReward: reward,
-      referrerId: member.referredById,
-    };
+    return { outcome, welcomePaid, referrerReward, referrerId: resultReferrerId };
   });
 }
 
@@ -137,9 +205,9 @@ const REFERRAL_STAGE_RANK: Record<string, number> = {
  * Create or advance the single canonical Referral row for a referee under a
  * referrer — keyed by member id (preferred), else by phone (an enquiry made
  * before signup). Status only ever advances, never regressing a further-along
- * referral. Best-effort attribution used by the enquiry API (ENQUIRED) and signup
- * (PENDING + refereeMemberId → "Joined"); the money-moving REWARDED transition
- * stays inside awardBookingCredits' transaction.
+ * referral. Best-effort attribution used by the enquiry API (ENQUIRED), signup
+ * (PENDING + refereeMemberId → "Joined") and the admin "mark booked" step (BOOKED);
+ * the money-moving REWARDED transition happens in completeMemberTrip's transaction.
  */
 export async function upsertReferralStage(params: {
   referrerId: string;

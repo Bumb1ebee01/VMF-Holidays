@@ -1,21 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { adjustMemberCredit, awardBooking, type CreditState } from "@/app/admin/(panel)/members/actions";
+import { adjustMemberCredit, markTripCompleted, type CreditState } from "@/app/admin/(panel)/members/actions";
 import shared from "./shared.module.css";
 
 const initial: CreditState = {};
 const formStyle = { marginTop: 14, display: "flex", flexDirection: "column" as const, gap: 12 };
 
-export default function MemberCreditForms({
-  memberId,
-  alreadyBooked,
-}: {
-  memberId: string;
-  alreadyBooked: boolean;
-}) {
+export default function MemberCreditForms({ memberId }: { memberId: string }) {
   const [adjState, adjAction, adjPending] = useActionState(adjustMemberCredit, initial);
-  const [bookState, bookAction, bookPending] = useActionState(awardBooking, initial);
+  const [tripState, tripAction, tripPending] = useActionState(markTripCompleted, initial);
 
   return (
     <div className={shared.grid2}>
@@ -41,31 +35,26 @@ export default function MemberCreditForms({
       </div>
 
       <div className={shared.card}>
-        <h3 className={shared.cardTitle}>Record booking &amp; award credit</h3>
+        <h3 className={shared.cardTitle}>Mark trip completed</h3>
         <p className={shared.cardSub}>
-          {alreadyBooked
-            ? "This member's first booking is already recorded."
-            : "Marks this member's first booking. If they were referred, both they and their referrer get credit."}
+          Confirms this member has travelled. If they were referred, this releases their ₹1,000 welcome and — for
+          bookings ≥ ₹25,000 that pass the margin guard — their referrer&apos;s reward. Rewards fire on travel, not
+          booking.
         </p>
-        <form action={bookAction} style={formStyle}>
+        <form action={tripAction} style={formStyle}>
           <input type="hidden" name="memberId" value={memberId} />
           <div className="form-group">
-            <label className="form-label" htmlFor="book-value">Booking value ₹ (optional)</label>
-            <input
-              id="book-value"
-              name="bookingValue"
-              type="number"
-              step="1"
-              min="0"
-              className="form-input"
-              placeholder="e.g. 80000"
-              disabled={alreadyBooked}
-            />
+            <label className="form-label" htmlFor="trip-value">Booking value ₹</label>
+            <input id="trip-value" name="bookingValue" type="number" step="1" min="0" className="form-input" placeholder="e.g. 80000" />
           </div>
-          {bookState.error && <p className={shared.error}>{bookState.error}</p>}
-          {bookState.success && <p className={shared.success}>{bookState.success}</p>}
-          <button type="submit" className="btn btn-navy btn--sm" disabled={bookPending || alreadyBooked}>
-            {bookPending ? "Recording…" : "Confirm booking & credit"}
+          <div className="form-group">
+            <label className="form-label" htmlFor="trip-margin">Trip margin ₹ (needed to release the referrer reward)</label>
+            <input id="trip-margin" name="tripMargin" type="number" step="1" className="form-input" placeholder="e.g. 18000" />
+          </div>
+          {tripState.error && <p className={shared.error}>{tripState.error}</p>}
+          {tripState.success && <p className={shared.success}>{tripState.success}</p>}
+          <button type="submit" className="btn btn-navy btn--sm" disabled={tripPending}>
+            {tripPending ? "Saving…" : "Mark trip completed"}
           </button>
         </form>
       </div>

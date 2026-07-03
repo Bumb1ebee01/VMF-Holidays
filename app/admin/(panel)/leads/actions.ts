@@ -6,8 +6,7 @@ import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/user";
 import { logActivity } from "@/lib/activity";
 import { LEAD_STATUSES, type LeadStatusValue } from "@/components/admin/StatusBadge";
-import { awardBookingCredits } from "@/lib/referral-credit";
-import { creditsToRupees } from "@/lib/referral";
+import { upsertReferralStage } from "@/lib/referral-credit";
 
 export async function updateLeadStatus(leadId: string, status: string) {
   const actor = await requirePermission("leads:edit");
@@ -111,22 +110,14 @@ export async function createLead(_prev: NewLeadState, formData: FormData): Promi
 export type BookedState = { error?: string; success?: string };
 
 /**
- * Mark a lead as booked (status WON) and, if the lead matches a Travellers Club
- * member by email, award the two-sided referral credit. Admin-initiated, so it
- * doubles as the "confirm they receive their credits" step.
+ * Mark a lead as booked (status WON). If the lead matches a referred Travellers
+ * Club member, advance their referral to BOOKED — the reward itself pays later,
+ * when their trip is marked completed (rewards fire on travel, not booking).
  */
 export async function markLeadBooked(_prev: BookedState, formData: FormData): Promise<BookedState> {
   const actor = await requirePermission("leads:edit");
   const leadId = String(formData.get("leadId") ?? "");
-  const raw = String(formData.get("bookingValue") ?? "").trim();
   if (!leadId) return { error: "Missing lead." };
-
-  let bookingValue: number | null = null;
-  if (raw) {
-    const n = Math.round(Number(raw));
-    if (!Number.isFinite(n) || n < 0) return { error: "Enter a valid booking value (or leave it blank)." };
-    bookingValue = n;
-  }
 
   const lead = await db.lead.findUnique({
     where: { id: leadId },
@@ -136,23 +127,23 @@ export async function markLeadBooked(_prev: BookedState, formData: FormData): Pr
 
   await db.lead.update({ where: { id: leadId }, data: { status: "WON" } });
 
-  let creditMsg = "No matching club member — booking recorded, no credit awarded.";
+  let msg = "No matching club member — booking recorded.";
   if (lead.email) {
     const member = await db.member.findUnique({
       where: { email: lead.email.toLowerCase() },
-      select: { id: true },
+      select: { id: true, name: true, referredById: true },
     });
-    if (member) {
-      const result = await awardBookingCredits(member.id, bookingValue);
-      if (result.alreadyBooked) {
-        creditMsg = "Club member matched, but their first booking was already recorded.";
-      } else if (result.referrerReward) {
-        creditMsg = `Credited ${creditsToRupees(result.welcomeBonus)} welcome + ${creditsToRupees(result.referrerReward)} to their referrer.`;
-      } else {
-        creditMsg = "Club member matched (no referrer to reward).";
-      }
+    if (member?.referredById) {
+      await upsertReferralStage({
+        referrerId: member.referredById,
+        refereeMemberId: member.id,
+        refereeName: member.name,
+        status: "BOOKED",
+      });
+      msg = "Club member matched — their referral is now Booked. Mark their trip completed on their member profile to release the reward.";
       revalidatePath(`/admin/members/${member.id}`);
-      if (result.referrerId) revalidatePath(`/admin/members/${result.referrerId}`);
+    } else if (member) {
+      msg = "Club member matched (they weren't referred).";
     }
   }
 
@@ -160,9 +151,9 @@ export async function markLeadBooked(_prev: BookedState, formData: FormData): Pr
     action: "lead.booked",
     entity: "Lead",
     entityId: leadId,
-    detail: `Marked ${lead.name} booked. ${creditMsg}`,
+    detail: `Marked ${lead.name} booked. ${msg}`,
   });
   revalidatePath(`/admin/leads/${leadId}`);
   revalidatePath("/admin/leads");
-  return { success: `Marked as booked. ${creditMsg}` };
+  return { success: `Marked as booked. ${msg}` };
 }
