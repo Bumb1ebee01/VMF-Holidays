@@ -1,8 +1,11 @@
 import { Resend } from "resend";
+import { cookies } from "next/headers";
 import { db } from "@/lib/db";
 import { sendEnquiryWhatsApp } from "@/lib/whatsapp";
 import { isRateLimited } from "@/lib/ratelimit";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { REF_COOKIE, normalizeCode } from "@/lib/referral";
+import { upsertReferralStage } from "@/lib/referral-credit";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -111,8 +114,25 @@ export async function POST(request: Request) {
       ? "TRIP_WIZARD"
       : "CONTACT_FORM";
 
+  // Travellers Club referral attribution (WI-1): a first-touch ?ref cookie (set by
+  // proxy.ts) credits the referrer for an enquiry — even one made without signing up.
+  const jar = await cookies();
+  const refCookie = normalizeCode(jar.get(REF_COOKIE)?.value ?? "");
+  let referrerId: string | null = null;
+  if (refCookie) {
+    const referrer = await db.member.findUnique({
+      where: { referralCode: refCookie },
+      select: { id: true, phone: true, email: true },
+    });
+    // Ignore self-referral (someone enquiring with their own code).
+    if (referrer && referrer.phone !== phone && (!email || referrer.email !== email)) {
+      referrerId = referrer.id;
+    }
+  }
+
+  let leadId: string | null = null;
   try {
-    await db.lead.create({
+    const lead = await db.lead.create({
       data: {
         name,
         phone,
@@ -130,10 +150,29 @@ export async function POST(request: Request) {
         packageTitle: f.packageTitle || null,
         hotelCategory: f.hotelCategory || null,
         mealPlan: f.mealPlan || null,
+        referralCode: referrerId ? refCookie : null,
       },
+      select: { id: true },
     });
+    leadId = lead.id;
   } catch (err) {
     console.error("[enquiry] Failed to save lead:", err);
+  }
+
+  // Record the referral touch (ENQUIRED) and consume the first-touch cookie.
+  if (referrerId && leadId) {
+    try {
+      await upsertReferralStage({
+        referrerId,
+        refereeName: name,
+        refereePhone: phone,
+        leadId,
+        status: "ENQUIRED",
+      });
+      jar.delete(REF_COOKIE);
+    } catch (err) {
+      console.error("[enquiry] referral attribution failed:", err);
+    }
   }
 
   // Auto-confirm to the customer over WhatsApp (best-effort, never blocks the response)

@@ -1,8 +1,19 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { getCurrentMember } from "@/lib/auth/member";
+import { db } from "@/lib/db";
 import { JsonLd, serviceJsonLd } from "@/lib/seo";
-import { REFERRAL_REWARD, WELCOME_BONUS, MIN_REDEMPTION, creditsToRupees } from "@/lib/referral";
+import {
+  REFERRAL_REWARD,
+  WELCOME_BONUS,
+  MIN_REDEMPTION,
+  CREDIT_VALIDITY_MONTHS,
+  REF_COOKIE,
+  normalizeCode,
+  referrerLabel,
+  creditsToRupees,
+} from "@/lib/referral";
 import JoinForm from "@/components/club/JoinForm";
 import styles from "./page.module.css";
 
@@ -28,16 +39,29 @@ export default async function TravellersClubPage({
 }) {
   const member = await getCurrentMember();
   if (member) redirect("/travellers-club/dashboard");
-  const { ref = "" } = await searchParams;
+
+  // The referral code now arrives via the first-touch cookie (proxy.ts strips the
+  // ?ref= param); the search param is kept only as a dev / no-proxy fallback.
+  const { ref: spRef = "" } = await searchParams;
+  const jar = await cookies();
+  const refCode = normalizeCode(spRef || jar.get(REF_COOKIE)?.value || "");
+  let refName = "";
+  if (refCode) {
+    const referrer = await db.member.findUnique({
+      where: { referralCode: refCode },
+      select: { name: true },
+    });
+    if (referrer) refName = referrerLabel(referrer.name);
+  }
 
   const benefits = [
     {
       t: "Refer & earn",
-      d: `Give friends ${creditsToRupees(WELCOME_BONUS)} off their first trip and earn ${creditsToRupees(REFERRAL_REWARD)} credit yourself when they book.`,
+      d: `Give friends ${creditsToRupees(WELCOME_BONUS)} off their first trip and earn ${creditsToRupees(REFERRAL_REWARD)} credit yourself when they travel.`,
     },
     {
       t: "Credit that compounds",
-      d: `Your VMF credit never expires and stacks up — redeem from ${creditsToRupees(MIN_REDEMPTION)} against any holiday package.`,
+      d: `Your VMF credit stacks up and stays valid for ${CREDIT_VALIDITY_MONTHS} months from your last activity — redeem from ${creditsToRupees(MIN_REDEMPTION)} against any holiday package.`,
     },
     {
       t: "Members-only community",
@@ -61,7 +85,7 @@ export default async function TravellersClubPage({
             <h1 className={styles.title}>Travel more. Refer friends. Earn credit.</h1>
             <p className={styles.sub}>
               Members earn VMF travel credit for every friend they bring — and your friends get a welcome
-              discount too. Free to join, and your credit never expires.
+              discount too. Free to join, with a ₹250 head start the moment you sign up.
             </p>
             <div className={styles.benefits}>
               {benefits.map((b) => (
@@ -76,7 +100,7 @@ export default async function TravellersClubPage({
           <div className={styles.formCard}>
             <h2 className={styles.formTitle}>Create your free account</h2>
             <p className={styles.formSub}>Takes a minute. You&apos;ll get your own referral link instantly.</p>
-            <JoinForm refCode={ref} />
+            <JoinForm refCode={refCode} refName={refName} />
           </div>
         </div>
       </section>

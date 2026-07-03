@@ -146,6 +146,9 @@ model Package {
   itinerary       Json         @default("[]")
   featured        Boolean      @default(false)
   badge           String?
+  // Travellers Club gate (WI-6): STANDARD_RETAIL earns + redeems; LAUNCHED_GROUP excluded on both sides.
+  productClass    ProductClass @default(STANDARD_RETAIL)
+  travelStyles    String[]     @default([]) // WI-7 style tags for recommendations
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
@@ -249,34 +252,60 @@ model GeoPlace {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// VMF Holidays Travellers Club — referral program (see docs/REFERRAL-PROGRAM.md).
-// Two-sided travel-credit referrals + a WhatsApp community. These models define
-// the schema; the public/admin/API code is built in a follow-up phase. Apply with
-// `npm run db:push`. Nothing queries these tables yet, so they're inert until then.
+// VMF Holidays Travellers Club — referral program (v5 spec: locked economics,
+// anti-fraud, tiers, redemption, engagement, badges). Two-sided travel-credit
+// referrals + a WhatsApp community. Config lives in lib/referral.ts. Apply schema
+// changes with `npm run db:push` (regenerates the client), then verify on preview.
 // ─────────────────────────────────────────────────────────────────────────────
 
 enum MemberTier {
   EXPLORER
   VOYAGER
-  GLOBETROTTER
+  NAVIGATOR
   AMBASSADOR
 }
 
 enum ReferralStatus {
   PENDING // friend referred, not yet enquired
   ENQUIRED // friend submitted an enquiry
-  BOOKED // friend completed a paid booking (reward due)
-  REWARDED // referrer credited
-  EXPIRED // lapsed without booking
+  BOOKED // friend completed a paid booking
+  WELCOME_PAID // friend travelled + got their welcome, but referrer-reward gate not met
+  REWARDED // referrer credited (full ₹25k+ gate passed)
+  REJECTED_MARGIN // auto-rejected by the margin guard (WI-14a); no credit issued
+  NEEDS_DATA // margin/booking value missing — awaiting ops (WI-14a)
+  EXPIRED // lapsed without travel (WI-12 sweep)
   REJECTED // disqualified (self-referral / fraud)
 }
 
 enum CreditReason {
-  REFERRAL_REWARD // earned for referring a booked friend
+  JOIN_BONUS // ₹250 granted on signup (WI-5)
+  REFERRAL_REWARD // earned for referring a friend who completed travel
   WELCOME_BONUS // friend's first-trip welcome credit
+  ENGAGEMENT // light-action engagement credit (WI-13)
   REDEMPTION // spent against a booking
   ADJUSTMENT // manual admin correction
   EXPIRY // credit expired
+}
+
+enum RedemptionStatus {
+  PENDING
+  APPROVED
+  APPLIED
+  REJECTED
+  REVERSED // trip cancelled/refunded — credit restored (WI-18B)
+}
+
+enum EngagementStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// Travellers Club earn/spend gate (WI-6). STANDARD_RETAIL (fixed template + Build
+// My Trip) earns and redeems; LAUNCHED_GROUP (college/group/budget) is excluded.
+enum ProductClass {
+  STANDARD_RETAIL
+  LAUNCHED_GROUP
 }
 
 model Member {
@@ -288,17 +317,25 @@ model Member {
   referralCode     String        @unique
   tier             MemberTier    @default(EXPLORER)
   creditBalance    Int           @default(0) // travel credit balance, INR
+  completedTrips   Int           @default(0) // completed VMF trips (drives tier + badges)
+  travelStyles     String[]      @default([]) // WI-7 style keys, aligned to WhatsApp segments
+  ambassadorSpotlightConsent Boolean @default(false) // WI-13: OK to feature at Ambassador tier
   whatsappJoinedAt DateTime?
   firstBookingAt   DateTime? // set on their first booking (gates the welcome bonus)
   lastLoginAt      DateTime?
+  lastActivityAt   DateTime? // bumped on any earn/redeem/login/trip; drives 24-month expiry
   active           Boolean       @default(true)
   // Self-relation: which member referred this member (if any).
   referredBy       Member?       @relation("MemberReferrals", fields: [referredById], references: [id], onDelete: SetNull)
   referredById     String?
   referredMembers  Member[]      @relation("MemberReferrals")
-  // Referral events where this member is the referrer.
-  referrals        Referral[]
+  // Referral events where this member is the referrer / the referred friend.
+  referrals        Referral[]    @relation("ReferralReferrer")
+  refereeReferrals Referral[]    @relation("ReferralReferee")
   credits          CreditEntry[]
+  redemptionRequests RedemptionRequest[]
+  badges           MemberBadge[]
+  engagementClaims EngagementClaim[]
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
@@ -306,30 +343,99 @@ model Member {
 }
 
 model Referral {
-  id           String         @id @default(cuid())
-  referrer     Member         @relation(fields: [referrerId], references: [id], onDelete: Cascade)
-  referrerId   String
-  refereeName  String?
-  refereePhone String?
-  status       ReferralStatus @default(PENDING)
-  bookingValue Int? // INR, set when the friend books
-  rewardAmount Int? // INR credited to the referrer on reward
-  leadId       String? // attribution to a Lead (loose link, no FK)
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id                String         @id @default(cuid())
+  referrer          Member         @relation("ReferralReferrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referrerId        String
+  // The referred friend's Member account, set once they sign up (WI-16 "Joined").
+  refereeMember     Member?        @relation("ReferralReferee", fields: [refereeMemberId], references: [id], onDelete: SetNull)
+  refereeMemberId   String?
+  refereeName       String?
+  refereePhone      String?
+  status            ReferralStatus @default(PENDING)
+  bookingValue      Int? // INR, set when the friend books
+  tripMargin        Int? // INR, admin-entered at trip completion (margin guard, WI-4/WI-14)
+  travelCompletedAt DateTime? // set when the friend completes travel (gates the reward)
+  rewardEligible    Boolean        @default(false)
+  rewardAmount      Int? // INR credited to the referrer on reward
+  leadId            String? // attribution to a Lead (loose link, no FK)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
 
   @@index([referrerId])
+  @@index([refereeMemberId])
   @@index([status])
 }
 
 model CreditEntry {
-  id        String       @id @default(cuid())
-  member    Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
-  memberId  String
-  amount    Int // +earned / -redeemed, INR
-  reason    CreditReason
-  note      String?
-  createdAt DateTime     @default(now())
+  id         String       @id @default(cuid())
+  member     Member       @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId   String
+  amount     Int // +earned / -redeemed, INR
+  reason     CreditReason
+  note       String?
+  approvedBy String? // admin id, or 'SYSTEM_AUTO' for auto-decisions (WI-14)
+  createdAt  DateTime     @default(now())
 
   @@index([memberId])
+}
+
+model RedemptionRequest {
+  id          String           @id @default(cuid())
+  member      Member           @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId    String
+  amount      Int
+  packageNote String?
+  tripType    String? // "DOMESTIC" | "INTERNATIONAL"
+  status      RedemptionStatus @default(PENDING)
+  leadId      String?
+  resolvedBy  String? // admin id, or 'SYSTEM_AUTO'
+  createdAt   DateTime         @default(now())
+  resolvedAt  DateTime?
+
+  @@index([memberId])
+  @@index([status])
+}
+
+model MemberBadge {
+  id       String   @id @default(cuid())
+  member   Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId String
+  key      String
+  earnedAt DateTime @default(now())
+
+  @@unique([memberId, key])
+  @@index([memberId])
+}
+
+model EngagementClaim {
+  id         String           @id @default(cuid())
+  member     Member           @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId   String
+  taskKey    String
+  credit     Int
+  status     EngagementStatus @default(PENDING)
+  approvedBy String?
+  createdAt  DateTime         @default(now())
+  approvedAt DateTime?
+
+  @@unique([memberId, taskKey])
+  @@index([memberId])
+  @@index([status])
+}
+
+// Audit trail for the non-member "apply ₹1,000 welcome as a booking discount"
+// action (WI-14c). Written in the same transaction as applying the discount, so
+// the off-ledger welcome can never go untracked.
+model WelcomeDiscountLog {
+  id           String   @id @default(cuid())
+  bookingId    String?
+  leadId       String?
+  refereeName  String?
+  refereePhone String?
+  referrerId   String?
+  amount       Int
+  note         String?
+  createdAt    DateTime @default(now())
+
+  @@index([referrerId])
 }

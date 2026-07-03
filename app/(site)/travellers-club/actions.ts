@@ -1,10 +1,12 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { createMemberSession, destroyMemberSession } from "@/lib/auth/member";
-import { generateReferralCode } from "@/lib/referral";
+import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode } from "@/lib/referral";
+import { upsertReferralStage } from "@/lib/referral-credit";
 
 export type ClubFormState = { error?: string };
 
@@ -21,7 +23,7 @@ export async function joinClub(_prev: ClubFormState, formData: FormData): Promis
   const email = String(formData.get("email") ?? "").trim().toLowerCase().slice(0, 200);
   const phone = String(formData.get("phone") ?? "").trim().slice(0, 25);
   const password = String(formData.get("password") ?? "");
-  const refCode = String(formData.get("ref") ?? "").trim().toUpperCase().slice(0, 32);
+  const typedCode = normalizeCode(String(formData.get("ref") ?? ""));
 
   if (!name || !email || !phone || !password) return { error: "Please fill in every field." };
   if (!EMAIL_RE.test(email)) return { error: "Please enter a valid email address." };
@@ -34,15 +36,19 @@ export async function joinClub(_prev: ClubFormState, formData: FormData): Promis
   });
   if (existing) return { error: "An account with this email or phone already exists — try logging in." };
 
-  // Resolve the referrer from the code (ignore unknown codes; self-referral is
-  // impossible here since the new member has no code yet).
+  // Resolve the referrer. First-touch cookie wins; a typed code (WI-15) is only a
+  // fallback when there's no cookie, so a genuine link referral is never overwritten.
+  const jar = await cookies();
+  const cookieCode = normalizeCode(jar.get(REF_COOKIE)?.value ?? "");
+  const chosenCode = cookieCode || typedCode;
   let referredById: string | null = null;
-  if (refCode) {
+  if (chosenCode) {
     const referrer = await db.member.findUnique({
-      where: { referralCode: refCode },
-      select: { id: true },
+      where: { referralCode: chosenCode },
+      select: { id: true, phone: true, email: true },
     });
-    if (referrer) referredById = referrer.id;
+    // Reject self-referral: the code must not resolve to this same person.
+    if (referrer && referrer.phone !== phone && referrer.email !== email) referredById = referrer.id;
   }
 
   // Generate a unique referral code (retry on the rare collision).
@@ -53,11 +59,51 @@ export async function joinClub(_prev: ClubFormState, formData: FormData): Promis
     code = generateReferralCode(name);
   }
 
+  // Create the member with their ₹250 join bonus written to the ledger in the same
+  // transaction (WI-5), so a new member always starts with a correct balance.
   const passwordHash = await bcrypt.hash(password, 10);
-  const member = await db.member.create({
-    data: { name, email, phone, passwordHash, referralCode: code, referredById },
-    select: { id: true },
+  const member = await db.$transaction(async (tx) => {
+    const m = await tx.member.create({
+      data: {
+        name,
+        email,
+        phone,
+        passwordHash,
+        referralCode: code,
+        referredById,
+        creditBalance: JOIN_BONUS,
+        lastActivityAt: new Date(),
+      },
+      select: { id: true },
+    });
+    await tx.creditEntry.create({
+      data: {
+        memberId: m.id,
+        amount: JOIN_BONUS,
+        reason: "JOIN_BONUS",
+        note: "Welcome to the Travellers Club",
+        approvedBy: "SYSTEM_AUTO",
+      },
+    });
+    return m;
   });
+
+  // Link the referral (marks the friend as "Joined") and consume the first-touch
+  // cookie. Attribution is best-effort — it must never block a successful signup.
+  if (referredById) {
+    try {
+      await upsertReferralStage({
+        referrerId: referredById,
+        refereeMemberId: member.id,
+        refereeName: name,
+        refereePhone: phone,
+        status: "PENDING",
+      });
+    } catch (err) {
+      console.error("[joinClub] referral link failed:", err);
+    }
+  }
+  jar.delete(REF_COOKIE);
 
   await createMemberSession(member.id);
   redirect("/travellers-club/dashboard");
@@ -73,7 +119,10 @@ export async function loginMember(_prev: ClubFormState, formData: FormData): Pro
   const valid = member && member.active && (await bcrypt.compare(password, member.passwordHash));
   if (!valid) return { error: "Invalid email or password." };
 
-  await db.member.update({ where: { id: member.id }, data: { lastLoginAt: new Date() } });
+  await db.member.update({
+    where: { id: member.id },
+    data: { lastLoginAt: new Date(), lastActivityAt: new Date() },
+  });
   await createMemberSession(member.id);
   redirect("/travellers-club/dashboard");
 }
@@ -81,4 +130,14 @@ export async function loginMember(_prev: ClubFormState, formData: FormData): Pro
 export async function logoutMember() {
   await destroyMemberSession();
   redirect("/travellers-club");
+}
+
+/** Live validation for the WI-15 referral-code field — returns a masked referrer label. */
+export type RefCheck = { ok: boolean; label?: string };
+
+export async function checkReferralCode(code: string): Promise<RefCheck> {
+  const c = normalizeCode(code);
+  if (!c) return { ok: false };
+  const m = await db.member.findUnique({ where: { referralCode: c }, select: { name: true } });
+  return m ? { ok: true, label: referrerLabel(m.name) } : { ok: false };
 }

@@ -1,23 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
-import { joinClub, type ClubFormState } from "@/app/(site)/travellers-club/actions";
+import { useActionState, useState, useTransition } from "react";
+import { joinClub, checkReferralCode, type ClubFormState, type RefCheck } from "@/app/(site)/travellers-club/actions";
 import styles from "./club.module.css";
 
 const initial: ClubFormState = {};
 
-export default function JoinForm({ refCode = "" }: { refCode?: string }) {
+export default function JoinForm({ refCode = "", refName = "" }: { refCode?: string; refName?: string }) {
   const [state, action, pending] = useActionState(joinClub, initial);
+  const [showCode, setShowCode] = useState(Boolean(refCode));
+  const [code, setCode] = useState(refCode);
+  const [check, setCheck] = useState<RefCheck | null>(refCode && refName ? { ok: true, label: refName } : null);
+  const [checking, startCheck] = useTransition();
+
+  function validate(value: string) {
+    const v = value.trim();
+    if (!v) {
+      setCheck(null);
+      return;
+    }
+    startCheck(async () => {
+      setCheck(await checkReferralCode(v));
+    });
+  }
 
   return (
     <form action={action} className={styles.form}>
       {refCode && (
         <p className={styles.refNote}>
-          A friend invited you — you&apos;ll both earn VMF travel credit when you book your first trip.
+          {refName ? `${refName} invited you` : "A friend invited you"} — keep their code below so they get
+          credit when you travel, and you&apos;ll get ₹1,000 off your first trip.
         </p>
       )}
-      <input type="hidden" name="ref" defaultValue={refCode} />
       {/* honeypot — hidden from real users */}
       <input
         type="text"
@@ -60,6 +75,35 @@ export default function JoinForm({ refCode = "" }: { refCode?: string }) {
           required
         />
       </div>
+
+      {/* WI-15: optional referral code — collapsed by default, auto-open when prefilled. */}
+      <input type="hidden" name="ref" value={code} />
+      {!showCode ? (
+        <button type="button" className={styles.codeToggle} onClick={() => setShowCode(true)}>
+          Have a referral code?
+        </button>
+      ) : (
+        <div className="form-group">
+          <label className="form-label" htmlFor="cf-ref">Referral code (optional)</label>
+          <input
+            id="cf-ref"
+            type="text"
+            className="form-input"
+            value={code}
+            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            onBlur={(e) => validate(e.target.value)}
+            placeholder="e.g. AARAV7KD"
+            autoComplete="off"
+          />
+          {checking && <p className={styles.refCheck}>Checking…</p>}
+          {!checking && check?.ok && (
+            <p className={`${styles.refCheck} ${styles.refOk}`}>✓ Referred by {check.label ?? "a friend"}</p>
+          )}
+          {!checking && check && !check.ok && code.trim() !== "" && (
+            <p className={styles.refCheck}>We couldn&apos;t find that code — you can still join.</p>
+          )}
+        </div>
+      )}
 
       {state.error && <p className={styles.error}>{state.error}</p>}
 

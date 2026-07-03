@@ -215,6 +215,79 @@
   margin: 18px 2px 0;
 }
 
+.tierHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.tierNow {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin-top: 2px;
+}
+
+.tierReward {
+  flex-shrink: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--orange);
+  background: rgba(254, 92, 16, 0.1);
+  border-radius: 999px;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.tierBar {
+  height: 9px;
+  background: var(--surface, #efebe2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.tierBarFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange) 0%, var(--orange-lt, #ffa333) 100%);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.tierHint {
+  font-size: 0.86rem;
+  color: var(--muted);
+  margin: 10px 0 0;
+}
+
+.perks {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.perks li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.perks li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: var(--orange);
+  font-weight: 800;
+}
+
 @media (max-width: 640px) {
   .statsGrid {
     grid-template-columns: 1fr 1fr;
@@ -230,6 +303,7 @@
 [data-theme="dark"] .hello,
 [data-theme="dark"] .sectionTitle,
 [data-theme="dark"] .statValue,
+[data-theme="dark"] .tierNow,
 [data-theme="dark"] .community {
   color: var(--text);
 }

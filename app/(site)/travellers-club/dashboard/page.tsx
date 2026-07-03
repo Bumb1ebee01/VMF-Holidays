@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import {
   creditsToRupees,
   tierLabel,
+  tierProgress,
   referralLink,
   MIN_REDEMPTION,
   REFERRAL_REWARD,
@@ -48,6 +49,7 @@ export default async function ClubDashboardPage() {
 
   const link = referralLink(SITE_URL, member.referralCode);
   const successful = referred.filter((r) => r.firstBookingAt).length;
+  const tier = tierProgress(successful, member.completedTrips);
   const canRedeem = member.creditBalance >= MIN_REDEMPTION;
   const toRedeem = Math.max(MIN_REDEMPTION - member.creditBalance, 0);
   const communityUrl = process.env.WHATSAPP_COMMUNITY_URL;
@@ -85,6 +87,38 @@ export default async function ClubDashboardPage() {
             <span className={styles.statValue}>{successful}</span>
           </div>
         </div>
+
+        <section className={styles.sectionCard}>
+          <div className={styles.tierHead}>
+            <div>
+              <h2 className={styles.sectionTitle}>Your tier</h2>
+              <span className={styles.tierNow}>{tier.current.label}</span>
+            </div>
+            <span className={styles.tierReward}>{creditsToRupees(tier.current.referrerReward)} per referral</span>
+          </div>
+          {tier.next ? (
+            <>
+              <div
+                className={styles.tierBar}
+                role="progressbar"
+                aria-valuenow={Math.round(tier.fraction * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={`Progress to ${tier.next.label}`}
+              >
+                <span className={styles.tierBarFill} style={{ width: `${Math.round(tier.fraction * 100)}%` }} />
+              </div>
+              <p className={styles.tierHint}>{tier.hint}</p>
+            </>
+          ) : (
+            <p className={styles.tierHint}>You&apos;ve reached our top tier — thank you for being a VMF Ambassador.</p>
+          )}
+          <ul className={styles.perks}>
+            {tier.current.perks.map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+        </section>
 
         <section className={styles.sectionCard}>
           <h2 className={styles.sectionTitle}>Your referral link</h2>
