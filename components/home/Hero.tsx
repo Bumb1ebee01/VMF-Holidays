@@ -20,11 +20,11 @@ interface Suggestion {
 }
 
 const FILTER_PILLS = [
-  { label: "Beach Escapes", href: "/adventure" },
+  { label: "Beach Escapes", href: "/destinations" },
   { label: "Honeymoon", href: "/honeymoon" },
   { label: "Adventure", href: "/adventure" },
   { label: "Family Trips", href: "/family" },
-  { label: "Heritage Tours", href: "/pilgrimage" },
+  { label: "Heritage Tours", href: "/destinations" },
 ];
 
 const MARQUEE = [
@@ -185,7 +185,7 @@ export default function Hero({
             <LineReveal
               as="p"
               className={styles.tagline}
-              lines={["Your Way."]}
+              lines={["Your Way"]}
               play={ready}
               delay={0.35}
               duration={0.9}

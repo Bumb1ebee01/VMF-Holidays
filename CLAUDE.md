@@ -12,9 +12,9 @@ See `PLAN.md` for the full phased build plan.
 | Field | Value |
 |---|---|
 | Company | VMF Holidays Pvt. Ltd. |
-| Tagline | Discover Your World, Your Way |
+| Tagline | Discover Your World Your Way |
 | Phone 1 | +91 7499322412 |
-| Phone 2 | +91 8788324054 |
+| Phone 2 | +91 9270354828 |
 | Email | info@vmfholidays.com |
 | Address | Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India |
 | Founded | 3 July 2025 |

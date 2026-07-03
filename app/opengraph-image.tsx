@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "VMF Holidays — Discover Your World, Your Way";
+export const alt = "VMF Holidays — Discover Your World Your Way";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -59,7 +59,7 @@ export default function OpengraphImage() {
               display: "flex",
             }}
           >
-            Discover Your World, Your Way
+            Discover Your World Your Way
           </div>
         </div>
 

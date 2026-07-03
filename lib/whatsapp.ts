@@ -62,7 +62,7 @@ export function enquiryConfirmationText(name: string, interest?: string | null):
     `Hello ${firstName}!\n\n` +
     `Thank you for your enquiry with *VMF Holidays* regarding ${topic}. ` +
     `We've received it and our team is actively looking into it — we'll get back to you very shortly with the best options.\n\n` +
-    `Warm regards,\nTeam VMF Holidays\nDiscover Your World, Your Way`
+    `Warm regards,\nTeam VMF Holidays\nDiscover Your World Your Way`
   );
 }
 

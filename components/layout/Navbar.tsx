@@ -9,8 +9,8 @@ import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
   { href: "/destinations", label: "Destinations" },
+  { href: "/trip-builder", label: "Build My Trip" },
   { href: "/offers", label: "Offers" },
-  { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Blog" },
   { href: "/travellers-club", label: "Travellers Club" },
   { href: "/about", label: "About" },
@@ -123,6 +123,10 @@ export default function Navbar() {
 
         <div className={styles.actions}>
           <ThemeToggle onLight={isLight} />
+          <div className={styles.authLinks}>
+            <Link href="/travellers-club/login" className={styles.authLink}>Log in</Link>
+            <Link href="/travellers-club" className={styles.authSignup}>Sign up</Link>
+          </div>
           <div
             ref={planRef}
             className={styles.planWrap}
@@ -187,6 +191,13 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/travellers-club/login"
+            className={isActive("/travellers-club/login") ? styles.active : ""}
+            onClick={() => setMobileOpen(false)}
+          >
+            Log in
+          </Link>
           <Link href="/trip-builder" className="btn btn-primary" onClick={() => setMobileOpen(false)}>
             Plan My Trip
           </Link>

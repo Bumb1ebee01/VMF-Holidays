@@ -16,14 +16,14 @@ export const SITE_URL = "https://vmfholidays.com";
 // environment (or update this default).
 export const APP_URL = (process.env.APP_URL || "https://new-vmf-holidays.vercel.app").replace(/\/+$/, "");
 export const SITE_NAME = "VMF Holidays";
-export const SITE_TAGLINE = "Discover Your World, Your Way";
+export const SITE_TAGLINE = "Discover Your World Your Way";
 export const SITE_DESCRIPTION =
   "VMF Holidays offers curated domestic and international holiday packages with transparent pricing, full itineraries, and personalised service. Based in Goa, India.";
 
 export const BUSINESS = {
   legalName: "VMF Holidays Pvt. Ltd.",
   email: "info@vmfholidays.com",
-  phones: ["+917499322412", "+918788324054"],
+  phones: ["+917499322412", "+919270354828", "+919481384953"],
   whatsapp: "https://wa.me/917499322412",
   instagram: "https://www.instagram.com/vmfholidays/",
   facebook: "https://www.facebook.com/vmfholidays/",

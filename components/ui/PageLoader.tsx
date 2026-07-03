@@ -67,7 +67,7 @@ export default function PageLoader() {
       <div key={barKey} className={styles.track}>
         <div className={styles.fill} />
       </div>
-      <p className={styles.tagline}>Discover Your World, Your Way</p>
+      <p className={styles.tagline}>Discover Your World Your Way</p>
     </div>
   );
 }

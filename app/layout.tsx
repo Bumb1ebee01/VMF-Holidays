@@ -49,13 +49,13 @@ export const metadata: Metadata = {
     locale: "en_IN",
     url: SITE_URL,
     siteName: "VMF Holidays",
-    title: "VMF Holidays — Discover Your World, Your Way",
+    title: "VMF Holidays — Discover Your World Your Way",
     description:
       "Curated holiday packages with transparent pricing and full itineraries. Domestic & international tours from Goa, India.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "VMF Holidays — Discover Your World, Your Way",
+    title: "VMF Holidays — Discover Your World Your Way",
     description: "Curated holiday packages with transparent pricing from Goa, India.",
   },
   robots: {

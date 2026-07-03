@@ -103,7 +103,7 @@ export default function PackageCompare({
               <Row label="Hotel" cells={selected.map((it) => it.hotel ?? "—")} />
               <ListRow label="Highlights" cells={selected.map((it) => it.highlights)} />
               <ListRow label="Inclusions" cells={selected.map((it) => it.inclusions)} />
-              <ListRow label="Not included" cells={selected.map((it) => it.exclusions)} />
+              <ListRow label="Exclusions" cells={selected.map((it) => it.exclusions)} />
             </tbody>
           </table>
         </div>

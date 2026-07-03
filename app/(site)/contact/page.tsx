@@ -56,8 +56,8 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </div>
               <div>
                 <p className={styles.detailLabel}>Phone</p>
-                <a href="tel:+917499322412" className={styles.detailValue}>+91 7499322412</a>
-                <a href="tel:+918788324054" className={styles.detailValue}>+91 8788324054</a>
+                <a href="tel:+917499322412" className={styles.detailValue}>+91 74993 22412</a>
+                <a href="tel:+919270354828" className={styles.detailValue}>+91 92703 54828</a>
                 <a href="tel:+919481384953" className={styles.detailValue}>+91 94813 84953</a>
               </div>
             </div>
