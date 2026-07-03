@@ -9,10 +9,13 @@ import {
   tierProgress,
   referralLink,
   MIN_REDEMPTION,
+  CAP_DOMESTIC_PCT,
+  CAP_INTERNATIONAL_PCT,
   REFERRAL_REWARD,
   WELCOME_BONUS,
 } from "@/lib/referral";
 import ReferralShare from "@/components/club/ReferralShare";
+import RedemptionForm from "@/components/club/RedemptionForm";
 import { logoutMember } from "../actions";
 import styles from "./dashboard.module.css";
 
@@ -44,10 +47,18 @@ const REFERRAL_STATUS_LABEL: Record<string, string> = {
   REJECTED: "Closed",
 };
 
+const REDEMPTION_STATUS_LABEL: Record<string, string> = {
+  PENDING: "Pending review",
+  APPROVED: "Approved",
+  APPLIED: "Applied",
+  REJECTED: "Rejected",
+  REVERSED: "Reversed",
+};
+
 export default async function ClubDashboardPage() {
   const member = await requireMember();
 
-  const [referred, ledger, referrals] = await Promise.all([
+  const [referred, ledger, referrals, redemptions] = await Promise.all([
     db.member.findMany({
       where: { referredById: member.id },
       orderBy: { createdAt: "desc" },
@@ -62,6 +73,12 @@ export default async function ClubDashboardPage() {
     db.referral.findMany({
       where: { referrerId: member.id },
       select: { refereeMemberId: true, status: true },
+    }),
+    db.redemptionRequest.findMany({
+      where: { memberId: member.id },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: { id: true, amount: true, packageNote: true, status: true, createdAt: true },
     }),
   ]);
 
@@ -139,6 +156,41 @@ export default async function ClubDashboardPage() {
               <li key={p}>{p}</li>
             ))}
           </ul>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Redeem your credit</h2>
+          {canRedeem ? (
+            <>
+              <p className={styles.sectionSub}>
+                Apply your VMF credit to a trip — up to {CAP_DOMESTIC_PCT}% of a domestic trip or{" "}
+                {CAP_INTERNATIONAL_PCT}% of an international one. Clean requests apply straight away; the rest
+                our team confirms with your booking.
+              </p>
+              <RedemptionForm balance={member.creditBalance} />
+            </>
+          ) : (
+            <p className={styles.sectionSub}>
+              Redeeming starts at {creditsToRupees(MIN_REDEMPTION)}. Earn {creditsToRupees(toRedeem)} more to
+              unlock it.
+            </p>
+          )}
+          {redemptions.length > 0 && (
+            <div className={styles.list} style={{ marginTop: 8 }}>
+              {redemptions.map((r) => (
+                <div key={r.id} className={styles.listRow}>
+                  <div>
+                    <span className={styles.rowName}>
+                      {creditsToRupees(r.amount)}
+                      {r.packageNote ? ` · ${r.packageNote}` : ""}
+                    </span>
+                    <span className={styles.rowMeta}>{formatDate(r.createdAt)}</span>
+                  </div>
+                  <span className={styles.status}>{REDEMPTION_STATUS_LABEL[r.status] ?? r.status}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className={styles.sectionCard}>

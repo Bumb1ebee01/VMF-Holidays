@@ -3,10 +3,12 @@
 import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { createMemberSession, destroyMemberSession } from "@/lib/auth/member";
-import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode } from "@/lib/referral";
+import { createMemberSession, destroyMemberSession, getCurrentMember } from "@/lib/auth/member";
+import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode, creditsToRupees } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
+import { requestRedemption } from "@/lib/redemption";
 
 export type ClubFormState = { error?: string };
 
@@ -140,4 +142,32 @@ export async function checkReferralCode(code: string): Promise<RefCheck> {
   if (!c) return { ok: false };
   const m = await db.member.findUnique({ where: { referralCode: c }, select: { name: true } });
   return m ? { ok: true, label: referrerLabel(m.name) } : { ok: false };
+}
+
+export type RedemptionFormState = { error?: string; success?: string };
+
+/** Member requests to redeem credit against a trip (WI-3). */
+export async function requestRedemptionAction(
+  _prev: RedemptionFormState,
+  formData: FormData
+): Promise<RedemptionFormState> {
+  const member = await getCurrentMember();
+  if (!member) return { error: "Please log in to redeem credit." };
+
+  const amount = Math.round(Number(formData.get("amount")));
+  const tripType = String(formData.get("tripType") ?? "") === "INTERNATIONAL" ? "INTERNATIONAL" : "DOMESTIC";
+  const packageNote = String(formData.get("packageNote") ?? "").trim().slice(0, 200);
+  const rawValue = String(formData.get("tripValue") ?? "").trim();
+  const tripValue = rawValue ? Math.round(Number(rawValue)) : null;
+
+  const result = await requestRedemption(member.id, { amount, tripType, packageNote, tripValue });
+  if (!result.ok) return { error: result.error };
+
+  revalidatePath("/travellers-club/dashboard");
+  return {
+    success:
+      result.status === "APPLIED"
+        ? `${creditsToRupees(result.amount)} applied — it's been deducted from your balance and will come off this trip.`
+        : `Request for ${creditsToRupees(result.amount)} received. Our team will confirm it when they finalise your booking.`,
+  };
 }
