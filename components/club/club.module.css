@@ -104,6 +104,46 @@
   color: var(--orange);
 }
 
+.taskList {
+  display: flex;
+  flex-direction: column;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border, #e3dfd4);
+}
+
+.task:first-child {
+  border-top: none;
+}
+
+.taskInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.taskInfo strong {
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.taskInfo span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.taskDone {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #15803d;
+  white-space: nowrap;
+}
+
 .shareRow {
   display: flex;
   gap: 10px;

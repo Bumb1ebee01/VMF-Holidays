@@ -19,10 +19,12 @@ import {
   CREDIT_VALIDITY_MONTHS,
   BADGES,
   FOUNDING_MEMBER_UNTIL,
+  ENGAGEMENT_LIFETIME_CAP,
 } from "@/lib/referral";
 import ReferralShare from "@/components/club/ReferralShare";
 import RedemptionForm from "@/components/club/RedemptionForm";
 import TravelStylesPicker from "@/components/club/TravelStylesPicker";
+import EngagementTasks from "@/components/club/EngagementTasks";
 import { logoutMember } from "../actions";
 import styles from "./dashboard.module.css";
 
@@ -95,7 +97,7 @@ function referralNext(r: ReferralRow): string {
 export default async function ClubDashboardPage() {
   const member = await requireMember();
 
-  const [ledger, referrals, redemptions] = await Promise.all([
+  const [ledger, referrals, redemptions, engagementClaims] = await Promise.all([
     db.creditEntry.findMany({
       where: { memberId: member.id },
       orderBy: { createdAt: "desc" },
@@ -121,7 +123,12 @@ export default async function ClubDashboardPage() {
       take: 6,
       select: { id: true, amount: true, packageNote: true, status: true, createdAt: true },
     }),
+    db.engagementClaim.findMany({
+      where: { memberId: member.id },
+      select: { taskKey: true, status: true },
+    }),
   ]);
+  const claimedMap = Object.fromEntries(engagementClaims.map((c) => [c.taskKey, c.status]));
 
   const link = referralLink(APP_URL, member.referralCode);
   const successful = referrals.filter((r) => r.status === "REWARDED").length;
@@ -356,6 +363,14 @@ export default async function ClubDashboardPage() {
           <h2 className={styles.sectionTitle}>Your travel styles</h2>
           <p className={styles.sectionSub}>Pick up to 3 — we&apos;ll tailor deals and trip ideas to what you love.</p>
           <TravelStylesPicker current={member.travelStyles} />
+        </section>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Earn more credit</h2>
+          <p className={styles.sectionSub}>
+            Small one-time bonuses for getting set up — up to {creditsToRupees(ENGAGEMENT_LIFETIME_CAP)} in total.
+          </p>
+          <EngagementTasks claimed={claimedMap} />
         </section>
 
         {communityUrl && (

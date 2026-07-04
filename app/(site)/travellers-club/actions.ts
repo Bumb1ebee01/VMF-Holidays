@@ -9,6 +9,7 @@ import { createMemberSession, destroyMemberSession, getCurrentMember } from "@/l
 import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode, creditsToRupees, TRAVEL_STYLES } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
 import { requestRedemption } from "@/lib/redemption";
+import { claimEngagement } from "@/lib/engagement";
 
 export type ClubFormState = { error?: string };
 
@@ -189,4 +190,24 @@ export async function saveTravelStyles(_prev: StylesState, formData: FormData): 
   await db.member.update({ where: { id: member.id }, data: { travelStyles: chosen } });
   revalidatePath("/travellers-club/dashboard");
   return { success: chosen.length ? "Saved your travel styles." : "Cleared your travel styles." };
+}
+
+export type EngagementState = { error?: string; success?: string; status?: "APPROVED" | "PENDING" };
+
+/** Member claims an engagement task (WI-13). */
+export async function claimEngagementAction(taskKey: string): Promise<EngagementState> {
+  const member = await getCurrentMember();
+  if (!member) return { error: "Please log in." };
+
+  const r = await claimEngagement(member.id, taskKey);
+  if (!r.ok) return { error: r.error };
+
+  revalidatePath("/travellers-club/dashboard");
+  return {
+    status: r.status,
+    success:
+      r.status === "APPROVED"
+        ? `+${creditsToRupees(r.credit)} added to your balance!`
+        : "Submitted — our team will review it.",
+  };
 }
