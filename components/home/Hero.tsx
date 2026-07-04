@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { WordReveal, LineReveal } from "@/components/ui/Motion";
 import type { Destination } from "@/lib/types";
 import styles from "./Hero.module.css";
@@ -304,11 +304,6 @@ export default function Hero({
               </a>
             </motion.div>
           </div>
-
-          {/* Glass card cluster — featured destination slider */}
-          <div className={styles.cardCluster}>
-            <CollectionSlider destinations={destinations} ready={ready} />
-          </div>
         </div>
 
         {bgImages.length > 1 && (
@@ -344,69 +339,5 @@ export default function Hero({
         </div>
       </div>
     </>
-  );
-}
-
-function CollectionSlider({
-  destinations,
-  ready,
-}: {
-  destinations: Destination[];
-  ready: boolean;
-}) {
-  const slides = destinations.slice(0, 4);
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    if (!ready || slides.length < 2) return;
-    const id = setInterval(() => setIndex((i) => (i + 1) % slides.length), 3800);
-    return () => clearInterval(id);
-  }, [ready, slides.length]);
-
-  if (slides.length === 0) return null;
-  const active = slides[index];
-
-  return (
-    <motion.div
-      className={styles.slider}
-      initial={{ opacity: 0, y: 28 }}
-      animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-      transition={{ type: "spring", stiffness: 200, damping: 26, delay: 0.65 }}
-    >
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={active.slug}
-          initial={{ opacity: 0, y: 16, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -12, scale: 0.97 }}
-          transition={SPRING}
-        >
-          <Link href="/destinations" className={styles.slideCard}>
-            <span className={styles.slideThumb} style={{ backgroundImage: `url(${active.heroImage})` }} />
-            <span className={styles.slideMeta}>
-              <span className={styles.slideBrand}>
-                {active.region === "domestic" ? "India" : "International"}
-              </span>
-              <span className={styles.slideTitle}>{active.name}</span>
-              <span className={styles.slideCta}>
-                from ₹{(active.fromPrice / 1000).toFixed(0)}k →
-              </span>
-            </span>
-          </Link>
-        </motion.div>
-      </AnimatePresence>
-      <div className={styles.dots}>
-        {slides.map((s, i) => (
-          <button
-            key={s.slug}
-            type="button"
-            className={`${styles.dot} ${i === index ? styles.dotActive : ""}`}
-            aria-label={`Show ${s.name}`}
-            aria-current={i === index}
-            onClick={() => setIndex(i)}
-          />
-        ))}
-      </div>
-    </motion.div>
   );
 }

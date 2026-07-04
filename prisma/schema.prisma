@@ -415,6 +415,8 @@ model EngagementClaim {
   credit     Int
   status     EngagementStatus @default(PENDING)
   approvedBy String?
+  // Admin's reason when a claim is rejected — surfaced back to the member.
+  reviewNote String?
   createdAt  DateTime         @default(now())
   approvedAt DateTime?
 

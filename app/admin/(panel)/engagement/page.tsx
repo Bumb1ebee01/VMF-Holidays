@@ -75,7 +75,14 @@ export default async function EngagementPage() {
                   <td><Link href={`/admin/members/${c.member.id}`} className={shared.rowLink}>{c.member.name}</Link></td>
                   <td>{TASK_LABEL[c.taskKey] ?? c.taskKey}</td>
                   <td>{creditsToRupees(c.credit)}</td>
-                  <td>{STATUS_LABEL[c.status] ?? c.status}</td>
+                  <td>
+                    {STATUS_LABEL[c.status] ?? c.status}
+                    {c.status === "REJECTED" && c.reviewNote && (
+                      <span className={shared.cardSub} style={{ display: "block", marginTop: 2 }}>
+                        {c.reviewNote}
+                      </span>
+                    )}
+                  </td>
                   <td>{c.approvedAt ? formatDate(c.approvedAt) : "—"}</td>
                 </tr>
               ))}

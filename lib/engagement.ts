@@ -93,14 +93,20 @@ export async function approveEngagement(claimId: string, adminId: string): Promi
   });
 }
 
-/** Admin rejects a PENDING claim (no credit moves). */
-export async function rejectEngagement(claimId: string, adminId: string): Promise<{ error?: string }> {
+/** Admin rejects a PENDING claim (no credit moves). The optional note is the
+ *  reason, shown back to the member on their dashboard. */
+export async function rejectEngagement(
+  claimId: string,
+  adminId: string,
+  note?: string
+): Promise<{ error?: string }> {
   const claim = await db.engagementClaim.findUnique({ where: { id: claimId }, select: { status: true } });
   if (!claim) return { error: "Claim not found." };
   if (claim.status !== "PENDING") return { error: "Only a pending claim can be rejected." };
+  const reviewNote = (note ?? "").trim().slice(0, 300) || null;
   await db.engagementClaim.update({
     where: { id: claimId },
-    data: { status: "REJECTED", approvedBy: adminId, approvedAt: new Date() },
+    data: { status: "REJECTED", approvedBy: adminId, approvedAt: new Date(), reviewNote },
   });
   return {};
 }

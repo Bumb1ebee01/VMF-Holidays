@@ -22,15 +22,16 @@ export async function approveEngagementAction(claimId: string): Promise<Engageme
   return r;
 }
 
-export async function rejectEngagementAction(claimId: string): Promise<EngagementActionState> {
+export async function rejectEngagementAction(claimId: string, note?: string): Promise<EngagementActionState> {
   const actor = await requirePermission("members:manage");
-  const r = await rejectEngagement(claimId, actor.id);
+  const r = await rejectEngagement(claimId, actor.id, note);
   if (!r.error) {
+    const reason = (note ?? "").trim();
     await logActivity(actor, {
       action: "engagement.reject",
       entity: "EngagementClaim",
       entityId: claimId,
-      detail: "Rejected an engagement claim",
+      detail: reason ? `Rejected an engagement claim — ${reason}` : "Rejected an engagement claim",
     });
   }
   revalidatePath("/admin/engagement");

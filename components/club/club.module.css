@@ -144,6 +144,19 @@
   white-space: nowrap;
 }
 
+.taskFailed {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #c0341d;
+  white-space: nowrap;
+}
+
+.taskNote {
+  font-size: 0.78rem;
+  color: #c0341d;
+  margin-top: 2px;
+}
+
 .shareRow {
   display: flex;
   gap: 10px;

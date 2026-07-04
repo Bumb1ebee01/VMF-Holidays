@@ -248,7 +248,13 @@ export function redeemableForTrip(balance: number, tripValue: number, internatio
 
 // ── Engagement tasks (WI-13, config-driven) ───────────────────────────────────
 export type EngagementVerify = "auto" | "manual";
-export type EngagementTask = { key: string; label: string; credit: number; verify: EngagementVerify };
+// `url`, when present, is the official place the member goes to do the task (e.g.
+// our Instagram). The dashboard opens it when they claim; and because a follow/tag
+// can't be verified programmatically, those tasks are `manual` so an admin confirms
+// (or rejects with a reason) before the credit lands.
+export type EngagementTask = { key: string; label: string; credit: number; verify: EngagementVerify; url?: string };
+
+const INSTAGRAM_URL = "https://www.instagram.com/vmfholidays/";
 
 /** One-time light actions that earn small credit. Total capped at ENGAGEMENT_LIFETIME_CAP. */
 export const ENGAGEMENT_TASKS: EngagementTask[] = [
@@ -256,8 +262,8 @@ export const ENGAGEMENT_TASKS: EngagementTask[] = [
   { key: "WHATSAPP_VERIFY", label: "Verify WhatsApp & join the community", credit: 100, verify: "auto" },
   { key: "BIRTHDAY", label: "Add birthday / anniversary", credit: 50, verify: "auto" },
   { key: "TRIP_TESTIMONIAL", label: "Submit post-trip testimonial + photos", credit: 250, verify: "manual" },
-  { key: "FOLLOW_SOCIAL", label: "Follow Instagram + YouTube", credit: 100, verify: "auto" },
-  { key: "TRIP_UGC", label: "Tag VMF in a trip post", credit: 100, verify: "manual" },
+  { key: "FOLLOW_SOCIAL", label: "Follow us on Instagram", credit: 100, verify: "manual", url: INSTAGRAM_URL },
+  { key: "TRIP_UGC", label: "Tag VMF in a trip post", credit: 100, verify: "manual", url: INSTAGRAM_URL },
 ];
 
 // ── Travel styles (WI-7) — keys align to the WhatsApp community categories ─────

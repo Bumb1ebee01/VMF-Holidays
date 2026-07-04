@@ -133,10 +133,12 @@ export default async function ClubDashboardPage() {
     }),
     db.engagementClaim.findMany({
       where: { memberId: member.id },
-      select: { taskKey: true, status: true },
+      select: { taskKey: true, status: true, reviewNote: true },
     }),
   ]);
-  const claimedMap = Object.fromEntries(engagementClaims.map((c) => [c.taskKey, c.status]));
+  const claimedMap = Object.fromEntries(
+    engagementClaims.map((c) => [c.taskKey, { status: c.status, note: c.reviewNote }])
+  );
 
   const link = referralLink(APP_URL, member.referralCode);
   const successful = referrals.filter((r) => r.status === "REWARDED").length;
