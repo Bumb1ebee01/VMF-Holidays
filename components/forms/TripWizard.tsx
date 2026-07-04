@@ -503,6 +503,20 @@ export default function TripWizard({ destinations, geography }: Props) {
                     numberOfMonths={2}
                     disabledBefore={(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; })()}
                     selected={startDate ?? undefined}
+                    // Single-click still sets the departure; these modifiers just paint
+                    // the auto-derived return + the nights between (reusing rdp-range CSS).
+                    modifiers={
+                      startDate && endDate && endDate > startDate
+                        ? {
+                            tripMid: {
+                              from: new Date(startDate.getTime() + 86400000),
+                              to: new Date(endDate.getTime() - 86400000),
+                            },
+                            tripEnd: endDate,
+                          }
+                        : undefined
+                    }
+                    modifiersClassNames={{ tripMid: "rdp-range_middle", tripEnd: "rdp-range_end" }}
                     onSelect={(value) => {
                       // Single-date picker: every click is the new departure date and
                       // the return is re-derived from tripDays (effect above). This lets

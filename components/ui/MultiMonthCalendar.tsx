@@ -30,6 +30,9 @@ interface Props {
   onSelect?: (value: Date | DateRange | undefined) => void;
   disabledBefore?: Date;
   showOutsideDays?: boolean;
+  /** Extra day modifiers (e.g. a derived trip range shown in single mode). */
+  modifiers?: Record<string, DateRange | Date>;
+  modifiersClassNames?: Record<string, string>;
 }
 
 export function MultiMonthCalendar({
@@ -39,6 +42,8 @@ export function MultiMonthCalendar({
   onSelect,
   disabledBefore,
   showOutsideDays = true,
+  modifiers,
+  modifiersClassNames,
 }: Props) {
   const today = React.useMemo(() => new Date(), []);
 
@@ -62,6 +67,8 @@ export function MultiMonthCalendar({
     showOutsideDays,
     disabled,
     components: { Chevron },
+    ...(modifiers ? { modifiers } : {}),
+    ...(modifiersClassNames ? { modifiersClassNames } : {}),
   };
 
   return (
