@@ -11,18 +11,21 @@ const STATS = [
 function StatItem({ stat, active }: { stat: typeof STATS[0]; active: boolean }) {
   const [value, setValue] = useState(0);
 
+  // Count up on a timer (not requestAnimationFrame — rAF is paused in background/
+  // hidden tabs, which left the number stuck at 0). Eased, finishes on the target.
   useEffect(() => {
     if (!active) return;
-    const dur = 2200;
-    const t0 = performance.now();
-    const tick = (now: number) => {
-      const p = Math.min((now - t0) / dur, 1);
+    const steps = 45;
+    const stepMs = 1600 / steps;
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      const p = Math.min(i / steps, 1);
       const eased = 1 - Math.pow(1 - p, 3);
-      setValue(Math.floor(eased * stat.target));
-      if (p < 1) requestAnimationFrame(tick);
-      else setValue(stat.target);
-    };
-    requestAnimationFrame(tick);
+      setValue(Math.round(eased * stat.target));
+      if (p >= 1) clearInterval(id);
+    }, stepMs);
+    return () => clearInterval(id);
   }, [active, stat.target]);
 
   return (
@@ -42,20 +45,33 @@ export default function Stats() {
   const ref = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(false);
 
+  // Start the count-up when the stats scroll into view. Uses a scroll + rect check
+  // (reliable under the site's Lenis smooth-scroll, where IntersectionObserver was
+  // not firing and left the numbers stuck at "0+") plus a safety timer so the count
+  // is never left at 0 even if no scroll event reaches us.
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setActive(true);
-          observer.unobserve(el);
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
+    let fired = false;
+    const activate = () => {
+      if (fired) return;
+      fired = true;
+      setActive(true);
+      cleanup();
+    };
+    const maybeActivate = () => {
+      const r = el.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.9 && r.bottom > 0) activate();
+    };
+    function cleanup() {
+      cancelAnimationFrame(raf);
+      clearTimeout(timer);
+      window.removeEventListener("scroll", maybeActivate);
+    }
+    const raf = requestAnimationFrame(maybeActivate); // already in view on load?
+    window.addEventListener("scroll", maybeActivate, { passive: true });
+    const timer = setTimeout(activate, 1800);
+    return cleanup;
   }, []);
 
   return (
