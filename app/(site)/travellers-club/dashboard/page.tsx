@@ -22,6 +22,7 @@ import {
 } from "@/lib/referral";
 import ReferralShare from "@/components/club/ReferralShare";
 import RedemptionForm from "@/components/club/RedemptionForm";
+import TravelStylesPicker from "@/components/club/TravelStylesPicker";
 import { logoutMember } from "../actions";
 import styles from "./dashboard.module.css";
 
@@ -349,6 +350,12 @@ export default async function ClubDashboardPage() {
               );
             })}
           </div>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Your travel styles</h2>
+          <p className={styles.sectionSub}>Pick up to 3 — we&apos;ll tailor deals and trip ideas to what you love.</p>
+          <TravelStylesPicker current={member.travelStyles} />
         </section>
 
         {communityUrl && (

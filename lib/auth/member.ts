@@ -62,6 +62,7 @@ export type ClubMember = {
   tier: string;
   creditBalance: number;
   completedTrips: number;
+  travelStyles: string[];
   referredById: string | null;
   firstBookingAt: Date | null;
   createdAt: Date;
@@ -81,6 +82,7 @@ export async function getCurrentMember(): Promise<ClubMember | null> {
       tier: true,
       creditBalance: true,
       completedTrips: true,
+      travelStyles: true,
       active: true,
       referredById: true,
       firstBookingAt: true,
@@ -97,6 +99,7 @@ export async function getCurrentMember(): Promise<ClubMember | null> {
     tier: m.tier,
     creditBalance: m.creditBalance,
     completedTrips: m.completedTrips,
+    travelStyles: m.travelStyles,
     referredById: m.referredById,
     firstBookingAt: m.firstBookingAt,
     createdAt: m.createdAt,

@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { createMemberSession, destroyMemberSession, getCurrentMember } from "@/lib/auth/member";
-import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode, creditsToRupees } from "@/lib/referral";
+import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode, creditsToRupees, TRAVEL_STYLES } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
 import { requestRedemption } from "@/lib/redemption";
 
@@ -170,4 +170,23 @@ export async function requestRedemptionAction(
         ? `${creditsToRupees(result.amount)} applied — it's been deducted from your balance and will come off this trip.`
         : `Request for ${creditsToRupees(result.amount)} received. Our team will confirm it when they finalise your booking.`,
   };
+}
+
+export type StylesState = { error?: string; success?: string };
+
+/** Save a member's travel styles (WI-7) — up to 3, validated against the config. */
+export async function saveTravelStyles(_prev: StylesState, formData: FormData): Promise<StylesState> {
+  const member = await getCurrentMember();
+  if (!member) return { error: "Please log in." };
+
+  const validKeys = new Set<string>(TRAVEL_STYLES.map((s) => s.key));
+  const chosen = String(formData.get("styles") ?? "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => validKeys.has(s))
+    .slice(0, 3);
+
+  await db.member.update({ where: { id: member.id }, data: { travelStyles: chosen } });
+  revalidatePath("/travellers-club/dashboard");
+  return { success: chosen.length ? "Saved your travel styles." : "Cleared your travel styles." };
 }

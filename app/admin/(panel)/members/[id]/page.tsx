@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
-import { creditsToRupees, tierLabel } from "@/lib/referral";
+import { creditsToRupees, tierLabel, TRAVEL_STYLES } from "@/lib/referral";
 import { formatDate } from "@/lib/utils";
 import MemberCreditForms from "@/components/admin/MemberCreditForms";
 import shared from "@/components/admin/shared.module.css";
@@ -33,6 +33,8 @@ const REF_STATUS_LABEL: Record<string, string> = {
   EXPIRED: "Expired",
   REJECTED: "Rejected",
 };
+
+const STYLE_LABEL: Record<string, string> = Object.fromEntries(TRAVEL_STYLES.map((s) => [s.key, s.label]));
 
 export default async function MemberDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const actor = await requirePermission("members:view");
@@ -106,6 +108,14 @@ export default async function MemberDetailPage({ params }: { params: Promise<{ i
         <div className={styles.metaItem}>
           <span className={styles.metaLabel}>Trips completed</span>
           <span>{member.completedTrips}</span>
+        </div>
+        <div className={styles.metaItem}>
+          <span className={styles.metaLabel}>Travel styles</span>
+          <span>
+            {member.travelStyles.length
+              ? member.travelStyles.map((k) => STYLE_LABEL[k] ?? k).join(", ")
+              : "—"}
+          </span>
         </div>
       </div>
 
