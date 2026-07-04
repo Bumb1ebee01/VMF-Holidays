@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/ThemeToggle";
+import AccountMenu from "./AccountMenu";
 import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
@@ -123,10 +124,7 @@ export default function Navbar() {
 
         <div className={styles.actions}>
           <ThemeToggle onLight={isLight} />
-          <div className={styles.authLinks}>
-            <Link href="/travellers-club/login" className={styles.authLink}>Log in</Link>
-            <Link href="/travellers-club" className={styles.authSignup}>Sign up</Link>
-          </div>
+          <AccountMenu onLight={isLight} />
           <div
             ref={planRef}
             className={styles.planWrap}
@@ -192,11 +190,11 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/travellers-club/login"
-            className={isActive("/travellers-club/login") ? styles.active : ""}
+            href="/travellers-club/dashboard"
+            className={isActive("/travellers-club/dashboard") ? styles.active : ""}
             onClick={() => setMobileOpen(false)}
           >
-            Log in
+            My account
           </Link>
           <Link href="/trip-builder" className="btn btn-primary" onClick={() => setMobileOpen(false)}>
             Plan My Trip

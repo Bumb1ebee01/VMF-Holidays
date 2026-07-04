@@ -1,0 +1,125 @@
+.tab {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 90;
+  background: var(--navy);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  padding: 12px 18px;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 36, 100, 0.3);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.tab:hover {
+  transform: translateY(-2px);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease;
+}
+
+.card {
+  position: relative;
+  background: var(--card-bg, #fff);
+  color: var(--text);
+  border-radius: 18px;
+  max-width: 420px;
+  width: 100%;
+  padding: 34px 32px 32px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.32);
+  animation: popIn 0.25s ease;
+}
+
+.close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--text);
+  margin: 8px 0 0;
+}
+
+.body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+.cta {
+  display: inline-flex;
+  margin-top: 20px;
+  background: var(--orange);
+  color: #fff;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 10px;
+  text-decoration: none;
+  width: 100%;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 560px) {
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+  .card {
+    max-width: none;
+    border-radius: 18px 18px 0 0;
+    animation: sheetIn 0.25s ease;
+  }
+  @keyframes sheetIn {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .card {
+    animation: none;
+  }
+}

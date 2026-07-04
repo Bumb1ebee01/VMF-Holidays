@@ -8,6 +8,8 @@ import TripBuilderCTA from "@/components/home/TripBuilderCTA";
 import OffersStrip from "@/components/home/OffersStrip";
 import Testimonials from "@/components/home/Testimonials";
 import HowItWorks from "@/components/home/HowItWorks";
+import ClubStrip from "@/components/home/ClubStrip";
+import ClubPopup from "@/components/home/ClubPopup";
 import CTABanner from "@/components/home/CTABanner";
 import { getAllDestinations, getAllPackages, getPublishedOffers } from "@/lib/queries";
 
@@ -48,7 +50,9 @@ export default async function HomePage() {
       <Testimonials />
       <WhyChooseVMF />
       <HowItWorks />
+      <ClubStrip />
       <CTABanner />
+      <ClubPopup />
     </main>
   );
 }
