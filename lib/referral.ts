@@ -13,8 +13,9 @@ export const CREDIT_TO_INR = 1;
 export const JOIN_BONUS = 250;
 /** Referred friend's first-trip welcome credit. */
 export const WELCOME_BONUS = 1000;
-/** A booking must be at least this value for the friend's welcome to qualify. */
-export const MIN_WELCOME_BOOKING = 5000;
+/** A booking must be at least this value for the friend's welcome to qualify.
+ *  Aligned with MIN_QUALIFYING_BOOKING so both sides qualify on the same trip size. */
+export const MIN_WELCOME_BOOKING = 25000;
 /** A booking must be at least this value for the referrer reward to qualify. */
 export const MIN_QUALIFYING_BOOKING = 25000;
 /** Referrer reward must be ≤ this percentage of the trip's margin (margin guard). */

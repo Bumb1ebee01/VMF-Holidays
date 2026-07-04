@@ -83,9 +83,9 @@ Your referred friend receives a one-time **welcome credit of ₹1,000** when **a
 
 - they joined or enquired through your valid referral link or code;
 - they complete their first VMF trip; and
-- the booking value of that trip is **₹5,000 or more**.
+- the booking value of that trip is **₹25,000 or more**.
 
-The welcome credit is paid once per person, ever. A booking below ₹5,000 does not earn the welcome credit.
+The welcome credit is paid once per person, ever. A booking below ₹25,000 does not earn the welcome credit.
 
 ### 5.4 Referrer reward
 

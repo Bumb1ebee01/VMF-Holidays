@@ -15,9 +15,9 @@ import {
 export type TripOutcome =
   | "NOT_REFERRED" // member wasn't referred — trip recorded, no referral credit
   | "ALREADY_REWARDED" // this referral already paid out; nothing to do
-  | "BELOW_FLOOR" // booking under ₹5,000 — no welcome
+  | "BELOW_FLOOR" // booking under the ₹25,000 qualifying floor — no welcome, no reward
   | "NEEDS_DATA" // missing booking value / trip margin — can't finish the decision
-  | "WELCOME_PAID" // friend's ₹1,000 welcome paid; trip didn't clear the ₹25k referrer gate
+  | "WELCOME_PAID" // friend's ₹1,000 welcome paid; referrer reward still pending margin data
   | "REJECTED_MARGIN" // referrer reward blocked by the margin guard (welcome still paid)
   | "REWARDED"; // full payout — welcome + referrer reward
 
@@ -33,7 +33,7 @@ export type TripCompletionResult = {
  * event that fires the referral reward chain. It:
  *  - counts the member's completed trip (once) and re-evaluates their own tier;
  *  - if they were referred, runs the auto-decision on their inbound referral:
- *      • ₹1,000 welcome to the friend once the booking is ≥ ₹5,000,
+ *      • ₹1,000 welcome to the friend once the booking is ≥ ₹25,000,
  *      • the tier-based referrer reward once the booking is ≥ ₹25,000 AND that
  *        reward is ≤ 20% of the trip margin (the margin guard),
  *      • otherwise WELCOME_PAID / REJECTED_MARGIN / NEEDS_DATA (all overridable).
