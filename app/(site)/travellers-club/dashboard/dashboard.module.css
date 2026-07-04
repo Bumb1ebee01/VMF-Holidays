@@ -232,6 +232,21 @@
   margin: 18px 2px 0;
 }
 
+.fineprintLink {
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.fineprintLink:hover {
+  color: var(--navy);
+}
+
+:global([data-theme="dark"]) .fineprintLink:hover {
+  color: var(--orange-lt);
+}
+
 .tierHead {
   display: flex;
   justify-content: space-between;

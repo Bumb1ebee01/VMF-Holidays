@@ -78,14 +78,14 @@
 .links {
   display: flex;
   align-items: center;
-  gap: var(--sp-4);
+  gap: var(--sp-5);
   margin-left: auto;
 }
 
 .links a {
   font-size: 11px;
   font-weight: var(--fw-medium);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.85);
   text-decoration: none;

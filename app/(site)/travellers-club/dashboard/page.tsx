@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireMember } from "@/lib/auth/member";
 import { APP_URL } from "@/lib/seo";
@@ -436,7 +437,12 @@ export default async function ClubDashboardPage() {
 
         <p className={styles.fineprint}>
           Credit is redeemable from {creditsToRupees(MIN_REDEMPTION)} against any VMF Holidays package, applied by
-          our team when you book. Referral rewards are confirmed once a referred friend completes their trip.
+          our team when you book. Referral rewards are confirmed once a referred friend completes their trip. See
+          the full{" "}
+          <Link href="/travellers-club/terms" className={styles.fineprintLink}>
+            Travellers Club Terms &amp; Conditions
+          </Link>
+          .
         </p>
       </div>
     </div>
