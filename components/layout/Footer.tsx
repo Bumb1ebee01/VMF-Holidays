@@ -122,6 +122,7 @@ export default function Footer() {
           <div className={styles.bottomLinks}>
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms & Conditions</Link>
+            <Link href="/travellers-club/terms">Travellers Club Terms</Link>
           </div>
         </div>
       </div>
