@@ -6,7 +6,6 @@ import Link from "next/link";
 import type { Destination } from "@/lib/types";
 import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar } from "@/components/ui/MultiMonthCalendar";
-import RouteMap, { type RoutePoint } from "@/components/ui/RouteMap";
 import { trackLead } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
 import styles from "./TripWizard.module.css";
@@ -90,7 +89,7 @@ export default function TripWizard({ destinations, geography }: Props) {
   // Step 3 — dates & travellers
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [adults, setAdults] = useState(2);
+  const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
 
@@ -162,18 +161,6 @@ export default function TripWizard({ destinations, geography }: Props) {
   const tripDays = Math.min(Math.max(places.length, 1) * 2 + Math.ceil(totalExperiences / 3), 21);
   const tripNights = Math.max(tripDays - 1, 1);
 
-  const routePoints = useMemo<RoutePoint[]>(
-    () =>
-      places
-        .map(({ place }) => {
-          const coords: [number, number] | null =
-            place.lat != null && place.lng != null ? [place.lat, place.lng] : null;
-          return coords ? { name: place.name, coords } : null;
-        })
-        .filter((p): p is RoutePoint => p !== null),
-    [places]
-  );
-
   const travelersLabel =
     `${adults} Adult${adults !== 1 ? "s" : ""}` +
     (children > 0 ? `, ${children} Child${children !== 1 ? "ren" : ""}` : "") +
@@ -182,11 +169,20 @@ export default function TripWizard({ destinations, geography }: Props) {
   const allExperiences = Object.values(experiences).flat();
   const destinationStr = places.map((p) => p.place.name).join(", ");
 
+  // A selected city is "complete" for the Experiences step once it has ≥1 chosen
+  // activity — unless the DB lists none for it, in which case it's exempt (our team
+  // tailors it) so the traveller is never trapped on a city with nothing to pick.
+  const cityHasExp = (c: GeoCountry, p: GeoPlace) =>
+    p.activities.length === 0 || (experiences[placeKey(c, p)]?.length ?? 0) > 0;
+  const placesNeedingExp = places.filter(({ country, place }) => !cityHasExp(country, place));
+
   function canNext() {
     if (step === 0) return countries.length > 0;
     if (step === 1) return places.length > 0;
-    if (step === 2) return true;
-    if (step === 3) return !!startDate;
+    // Each city with listed experiences needs at least one before leaving the step;
+    // the active city must be satisfied to advance (goNext walks to the next city).
+    if (step === 2) return !activeExpPlace || cityHasExp(activeExpPlace.country, activeExpPlace.place);
+    if (step === 3) return !!startDate && adults >= 1;
     if (step === 4) return !!(hotelCategory && mealPlan);
     if (step === 5) return !!(form.name && form.phone);
     return true;
@@ -195,6 +191,13 @@ export default function TripWizard({ destinations, geography }: Props) {
   function goNext() {
     if (step === 0) setCityTab("all");
     if (step === 1 && places[0]) setExpTab(placeKey(places[0].country, places[0].place));
+    // City-by-city: if any selected city still needs an experience, jump to it and
+    // stay on the step rather than advancing to Dates.
+    if (step === 2 && placesNeedingExp.length > 0) {
+      const nextCity = placesNeedingExp[0];
+      setExpTab(placeKey(nextCity.country, nextCity.place));
+      return;
+    }
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
 
@@ -440,8 +443,11 @@ export default function TripWizard({ destinations, geography }: Props) {
                 <div className={styles.filterTabs}>
                   {places.map(({ country, place }) => {
                     const key = placeKey(country, place);
+                    const done = (experiences[key]?.length ?? 0) > 0;
                     return (
-                      <button key={key} type="button" className={`${styles.filterTab} ${activeExpKey === key ? styles.filterTabActive : ""}`} onClick={() => setExpTab(key)}>{place.name}</button>
+                      <button key={key} type="button" className={`${styles.filterTab} ${activeExpKey === key ? styles.filterTabActive : ""}`} onClick={() => setExpTab(key)}>
+                        {done && <span className={styles.tabDone} aria-hidden="true">✓</span>}{place.name}
+                      </button>
                     );
                   })}
                 </div>
@@ -450,6 +456,10 @@ export default function TripWizard({ destinations, geography }: Props) {
                   <span className={styles.daysPillNum}>{tripDays} Days</span>
                 </div>
               </div>
+              <p className={styles.expReq}>
+                Pick at least <strong>one experience per city *</strong> so we can plan your days. Cities with no
+                listed experiences are optional — our team will tailor those for you.
+              </p>
 
               {activeExpPlace && (
                 activeExpPlace.place.activities.length > 0 ? (
@@ -481,7 +491,7 @@ export default function TripWizard({ destinations, geography }: Props) {
           {step === 3 && (
             <div className={styles.datesLayout}>
               <div>
-                <div className={styles.subhead}>When are you travelling?</div>
+                <div className={styles.subhead}>When are you travelling? *</div>
                 <p className={styles.calNote}>
                   Based on your cities &amp; experiences we&apos;ve planned an approximate{" "}
                   <strong>{tripDays}-day</strong> trip. Just pick your <strong>departure date</strong> —
@@ -519,7 +529,7 @@ export default function TripWizard({ destinations, geography }: Props) {
               </div>
 
               <div>
-                <div className={styles.subhead}>Who&apos;s coming?</div>
+                <div className={styles.subhead}>Who&apos;s coming? *</div>
                 <div className={styles.travelerCard}>
                   {([["Adults", "Age 12+", adults, setAdults, 1], ["Children", "Age 5–12", children, setChildren, 0], ["Infants", "Under 5", infants, setInfants, 0]] as const).map(([label, sub, val, setter, min]) => (
                     <div key={label} className={styles.travelerRow}>
@@ -536,12 +546,6 @@ export default function TripWizard({ destinations, geography }: Props) {
                   ))}
                 </div>
 
-                <div className={styles.subhead} style={{ marginTop: 28 }}>Your route</div>
-                {routePoints.length > 0 ? (
-                  <RouteMap points={routePoints} />
-                ) : (
-                  <p className={styles.routeNote}>Add cities with mapped locations to preview your route here.</p>
-                )}
               </div>
             </div>
           )}
