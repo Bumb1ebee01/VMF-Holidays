@@ -8,11 +8,17 @@ import {
   tierLabel,
   tierProgress,
   referralLink,
+  maskReferee,
   MIN_REDEMPTION,
   CAP_DOMESTIC_PCT,
   CAP_INTERNATIONAL_PCT,
   REFERRAL_REWARD,
   WELCOME_BONUS,
+  JOIN_BONUS,
+  MIN_QUALIFYING_BOOKING,
+  CREDIT_VALIDITY_MONTHS,
+  BADGES,
+  FOUNDING_MEMBER_UNTIL,
 } from "@/lib/referral";
 import ReferralShare from "@/components/club/ReferralShare";
 import RedemptionForm from "@/components/club/RedemptionForm";
@@ -35,18 +41,6 @@ const REASON_LABEL: Record<string, string> = {
   EXPIRY: "Expired",
 };
 
-const REFERRAL_STATUS_LABEL: Record<string, string> = {
-  PENDING: "Joined",
-  ENQUIRED: "Enquired",
-  BOOKED: "Booked",
-  WELCOME_PAID: "Travelled",
-  REWARDED: "Rewarded",
-  REJECTED_MARGIN: "Travelled",
-  NEEDS_DATA: "In review",
-  EXPIRED: "Expired",
-  REJECTED: "Closed",
-};
-
 const REDEMPTION_STATUS_LABEL: Record<string, string> = {
   PENDING: "Pending review",
   APPROVED: "Approved",
@@ -55,15 +49,52 @@ const REDEMPTION_STATUS_LABEL: Record<string, string> = {
   REVERSED: "Reversed",
 };
 
+type ReferralRow = {
+  status: string;
+  refereeMemberId: string | null;
+  travelCompletedAt: Date | null;
+  rewardAmount: number | null;
+};
+
+// The stage pill shown for a referral (WI-16 ladder), derived from its status.
+function referralPill(r: ReferralRow): string {
+  if (r.status === "REWARDED") return "Rewarded";
+  if (r.travelCompletedAt || r.status === "WELCOME_PAID" || r.status === "REJECTED_MARGIN") return "Travelled";
+  if (r.status === "BOOKED") return "Booked";
+  if (r.refereeMemberId) return "Joined";
+  if (r.status === "ENQUIRED") return "Enquired";
+  if (r.status === "EXPIRED") return "Expired";
+  return "Invited";
+}
+
+// A plain-language "what's next" line for each referral.
+function referralNext(r: ReferralRow): string {
+  switch (r.status) {
+    case "REWARDED":
+      return `You earned ${creditsToRupees(r.rewardAmount ?? REFERRAL_REWARD)}.`;
+    case "WELCOME_PAID":
+      return `They travelled and got their welcome — this trip didn't reach ${creditsToRupees(MIN_QUALIFYING_BOOKING)}, so no reward this time.`;
+    case "REJECTED_MARGIN":
+      return "They travelled and got their welcome.";
+    case "BOOKED":
+      return `You'll earn ${creditsToRupees(REFERRAL_REWARD)} when they complete their trip.`;
+    case "ENQUIRED":
+      return "They've enquired — a friendly nudge might help them book.";
+    case "EXPIRED":
+      return "This referral lapsed without a trip.";
+    case "NEEDS_DATA":
+      return "We're confirming this reward.";
+    default:
+      return r.refereeMemberId
+        ? `They've joined — you'll earn ${creditsToRupees(REFERRAL_REWARD)} when they travel.`
+        : "Waiting for them to get started.";
+  }
+}
+
 export default async function ClubDashboardPage() {
   const member = await requireMember();
 
-  const [referred, ledger, referrals, redemptions] = await Promise.all([
-    db.member.findMany({
-      where: { referredById: member.id },
-      orderBy: { createdAt: "desc" },
-      select: { id: true, name: true, createdAt: true },
-    }),
+  const [ledger, referrals, redemptions] = await Promise.all([
     db.creditEntry.findMany({
       where: { memberId: member.id },
       orderBy: { createdAt: "desc" },
@@ -72,7 +103,16 @@ export default async function ClubDashboardPage() {
     }),
     db.referral.findMany({
       where: { referrerId: member.id },
-      select: { refereeMemberId: true, status: true },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        refereeName: true,
+        refereeMemberId: true,
+        status: true,
+        createdAt: true,
+        rewardAmount: true,
+        travelCompletedAt: true,
+      },
     }),
     db.redemptionRequest.findMany({
       where: { memberId: member.id },
@@ -83,14 +123,25 @@ export default async function ClubDashboardPage() {
   ]);
 
   const link = referralLink(APP_URL, member.referralCode);
-  const statusByReferee = new Map(
-    referrals.filter((r) => r.refereeMemberId).map((r) => [r.refereeMemberId as string, r.status])
-  );
   const successful = referrals.filter((r) => r.status === "REWARDED").length;
+  const joinedCount = referrals.filter((r) => r.refereeMemberId).length;
+  const travelledCount = referrals.filter(
+    (r) => r.travelCompletedAt || r.status === "WELCOME_PAID" || r.status === "REWARDED" || r.status === "REJECTED_MARGIN"
+  ).length;
+  const creditsEarned = referrals.reduce((sum, r) => sum + (r.status === "REWARDED" ? r.rewardAmount ?? 0 : 0), 0);
   const tier = tierProgress(successful, member.completedTrips);
   const canRedeem = member.creditBalance >= MIN_REDEMPTION;
   const toRedeem = Math.max(MIN_REDEMPTION - member.creditBalance, 0);
   const communityUrl = process.env.WHATSAPP_COMMUNITY_URL;
+
+  // WI-8 badges — derived from the member's activity for display.
+  const earned = new Set<string>();
+  if (joinedCount >= 1) earned.add("FIRST_REFERRAL");
+  if (successful >= 1) earned.add("FIRST_BOOKING_EARNED");
+  if (member.completedTrips >= 1) earned.add("TRIP_ONE");
+  if (member.completedTrips >= 3) earned.add("FREQUENT_TRAVELLER");
+  if (successful >= 5) earned.add("SUPER_REFERRER");
+  if (member.createdAt < FOUNDING_MEMBER_UNTIL) earned.add("FOUNDING_MEMBER");
 
   return (
     <div className={styles.page}>
@@ -118,13 +169,26 @@ export default async function ClubDashboardPage() {
           </div>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Friends referred</span>
-            <span className={styles.statValue}>{referred.length}</span>
+            <span className={styles.statValue}>{referrals.length}</span>
           </div>
           <div className={styles.statCard}>
             <span className={styles.statLabel}>Rewarded referrals</span>
             <span className={styles.statValue}>{successful}</span>
           </div>
         </div>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Your referral link</h2>
+          <p className={styles.sectionSub}>
+            Share this link. When a friend joins and travels, you earn{" "}
+            <strong>{creditsToRupees(REFERRAL_REWARD)}</strong> and they get{" "}
+            <strong>{creditsToRupees(WELCOME_BONUS)}</strong> off their first trip.
+          </p>
+          <ReferralShare link={link} />
+          <p className={styles.codeLine}>
+            Your code: <strong>{member.referralCode}</strong>
+          </p>
+        </section>
 
         <section className={styles.sectionCard}>
           <div className={styles.tierHead}>
@@ -156,6 +220,50 @@ export default async function ClubDashboardPage() {
               <li key={p}>{p}</li>
             ))}
           </ul>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Your referrals</h2>
+          <div className={styles.trackerCounts}>
+            <div className={styles.trackerStat}>
+              <span className={styles.trackerNum}>{referrals.length}</span>
+              <span className={styles.trackerLabel}>Referred</span>
+            </div>
+            <div className={styles.trackerStat}>
+              <span className={styles.trackerNum}>{joinedCount}</span>
+              <span className={styles.trackerLabel}>Joined</span>
+            </div>
+            <div className={styles.trackerStat}>
+              <span className={styles.trackerNum}>{travelledCount}</span>
+              <span className={styles.trackerLabel}>Travelled</span>
+            </div>
+            <div className={styles.trackerStat}>
+              <span className={styles.trackerNum}>{creditsToRupees(creditsEarned)}</span>
+              <span className={styles.trackerLabel}>Credits earned</span>
+            </div>
+          </div>
+          {referrals.length === 0 ? (
+            <div className={styles.empty}>
+              <p>No referrals yet — share your link to get started.</p>
+              <div style={{ marginTop: 12 }}>
+                <ReferralShare link={link} />
+              </div>
+            </div>
+          ) : (
+            <div className={styles.list}>
+              {referrals.map((r) => (
+                <div key={r.id} className={styles.listRow}>
+                  <div>
+                    <span className={styles.rowName}>{maskReferee(r.refereeName)}</span>
+                    <span className={styles.rowMeta}>{referralNext(r)}</span>
+                  </div>
+                  <span className={`${styles.status} ${r.status === "REWARDED" ? styles.statusBooked : styles.statusPending}`}>
+                    {referralPill(r)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
 
         <section className={styles.sectionCard}>
@@ -194,16 +302,53 @@ export default async function ClubDashboardPage() {
         </section>
 
         <section className={styles.sectionCard}>
-          <h2 className={styles.sectionTitle}>Your referral link</h2>
-          <p className={styles.sectionSub}>
-            Share this link. When a friend joins and books, you earn{" "}
-            <strong>{creditsToRupees(REFERRAL_REWARD)}</strong> and they get{" "}
-            <strong>{creditsToRupees(WELCOME_BONUS)}</strong> off their first trip.
-          </p>
-          <ReferralShare link={link} />
-          <p className={styles.codeLine}>
-            Your code: <strong>{member.referralCode}</strong>
-          </p>
+          <h2 className={styles.sectionTitle}>How your VMF Credit works</h2>
+          <div className={styles.steps3}>
+            <div className={styles.step3}>
+              <span className={styles.stepNum}>1</span>
+              <strong>Join</strong>
+              <span>Start with {creditsToRupees(JOIN_BONUS)} credit, free.</span>
+            </div>
+            <div className={styles.step3}>
+              <span className={styles.stepNum}>2</span>
+              <strong>Share</strong>
+              <span>Send your link to friends who love to travel.</span>
+            </div>
+            <div className={styles.step3}>
+              <span className={styles.stepNum}>3</span>
+              <strong>Earn</strong>
+              <span>
+                {creditsToRupees(REFERRAL_REWARD)} when a friend travels — they get {creditsToRupees(WELCOME_BONUS)} off.
+              </span>
+            </div>
+          </div>
+          <details className={styles.details}>
+            <summary>See the details</summary>
+            <p className={styles.detailsText}>
+              1 Credit = ₹1. Redeem from {creditsToRupees(MIN_REDEMPTION)} against any standard holiday package —
+              up to {CAP_DOMESTIC_PCT}% of a domestic trip or {CAP_INTERNATIONAL_PCT}% of an international one,
+              applied by our team at booking. Credit is valid for {CREDIT_VALIDITY_MONTHS} months from your last
+              activity. You earn {creditsToRupees(REFERRAL_REWARD)} each time a friend you referred completes
+              their first qualifying trip of {creditsToRupees(MIN_QUALIFYING_BOOKING)} or more, and they get{" "}
+              {creditsToRupees(WELCOME_BONUS)} off their first trip.
+            </p>
+          </details>
+        </section>
+
+        <section className={styles.sectionCard}>
+          <h2 className={styles.sectionTitle}>Your badges</h2>
+          <div className={styles.badges}>
+            {BADGES.map((b) => {
+              const got = earned.has(b.key);
+              return (
+                <div key={b.key} className={`${styles.badge} ${got ? styles.badgeOn : styles.badgeOff}`}>
+                  <span className={styles.badgeIcon} aria-hidden="true">{got ? "★" : "☆"}</span>
+                  <span className={styles.badgeName}>{b.label}</span>
+                  <span className={styles.badgeCriteria}>{got ? "Earned" : b.criteria}</span>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {communityUrl && (
@@ -212,29 +357,6 @@ export default async function ClubDashboardPage() {
             <span>Exclusive deals, early access and trip inspiration for members.</span>
           </a>
         )}
-
-        <section className={styles.sectionCard}>
-          <h2 className={styles.sectionTitle}>Friends you&apos;ve referred</h2>
-          {referred.length === 0 ? (
-            <p className={styles.empty}>No referrals yet — share your link above to get started.</p>
-          ) : (
-            <div className={styles.list}>
-              {referred.map((r) => (
-                <div key={r.id} className={styles.listRow}>
-                  <div>
-                    <span className={styles.rowName}>{r.name}</span>
-                    <span className={styles.rowMeta}>Joined {formatDate(r.createdAt)}</span>
-                  </div>
-                  <span
-                    className={`${styles.status} ${statusByReferee.get(r.id) === "REWARDED" ? styles.statusBooked : styles.statusPending}`}
-                  >
-                    {REFERRAL_STATUS_LABEL[statusByReferee.get(r.id) ?? "PENDING"] ?? "Joined"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
 
         <section className={styles.sectionCard}>
           <h2 className={styles.sectionTitle}>Credit history</h2>
@@ -263,7 +385,7 @@ export default async function ClubDashboardPage() {
 
         <p className={styles.fineprint}>
           Credit is redeemable from {creditsToRupees(MIN_REDEMPTION)} against any VMF Holidays package, applied by
-          our team when you book. Rewards are confirmed once a referred friend completes a paid booking.
+          our team when you book. Referral rewards are confirmed once a referred friend completes their trip.
         </p>
       </div>
     </div>

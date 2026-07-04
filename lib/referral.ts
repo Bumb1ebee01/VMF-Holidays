@@ -270,7 +270,10 @@ export const TRAVEL_STYLES = [
   { key: "CULTURE_FAITH", label: "Culture & Faith" },
 ] as const;
 
-// ── Achievement badges (WI-8) — awarded once, idempotent ──────────────────────
+// ── Achievement badges (WI-8) ─────────────────────────────────────────────────
+/** Members who joined before this date count as "Founding Members" (WI-8). */
+export const FOUNDING_MEMBER_UNTIL = new Date("2026-10-02T00:00:00Z");
+
 export const BADGES = [
   { key: "FIRST_REFERRAL", label: "First Referral", criteria: "A friend joins via your link" },
   { key: "FIRST_BOOKING_EARNED", label: "First Booking Earned", criteria: "A referred friend completes a qualifying trip" },
@@ -296,6 +299,18 @@ export function referrerLabel(name: string): string {
   const first = parts[0];
   const lastInitial = parts.length > 1 ? parts[parts.length - 1][0]!.toUpperCase() : "";
   return lastInitial ? `${first} ${lastInitial}.` : first;
+}
+
+/**
+ * A referred friend's masked label shown to their referrer: first initial + last
+ * name (e.g. "Aarav Sharma" → "A. Sharma"). Never exposes their first name or any
+ * contact detail (WI-16 privacy rule). Falls back to a generic label with no name.
+ */
+export function maskReferee(name: string | null | undefined): string {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "Friend via link";
+  const firstInitial = parts[0][0]!.toUpperCase();
+  return parts.length === 1 ? `${firstInitial}.` : `${firstInitial}. ${parts[parts.length - 1]}`;
 }
 
 /** Format a credit amount as rupees (e.g. 2000 -> "₹2,000"). */

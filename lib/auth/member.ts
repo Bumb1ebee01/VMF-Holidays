@@ -64,6 +64,7 @@ export type ClubMember = {
   completedTrips: number;
   referredById: string | null;
   firstBookingAt: Date | null;
+  createdAt: Date;
 };
 
 export async function getCurrentMember(): Promise<ClubMember | null> {
@@ -83,6 +84,7 @@ export async function getCurrentMember(): Promise<ClubMember | null> {
       active: true,
       referredById: true,
       firstBookingAt: true,
+      createdAt: true,
     },
   });
   if (!m || !m.active) return null;
@@ -97,6 +99,7 @@ export async function getCurrentMember(): Promise<ClubMember | null> {
     completedTrips: m.completedTrips,
     referredById: m.referredById,
     firstBookingAt: m.firstBookingAt,
+    createdAt: m.createdAt,
   };
 }
 

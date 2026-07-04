@@ -288,6 +288,145 @@
   font-weight: 800;
 }
 
+/* Referral tracker (WI-16) */
+.trackerCounts {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.trackerStat {
+  background: var(--surface, #efebe2);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.trackerNum {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.15;
+}
+
+.trackerLabel {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* "How your credit works" 3-step (WI-2) */
+.steps3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.step3 {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface, #efebe2);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.step3 strong {
+  color: var(--navy);
+  font-size: 0.95rem;
+}
+
+.step3 span {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.stepNum {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.details {
+  margin-top: 14px;
+}
+
+.details summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.detailsText {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 10px 0 0;
+}
+
+/* Badges (WI-8) */
+.badges {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px solid var(--border, #e3dfd4);
+}
+
+.badgeOn {
+  background: rgba(254, 92, 16, 0.08);
+  border-color: rgba(254, 92, 16, 0.3);
+}
+
+.badgeOff {
+  opacity: 0.6;
+}
+
+.badgeIcon {
+  font-size: 1.1rem;
+  color: var(--orange);
+}
+
+.badgeName {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.badgeCriteria {
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 560px) {
+  .trackerCounts {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .steps3 {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .statsGrid {
     grid-template-columns: 1fr 1fr;
@@ -304,6 +443,8 @@
 [data-theme="dark"] .sectionTitle,
 [data-theme="dark"] .statValue,
 [data-theme="dark"] .tierNow,
+[data-theme="dark"] .trackerNum,
+[data-theme="dark"] .step3 strong,
 [data-theme="dark"] .community {
   color: var(--text);
 }
