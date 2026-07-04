@@ -11,6 +11,7 @@ import CitySights from "@/components/packages/CitySights";
 import PackageFaq from "@/components/packages/PackageFaq";
 import EnquirySidebar from "@/components/packages/EnquirySidebar";
 import PackageCard from "@/components/ui/PackageCard";
+import ShareTripButton from "@/components/packages/ShareTripButton";
 import styles from "./page.module.css";
 
 export async function generateStaticParams() {
@@ -102,6 +103,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
               <>from <strong>{formatINR(pkg.fromPrice)}</strong> per person</>
             )}
           </p>
+          <ShareTripButton title={pkg.title} />
         </div>
       </div>
 
