@@ -22,6 +22,7 @@ import {
   ENGAGEMENT_LIFETIME_CAP,
 } from "@/lib/referral";
 import ReferralShare from "@/components/club/ReferralShare";
+import ShareActions from "@/components/club/ShareActions";
 import RedemptionForm from "@/components/club/RedemptionForm";
 import TravelStylesPicker from "@/components/club/TravelStylesPicker";
 import EngagementTasks from "@/components/club/EngagementTasks";
@@ -68,6 +69,13 @@ function referralPill(r: ReferralRow): string {
   if (r.status === "ENQUIRED") return "Enquired";
   if (r.status === "EXPIRED") return "Expired";
   return "Invited";
+}
+
+// A re-share nudge only helps for referrals still in flight — not ones that have
+// already travelled (rewarded or not) or lapsed.
+const NUDGE_DONE = new Set(["REWARDED", "WELCOME_PAID", "REJECTED_MARGIN", "EXPIRED"]);
+function canNudge(r: ReferralRow): boolean {
+  return !NUDGE_DONE.has(r.status) && !r.travelCompletedAt;
 }
 
 // A plain-language "what's next" line for each referral.
@@ -222,6 +230,12 @@ export default async function ClubDashboardPage() {
                 <span className={styles.tierBarFill} style={{ width: `${Math.round(tier.fraction * 100)}%` }} />
               </div>
               <p className={styles.tierHint}>{tier.hint}</p>
+              {tier.next.referrerReward > tier.current.referrerReward && (
+                <p className={styles.tierUplift}>
+                  Reach {tier.next.label} to earn{" "}
+                  <strong>{creditsToRupees(tier.next.referrerReward)} per referral</strong>.
+                </p>
+              )}
             </>
           ) : (
             <p className={styles.tierHint}>You&apos;ve reached our top tier — thank you for being a VMF Ambassador.</p>
@@ -267,6 +281,16 @@ export default async function ClubDashboardPage() {
                   <div>
                     <span className={styles.rowName}>{maskReferee(r.refereeName)}</span>
                     <span className={styles.rowMeta}>{referralNext(r)}</span>
+                    {canNudge(r) && (
+                      <div className={styles.rowNudge}>
+                        <ShareActions
+                          link={link}
+                          message="Still dreaming of that trip? Here's my VMF Holidays link — join and we both earn travel credit:"
+                          variant="compact"
+                          compactLabel="Re-share"
+                        />
+                      </div>
+                    )}
                   </div>
                   <span className={`${styles.status} ${r.status === "REWARDED" ? styles.statusBooked : styles.statusPending}`}>
                     {referralPill(r)}

@@ -189,6 +189,10 @@
   margin-top: 2px;
 }
 
+.rowNudge {
+  margin-top: 8px;
+}
+
 .status {
   font-size: 0.75rem;
   font-weight: 700;
@@ -275,6 +279,16 @@
   font-size: 0.86rem;
   color: var(--muted);
   margin: 10px 0 0;
+}
+
+.tierUplift {
+  font-size: 0.86rem;
+  color: var(--text);
+  margin: 6px 0 0;
+}
+
+.tierUplift strong {
+  color: var(--orange);
 }
 
 .perks {
