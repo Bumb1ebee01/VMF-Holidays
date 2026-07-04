@@ -18,6 +18,11 @@ const NAV_LINKS = [
   { href: "/contact", label: "Contact" },
 ];
 
+// Blog is kept out of the desktop top bar to save space — it lives in the
+// "Plan My Trip" dropdown below. The mobile menu (which has no dropdown) still
+// renders the full NAV_LINKS, so Blog stays reachable there.
+const TOP_NAV_LINKS = NAV_LINKS.filter((link) => link.href !== "/blog");
+
 // Pages shown in the "Plan My Trip" dropdown so visitors can jump straight to
 // any section instead of having to start in the Trip Builder.
 const PLAN_LINKS = [
@@ -110,7 +115,7 @@ export default function Navbar() {
         </Link>
 
         <nav className={styles.links}>
-          {NAV_LINKS.map((link) => (
+          {TOP_NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
