@@ -1,0 +1,75 @@
+/* Companion styles for the Travellers Club terms page. The page shell (page/hero/
+   title/updated/content, incl. h2 + p) is reused from ../../privacy/page.module.css;
+   this module only adds the extras that legal content needs: lead, notice, lists,
+   tables and the effective-date line. */
+
+.lead {
+  font-size: var(--text-lg, 1.05rem);
+  color: var(--text);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.notice {
+  background: rgba(254, 92, 16, 0.08);
+  border: 1px solid rgba(254, 92, 16, 0.28);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: var(--text-base);
+  color: var(--text);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+}
+
+.subhead {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--navy);
+  margin: 4px 0 -8px;
+}
+
+.list {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: var(--text-base);
+  color: var(--text-light);
+  line-height: var(--leading-relaxed);
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-base);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border, #e2e6ef);
+  color: var(--text-light);
+  vertical-align: top;
+}
+
+.table th {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.effective {
+  font-size: var(--text-sm);
+  color: var(--muted);
+  margin: 0;
+}
+
+:global([data-theme="dark"]) .subhead,
+:global([data-theme="dark"]) .table th {
+  color: var(--text);
+}

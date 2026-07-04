@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { getCurrentMember } from "@/lib/auth/member";
@@ -101,6 +102,10 @@ export default async function TravellersClubPage({
             <h2 className={styles.formTitle}>Create your free account</h2>
             <p className={styles.formSub}>Takes a minute. You&apos;ll get your own referral link instantly.</p>
             <JoinForm refCode={refCode} refName={refName} />
+            <p className={styles.formConsent}>
+              By creating an account you agree to the{" "}
+              <Link href="/travellers-club/terms">Travellers Club Terms</Link>.
+            </p>
           </div>
         </div>
       </section>

@@ -83,6 +83,18 @@
   max-width: 460px;
 }
 
+.formConsent {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 16px 0 0;
+}
+
+.formConsent a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
 @media (max-width: 860px) {
   .heroInner {
     grid-template-columns: 1fr;
