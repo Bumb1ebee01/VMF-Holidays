@@ -117,6 +117,19 @@
   margin: 12px 0 0;
 }
 
+.shareCard {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--orange);
+  text-decoration: none;
+}
+
+.shareCard:hover {
+  text-decoration: underline;
+}
+
 .community {
   display: block;
   background: rgba(254, 92, 16, 0.08);

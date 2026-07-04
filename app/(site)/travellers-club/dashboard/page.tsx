@@ -196,6 +196,9 @@ export default async function ClubDashboardPage() {
           <p className={styles.codeLine}>
             Your code: <strong>{member.referralCode}</strong>
           </p>
+          <a href="/api/club/share-card" download="vmf-travellers-club.png" className={styles.shareCard}>
+            Download a share card →
+          </a>
         </section>
 
         <section className={styles.sectionCard}>
