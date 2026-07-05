@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Fragment } from "react";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import AccountMenu from "./AccountMenu";
@@ -22,6 +22,12 @@ const NAV_LINKS = [
 // "Plan My Trip" dropdown below. The mobile menu (which has no dropdown) still
 // renders the full NAV_LINKS, so Blog stays reachable there.
 const TOP_NAV_LINKS = NAV_LINKS.filter((link) => link.href !== "/blog");
+
+// The "Destinations" top-bar item is a dropdown → Domestic / International.
+const DESTINATION_LINKS = [
+  { href: "/destinations/domestic", label: "Domestic (India)" },
+  { href: "/destinations/international", label: "International" },
+];
 
 // Pages shown in the "Plan My Trip" dropdown so visitors can jump straight to
 // any section instead of having to start in the Trip Builder.
@@ -46,8 +52,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(!isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
+  const [destOpen, setDestOpen] = useState(false);
   const [canHover, setCanHover] = useState(false);
   const planRef = useRef<HTMLDivElement>(null);
+  const destRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -71,9 +79,27 @@ export default function Navbar() {
     };
   }, [planOpen]);
 
+  // Close the Destinations dropdown on outside click, Escape, or route change.
+  useEffect(() => {
+    if (!destOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (destRef.current && !destRef.current.contains(e.target as Node)) setDestOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setDestOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [destOpen]);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlanOpen(false);
+    setDestOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -115,16 +141,55 @@ export default function Navbar() {
         </Link>
 
         <nav className={styles.links}>
-          {TOP_NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={isActive(link.href) ? styles.active : ""}
-              aria-current={isActive(link.href) ? "page" : undefined}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {TOP_NAV_LINKS.map((link) =>
+            link.href === "/destinations" ? (
+              <div
+                key={link.href}
+                ref={destRef}
+                className={styles.navDropdown}
+                onMouseEnter={canHover ? () => setDestOpen(true) : undefined}
+                onMouseLeave={canHover ? () => setDestOpen(false) : undefined}
+              >
+                <button
+                  type="button"
+                  className={`${styles.linkTrigger} ${isActive("/destinations") ? styles.active : ""}`}
+                  aria-haspopup="menu"
+                  aria-expanded={destOpen}
+                  onClick={() => setDestOpen((o) => !o)}
+                >
+                  Destinations
+                  <svg
+                    className={`${styles.linkCaret} ${destOpen ? styles.planCaretOpen : ""}`}
+                    width="12" height="12" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                {destOpen && (
+                  <div className={styles.navMenu} role="menu">
+                    <Link href="/destinations" role="menuitem" onClick={() => setDestOpen(false)}>
+                      All destinations
+                    </Link>
+                    {DESTINATION_LINKS.map((l) => (
+                      <Link key={l.href} href={l.href} role="menuitem" onClick={() => setDestOpen(false)}>
+                        {l.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={isActive(link.href) ? styles.active : ""}
+                aria-current={isActive(link.href) ? "page" : undefined}
+              >
+                {link.label}
+              </Link>
+            )
+          )}
         </nav>
 
         <div className={styles.actions}>
@@ -184,16 +249,38 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className={styles.mobileMenu} id="mobile-menu">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={isActive(link.href) ? styles.active : ""}
-              onClick={() => setMobileOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) =>
+            link.href === "/destinations" ? (
+              <Fragment key={link.href}>
+                <Link
+                  href={link.href}
+                  className={isActive(link.href) ? styles.active : ""}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+                {DESTINATION_LINKS.map((l) => (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`${styles.mobileSub} ${isActive(l.href) ? styles.active : ""}`}
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </Fragment>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={isActive(link.href) ? styles.active : ""}
+                onClick={() => setMobileOpen(false)}
+              >
+                {link.label}
+              </Link>
+            )
+          )}
           <Link
             href="/travellers-club/dashboard"
             className={isActive("/travellers-club/dashboard") ? styles.active : ""}

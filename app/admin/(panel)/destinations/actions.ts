@@ -12,6 +12,8 @@ export interface DestinationPayload {
   name: string;
   slug: string;
   country: string;
+  /** State the destination rolls up into on the domestic tiles (India only). */
+  state?: string;
   region: string;
   heroImage: string;
   fromPrice: number;
@@ -43,6 +45,8 @@ export async function saveDestination(payload: DestinationPayload): Promise<Save
     name,
     slug,
     country: payload.country.trim(),
+    // State only applies to domestic (India) destinations; clear it for international.
+    state: payload.region === "domestic" ? payload.state?.trim() || null : null,
     region: payload.region as "domestic" | "international",
     heroImage: payload.heroImage.trim(),
     fromPrice: Math.max(0, Math.floor(payload.fromPrice)),

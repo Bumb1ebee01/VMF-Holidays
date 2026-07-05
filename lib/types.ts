@@ -2,6 +2,8 @@ export interface Destination {
   slug: string;
   name: string;
   country: string;
+  /** State this destination rolls up into on the domestic tiles (India only). */
+  state?: string;
   region: "domestic" | "international";
   heroImage: string;
   fromPrice: number;

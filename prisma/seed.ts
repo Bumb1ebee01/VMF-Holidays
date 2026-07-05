@@ -19,6 +19,7 @@ async function main() {
         slug: d.slug,
         name: d.name,
         country: d.country,
+        state: d.state ?? null,
         region: d.region,
         heroImage: d.heroImage,
         fromPrice: d.fromPrice,

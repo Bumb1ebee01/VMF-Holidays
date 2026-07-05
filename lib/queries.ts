@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { db } from "./db";
+import { slugify } from "./utils";
 import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
 
@@ -32,6 +33,7 @@ function toDestination(row: DbDestination): Destination {
     slug: row.slug,
     name: row.name,
     country: row.country,
+    state: row.state ?? undefined,
     region: row.region,
     heroImage: row.heroImage,
     fromPrice: row.fromPrice,
@@ -51,6 +53,79 @@ export const getAllPackages = cache(async (): Promise<Package[]> => {
   const rows = await db.package.findMany({ orderBy: { createdAt: "asc" } });
   return rows.map(toPackage);
 });
+
+// ── Destination tiles: group by state (domestic) / country (international) ─────
+// The tile counts are derived live from Package rows, so adding a package in the
+// admin automatically bumps the right state/country tile.
+export type LocationTile = {
+  name: string;
+  slug: string;
+  image: string;
+  packageCount: number;
+  destinationCount: number;
+  fromPrice: number | null;
+};
+
+async function buildLocationTiles(
+  region: "domestic" | "international",
+  keyOf: (d: Destination) => string | undefined
+): Promise<LocationTile[]> {
+  const [dests, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const countBySlug = new Map<string, number>();
+  for (const p of packages) countBySlug.set(p.destinationSlug, (countBySlug.get(p.destinationSlug) ?? 0) + 1);
+
+  const groups = new Map<string, Omit<LocationTile, "slug">>();
+  for (const d of dests.filter((x) => x.region === region)) {
+    const name = keyOf(d);
+    if (!name) continue;
+    const slug = slugify(name);
+    const pkgs = countBySlug.get(d.slug) ?? 0;
+    const g = groups.get(slug);
+    if (g) {
+      g.packageCount += pkgs;
+      g.destinationCount += 1;
+      if (!g.image) g.image = d.heroImage;
+      if (d.fromPrice > 0) g.fromPrice = g.fromPrice == null ? d.fromPrice : Math.min(g.fromPrice, d.fromPrice);
+    } else {
+      groups.set(slug, {
+        name,
+        image: d.heroImage,
+        packageCount: pkgs,
+        destinationCount: 1,
+        fromPrice: d.fromPrice > 0 ? d.fromPrice : null,
+      });
+    }
+  }
+  return [...groups.entries()]
+    .map(([slug, g]) => ({ slug, ...g }))
+    .sort((a, b) => b.packageCount - a.packageCount || a.name.localeCompare(b.name));
+}
+
+// Domestic groups by state (falls back to the destination name until states are set).
+export const getDomesticStates = cache(() => buildLocationTiles("domestic", (d) => d.state ?? d.name));
+export const getInternationalCountries = cache(() => buildLocationTiles("international", (d) => d.country));
+
+async function packagesForGroup(
+  region: "domestic" | "international",
+  keyOf: (d: Destination) => string | undefined,
+  groupSlug: string
+): Promise<{ name: string; packages: Package[] } | null> {
+  const [dests, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const inGroup = dests.filter((d) => d.region === region && !!keyOf(d) && slugify(keyOf(d)!) === groupSlug);
+  if (inGroup.length === 0) return null;
+  const slugs = new Set(inGroup.map((d) => d.slug));
+  return {
+    name: keyOf(inGroup[0])!,
+    packages: packages.filter((p) => slugs.has(p.destinationSlug)),
+  };
+}
+
+export const getPackagesByState = cache((stateSlug: string) =>
+  packagesForGroup("domestic", (d) => d.state ?? d.name, stateSlug)
+);
+export const getPackagesByCountry = cache((countrySlug: string) =>
+  packagesForGroup("international", (d) => d.country, countrySlug)
+);
 
 export async function getFeaturedPackages(): Promise<Package[]> {
   const rows = await db.package.findMany({

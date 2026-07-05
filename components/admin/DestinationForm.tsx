@@ -24,6 +24,7 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
   const [slug, setSlug] = useState(initial?.slug ?? "");
   const [slugTouched, setSlugTouched] = useState(isEdit);
   const [country, setCountry] = useState(initial?.country ?? "India");
+  const [state, setStateName] = useState(initial?.state ?? "");
   const [region, setRegion] = useState(initial?.region ?? "domestic");
   const [heroImage, setHeroImage] = useState(initial?.heroImage ?? "");
   const [fromPrice, setFromPrice] = useState(initial?.fromPrice ?? 0);
@@ -39,6 +40,7 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
         name,
         slug,
         country,
+        state,
         region,
         heroImage,
         fromPrice: Number(fromPrice),
@@ -101,6 +103,19 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
               <option value="international">International</option>
             </select>
           </div>
+          {region === "domestic" && (
+            <div className="form-group">
+              <label className="form-label" htmlFor="dest-state">State</label>
+              <input
+                id="dest-state"
+                className="form-input"
+                value={state}
+                placeholder="e.g. Himachal Pradesh"
+                onChange={(e) => setStateName(e.target.value)}
+              />
+              <p className={shared.cardSub}>Groups this destination on the Domestic destinations page.</p>
+            </div>
+          )}
           <div className="form-group">
             <label className="form-label" htmlFor="dest-price">From price (₹)</label>
             <input

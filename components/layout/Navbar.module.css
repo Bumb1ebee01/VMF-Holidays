@@ -78,6 +78,7 @@
 .links {
   display: flex;
   align-items: center;
+  height: 100%;
   gap: var(--sp-5);
   margin-left: auto;
 }
@@ -137,6 +138,82 @@
 
 .links a.active::after {
   transform: scaleX(1);
+}
+
+/* Destinations dropdown — a nav-link-styled trigger + left-aligned menu */
+.navDropdown {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+}
+
+.linkTrigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.scrolled .linkTrigger { color: var(--text); }
+.linkTrigger:hover { color: var(--orange-lt); }
+.scrolled .linkTrigger:hover { color: var(--orange); }
+.linkTrigger.active { color: #fff; }
+.scrolled .linkTrigger.active { color: var(--orange); }
+
+.linkCaret { transition: transform var(--dur-base) var(--ease); }
+
+.navMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 210px;
+  display: flex;
+  flex-direction: column;
+  padding: var(--sp-2);
+  background: var(--bg);
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 44px rgba(0, 36, 100, 0.16);
+  z-index: 110;
+  animation: planMenuIn 0.18s var(--ease) both;
+}
+
+.navMenu::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+.navMenu a {
+  padding: 11px var(--sp-3);
+  border-radius: calc(var(--radius) - 4px);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+
+.navMenu a:hover {
+  background: var(--card-bg);
+  color: var(--orange);
 }
 
 /* Actions */
@@ -331,6 +408,16 @@
 .mobileMenu a:hover {
   color: var(--orange);
   padding-left: var(--sp-3);
+}
+
+.mobileMenu .mobileSub {
+  padding-left: var(--sp-6);
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.mobileMenu .mobileSub:hover {
+  padding-left: calc(var(--sp-6) + var(--sp-2));
 }
 
 .mobileMenu .btn {

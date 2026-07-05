@@ -116,6 +116,10 @@ model Destination {
   slug      String   @unique
   name      String
   country   String
+  // For domestic (India) destinations: the state they roll up into on the
+  // /destinations/domestic tiles (e.g. Manali → "Himachal Pradesh"). Null for
+  // international, which groups by `country` instead.
+  state     String?
   region    Region
   heroImage String
   fromPrice Int

@@ -30,6 +30,7 @@ export default async function EditDestinationPage({
           name: dest.name,
           slug: dest.slug,
           country: dest.country,
+          state: dest.state ?? undefined,
           region: dest.region,
           heroImage: dest.heroImage,
           fromPrice: dest.fromPrice,
