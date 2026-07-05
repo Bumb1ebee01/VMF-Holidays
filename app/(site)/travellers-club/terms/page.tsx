@@ -231,6 +231,12 @@ export default function ClubTermsPage() {
             availability and the terms of the specific package.
           </li>
           <li>
+            <strong>Excluded trips.</strong> Credit cannot be redeemed against group or fixed-departure trips
+            run by VMF Holidays — including college / student tours, MICE and corporate trips, pilgrimage
+            tours, and any custom or group booking for <strong>more than 10 travellers</strong>. These are
+            specially priced and fall outside the programme.
+          </li>
+          <li>
             If a trip funded partly by credit is cancelled or refunded, the corresponding credit is restored to
             your account (subject to Section 11) rather than refunded as cash.
           </li>

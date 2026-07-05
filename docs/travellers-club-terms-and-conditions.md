@@ -179,9 +179,11 @@ Any balance above the applicable cap remains in your account for future eligible
 
 9.4 Credit may not be combinable with certain other offers, promotions, or discounted/at-cost fares. Redemption is subject to availability and to the terms of the specific package or service.
 
-9.5 Redemption reduces your balance by the amount applied. Once a trip funded partly by credit is cancelled or refunded, VMF will restore the corresponding credit to your account (subject to Section 11), rather than refunding it as cash.
+9.5 **Excluded trips.** Credit cannot be redeemed against group or fixed-departure trips organised by VMF Holidays — including college / student tours, MICE and corporate trips, pilgrimage tours, and any custom or group booking for **more than 10 travellers**. These are specially priced and fall outside the programme.
 
-9.6 VMF may decline a redemption that would breach these Terms, exceed the applicable cap, or that relates to a booking VMF reasonably believes to be fraudulent or abusive.
+9.6 Redemption reduces your balance by the amount applied. Once a trip funded partly by credit is cancelled or refunded, VMF will restore the corresponding credit to your account (subject to Section 11), rather than refunding it as cash.
+
+9.7 VMF may decline a redemption that would breach these Terms, exceed the applicable cap, or that relates to a booking VMF reasonably believes to be fraudulent or abusive.
 
 ---
 

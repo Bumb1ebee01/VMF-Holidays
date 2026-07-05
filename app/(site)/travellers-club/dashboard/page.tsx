@@ -311,7 +311,8 @@ export default async function ClubDashboardPage() {
               <p className={styles.sectionSub}>
                 Apply your VMF credit to a trip — up to {CAP_DOMESTIC_PCT}% of a domestic trip or{" "}
                 {CAP_INTERNATIONAL_PCT}% of an international one. Clean requests apply straight away; the rest
-                our team confirms with your booking.
+                our team confirms with your booking. Not valid on group departures, college, MICE, pilgrimage
+                or custom tours over 10 travellers.
               </p>
               <RedemptionForm balance={member.creditBalance} />
             </>
