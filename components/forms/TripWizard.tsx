@@ -8,6 +8,7 @@ import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar } from "@/components/ui/MultiMonthCalendar";
 import { trackLead } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
+import { saveTripDraft, clearTripDraft, type SavedTripDraft } from "@/app/(site)/trip-builder/actions";
 import styles from "./TripWizard.module.css";
 
 // The Trip Builder data now arrives from the DB-backed loader (with a static
@@ -15,9 +16,29 @@ import styles from "./TripWizard.module.css";
 // geography module in the client bundle.
 const CONTINENT_ORDER: Continent[] = ["Asia", "Europe", "Africa", "North America", "South America"];
 
+// Compact, restore-safe snapshot of the wizard — identifiers only (codes/keys/ISO),
+// so it survives geography-data changes and stays small.
+type DraftSnapshot = {
+  step: number;
+  countryCodes: string[];
+  placeKeys: string[];
+  experiences: Record<string, string[]>;
+  startDate: string | null;
+  adults: number;
+  children: number;
+  infants: number;
+  hotelCategory: string;
+  mealPlan: string;
+  contactMode: string;
+  contactTime: string;
+  form: { name: string; phone: string; email: string; message: string };
+};
+
 interface Props {
   destinations: Destination[];
   geography: GeoCountry[];
+  isMember?: boolean;
+  savedDraft?: SavedTripDraft | null;
 }
 
 const CONTACT_MODES = [
@@ -70,8 +91,13 @@ function formatDate(d: Date) {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default function TripWizard({ destinations, geography }: Props) {
+export default function TripWizard({ destinations, geography, isMember = false, savedDraft = null }: Props) {
   const [step, setStep] = useState(0);
+
+  // Save & resume: show a resume prompt if the member has a saved draft, and track
+  // the "progress saved" indicator once auto-save has run.
+  const [resumePrompt, setResumePrompt] = useState<SavedTripDraft | null>(savedDraft);
+  const [draftSaved, setDraftSaved] = useState(false);
 
   // Step 0 — countries
   const [continent, setContinent] = useState<Continent>("Asia");
@@ -105,6 +131,52 @@ export default function TripWizard({ destinations, geography }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const placeKey = (c: GeoCountry, p: GeoPlace) => `${c.code}:${p.slug}`;
+
+  // ── Save & resume (members) ──────────────────────────────────────────────────
+  const serialize = (): DraftSnapshot => ({
+    step,
+    countryCodes: countries.map((c) => c.code),
+    placeKeys: places.map((p) => placeKey(p.country, p.place)),
+    experiences,
+    startDate: startDate ? startDate.toISOString() : null,
+    adults,
+    children,
+    infants,
+    hotelCategory,
+    mealPlan,
+    contactMode,
+    contactTime,
+    form: { name: form.name, phone: form.phone, email: form.email, message: form.message },
+  });
+
+  // Rebuild the wizard from a saved snapshot, mapping codes/keys back to the live
+  // geography (silently dropping anything that no longer exists).
+  const restore = (raw: unknown) => {
+    const d = raw as Partial<DraftSnapshot> | null;
+    if (!d) return;
+    setCountries((d.countryCodes ?? []).map((code) => geography.find((g) => g.code === code)).filter((c): c is GeoCountry => !!c));
+    const ps: { country: GeoCountry; place: GeoPlace }[] = [];
+    for (const key of d.placeKeys ?? []) {
+      const [code, slug] = key.split(":");
+      const c = geography.find((g) => g.code === code);
+      const p = c?.places.find((pl) => pl.slug === slug);
+      if (c && p) ps.push({ country: c, place: p });
+    }
+    setPlaces(ps);
+    setExperiences(d.experiences ?? {});
+    setStartDate(d.startDate ? new Date(d.startDate) : null);
+    setAdults(d.adults ?? 1);
+    setChildren(d.children ?? 0);
+    setInfants(d.infants ?? 0);
+    setHotelCategory(d.hotelCategory ?? "");
+    setMealPlan(d.mealPlan ?? "");
+    setContactMode(d.contactMode ?? "WhatsApp");
+    setContactTime(d.contactTime ?? "Anytime");
+    setForm({ name: d.form?.name ?? "", phone: d.form?.phone ?? "", email: d.form?.email ?? "", message: d.form?.message ?? "", company: "" });
+    setCityTab("all");
+    setStep(d.step ?? 0);
+    setResumePrompt(null);
+  };
 
   const placeImage = (c: GeoCountry, p: GeoPlace): string => {
     const destHero = destinations.find((d) => d.slug === p.destinationSlug)?.heroImage;
@@ -234,6 +306,7 @@ export default function TripWizard({ destinations, geography }: Props) {
         // Note: keep this independent of `destinationStr` — referencing that
         // memoised value here makes the React Compiler bail on the waText useMemo.
         trackLead({ source: "trip_wizard" });
+        void clearTripDraft(); // the trip is submitted — drop the saved draft
         return;
       }
     } catch { /* fall through */ }
@@ -277,6 +350,17 @@ export default function TripWizard({ destinations, geography }: Props) {
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("vmf:scroll-top"));
     }
+  }, [step]);
+
+  // Auto-save the member's progress whenever they advance a step (nothing to save
+  // until they've picked something). Silent — the manual button gives explicit feedback.
+  useEffect(() => {
+    if (!isMember || resumePrompt) return;
+    if (step === 0 && countries.length === 0) return;
+    let alive = true;
+    saveTripDraft(serialize()).then(() => { if (alive) setDraftSaved(true); }).catch(() => {});
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
 
   const waOpened = useRef(false);
@@ -357,6 +441,41 @@ export default function TripWizard({ destinations, geography }: Props) {
           <h1 className={styles.brandTitle}>Build your dream journey, your way.</h1>
           <p className={styles.brandSub}>Start planning your perfect getaway!</p>
         </div>
+
+        {/* Progress bar — reflects the current step across the existing 6-step flow */}
+        <div className={styles.progressRow}>
+          <div
+            className={styles.progressBar}
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemin={1}
+            aria-valuemax={STEPS.length}
+            aria-label={`Step ${step + 1} of ${STEPS.length}`}
+          >
+            <span className={styles.progressFill} style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+          </div>
+          <span className={styles.progressLabel}>Step {step + 1} of {STEPS.length}</span>
+        </div>
+
+        {resumePrompt && (
+          <div className={styles.resumeBanner} role="status">
+            <span>
+              You have a saved trip
+              {resumePrompt.savedAt ? ` from ${new Date(resumePrompt.savedAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}` : ""}
+              . Pick up where you left off?
+            </span>
+            <div className={styles.resumeActions}>
+              <button type="button" className={styles.resumeBtn} onClick={() => restore(resumePrompt.state)}>Resume</button>
+              <button
+                type="button"
+                className={styles.resumeDismiss}
+                onClick={() => { void clearTripDraft(); setResumePrompt(null); }}
+              >
+                Start fresh
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className={styles.mainScroll}>
           {/* STEP 0 — Countries */}
@@ -688,6 +807,22 @@ export default function TripWizard({ destinations, geography }: Props) {
         <div className={styles.footerBar}>
           {step > 0 ? (
             <button type="button" className={styles.footerBack} onClick={() => setStep((s) => s - 1)}>← Previous</button>
+          ) : <span />}
+          {countries.length > 0 && !isLast ? (
+            isMember ? (
+              <button
+                type="button"
+                className={styles.footerSave}
+                onClick={async () => {
+                  const r = await saveTripDraft(serialize());
+                  if (r.ok) setDraftSaved(true);
+                }}
+              >
+                {draftSaved ? "Saved ✓" : "Save & continue later"}
+              </button>
+            ) : (
+              <Link href="/travellers-club/login" className={styles.footerSave}>Log in to save your progress</Link>
+            )
           ) : <span />}
           {!isLast ? (
             <button type="button" className={styles.footerNext} onClick={goNext} disabled={!canNext()}>Next →</button>

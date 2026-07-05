@@ -1664,6 +1664,36 @@
 
 .mainScroll { flex: 1; padding: 8px 32px 24px; }
 
+/* Progress bar + save/resume (save & resume) */
+.progressRow { display: flex; align-items: center; gap: 12px; padding: 0 32px 6px; }
+.progressBar { flex: 1; height: 6px; background: var(--surface, #efebe2); border-radius: 999px; overflow: hidden; }
+.progressFill { display: block; height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-lt, #FFA333)); border-radius: 999px; transition: width 0.35s ease; }
+.progressLabel { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+
+.resumeBanner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 6px 32px 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(254, 92, 16, 0.08);
+  border: 1px solid rgba(254, 92, 16, 0.28);
+  font-size: 13.5px;
+  color: var(--navy);
+}
+:global([data-theme="dark"]) .resumeBanner { color: var(--text); }
+.resumeActions { display: flex; gap: 8px; flex-shrink: 0; }
+.resumeBtn { font-family: inherit; font-size: 13px; font-weight: 700; color: #fff; background: var(--orange); border: none; padding: 7px 16px; border-radius: 8px; cursor: pointer; }
+.resumeDismiss { font-family: inherit; font-size: 13px; font-weight: 700; color: var(--muted); background: none; border: none; padding: 7px 8px; cursor: pointer; }
+.resumeDismiss:hover { color: var(--navy); }
+
+.footerSave { font-family: inherit; font-size: 13px; font-weight: 700; color: var(--navy); background: none; border: none; cursor: pointer; text-decoration: none; text-align: center; }
+.footerSave:hover { color: var(--orange); }
+:global([data-theme="dark"]) .footerSave { color: var(--text); }
+
 /* ── Tabs row ── */
 .tabsRow {
   display: flex;

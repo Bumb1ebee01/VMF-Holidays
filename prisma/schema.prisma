@@ -336,10 +336,23 @@ model Member {
   redemptionRequests RedemptionRequest[]
   badges           MemberBadge[]
   engagementClaims EngagementClaim[]
+  tripDraft        TripDraft?
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
   @@index([referredById])
+}
+
+// A logged-in member's saved, in-progress Trip Builder session (WI: save & resume).
+// One draft per member; the wizard state is stored as opaque JSON and restored on
+// return. Cleared when the member submits or starts fresh.
+model TripDraft {
+  id        String   @id @default(cuid())
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  memberId  String   @unique
+  state     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Referral {

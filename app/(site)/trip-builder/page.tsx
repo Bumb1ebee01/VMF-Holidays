@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { getAllDestinations } from "@/lib/queries";
 import { loadGeography } from "@/lib/data/geography-db";
+import { getCurrentMember } from "@/lib/auth/member";
 import TripWizard from "@/components/forms/TripWizard";
+import { loadTripDraft } from "./actions";
 import { JsonLd, serviceJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 const PAGE_DESCRIPTION =
@@ -28,10 +30,12 @@ export const metadata: Metadata = {
 };
 
 export default async function TripBuilderPage() {
-  const [destinations, geography] = await Promise.all([
+  const [destinations, geography, member] = await Promise.all([
     getAllDestinations(),
     loadGeography(),
+    getCurrentMember(),
   ]);
+  const savedDraft = member ? await loadTripDraft() : null;
 
   return (
     <>
@@ -48,7 +52,12 @@ export default async function TripBuilderPage() {
           ]),
         ]}
       />
-      <TripWizard destinations={destinations} geography={geography} />
+      <TripWizard
+        destinations={destinations}
+        geography={geography}
+        isMember={!!member}
+        savedDraft={savedDraft}
+      />
     </>
   );
 }
