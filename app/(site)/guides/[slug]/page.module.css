@@ -53,6 +53,8 @@
   letter-spacing: -0.02em;
   line-height: 1.08;
   margin: 0;
+  /* Force white over the dark hero — globals set headings to var(--text). */
+  color: #fff;
 }
 
 .sub {

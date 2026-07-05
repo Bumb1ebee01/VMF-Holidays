@@ -13,6 +13,8 @@
   font-weight: 900;
   letter-spacing: -0.02em;
   margin: 12px 0 0;
+  /* Force white over the dark hero — globals set headings to var(--text). */
+  color: #fff;
 }
 
 .sub {
