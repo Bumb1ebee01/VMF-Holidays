@@ -15,6 +15,8 @@
   box-shadow: 0 4px 28px rgba(0, 36, 100, 0.12);
   transition: box-shadow 0.45s var(--ease), transform 0.45s var(--ease);
   isolation: isolate;
+  /* Fallback behind the image so a missing photo shows navy, not a broken icon. */
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
 }
 
 .tile:hover {

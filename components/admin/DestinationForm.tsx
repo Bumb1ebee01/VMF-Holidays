@@ -6,7 +6,7 @@ import {
   deleteDestination,
   type DestinationPayload,
 } from "@/app/admin/(panel)/destinations/actions";
-import { ImageUpload, StringListEditor } from "./fields";
+import { ImageUpload, StringListEditor, SectionsEditor, type SectionInput } from "./fields";
 import { slugify } from "@/lib/utils";
 import shared from "./shared.module.css";
 import styles from "./PackageForm.module.css";
@@ -30,6 +30,12 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
   const [fromPrice, setFromPrice] = useState(initial?.fromPrice ?? 0);
   const [blurb, setBlurb] = useState(initial?.blurb ?? "");
   const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
+  const [guideIntro, setGuideIntro] = useState(initial?.guideIntro ?? "");
+  const [guideBestTime, setGuideBestTime] = useState(initial?.guideBestTime ?? "");
+  const [guideThingsToDo, setGuideThingsToDo] = useState<string[]>(initial?.guideThingsToDo ?? []);
+  const [guideTip, setGuideTip] = useState(initial?.guideTip ?? "");
+  const [guideGallery, setGuideGallery] = useState<string[]>(initial?.guideGallery ?? []);
+  const [guideSections, setGuideSections] = useState<SectionInput[]>(initial?.guideSections ?? []);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,6 +52,12 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
         fromPrice: Number(fromPrice),
         blurb,
         tags,
+        guideIntro,
+        guideBestTime,
+        guideThingsToDo,
+        guideTip,
+        guideGallery,
+        guideSections,
       });
       if (result?.error) setError(result.error);
     });
@@ -150,6 +162,57 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
           onChange={setTags}
           placeholder="e.g. Beaches"
         />
+      </div>
+
+      <div className={`${shared.panel} ${shared.panelPad}`}>
+        <h3 className={shared.cardTitle}>Travel Guide</h3>
+        <p className={shared.cardSub}>
+          Shown on /guides/{slug || "…"}. Any field left blank falls back to the blurb + tags.
+        </p>
+        <div className={styles.spacer} />
+        <div className="form-group">
+          <label className="form-label" htmlFor="guide-intro">Intro</label>
+          <textarea
+            id="guide-intro"
+            className="form-textarea"
+            rows={3}
+            value={guideIntro}
+            onChange={(e) => setGuideIntro(e.target.value)}
+          />
+        </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor="guide-best-time">Best time to visit</label>
+          <textarea
+            id="guide-best-time"
+            className="form-textarea"
+            rows={2}
+            value={guideBestTime}
+            onChange={(e) => setGuideBestTime(e.target.value)}
+          />
+        </div>
+        <StringListEditor
+          label="Things to do"
+          values={guideThingsToDo}
+          onChange={setGuideThingsToDo}
+          placeholder="e.g. Sunset cruise on the Mandovi"
+        />
+        <div className="form-group">
+          <label className="form-label" htmlFor="guide-tip">Insider tip</label>
+          <textarea
+            id="guide-tip"
+            className="form-textarea"
+            rows={2}
+            value={guideTip}
+            onChange={(e) => setGuideTip(e.target.value)}
+          />
+        </div>
+        <StringListEditor
+          label="Gallery images"
+          values={guideGallery}
+          onChange={setGuideGallery}
+          placeholder="Image URL — /images/… or https://…"
+        />
+        <SectionsEditor label="Extra sections" values={guideSections} onChange={setGuideSections} />
       </div>
 
       {error && <p className={shared.error}>{error}</p>}

@@ -19,6 +19,13 @@ export interface DestinationPayload {
   fromPrice: number;
   blurb: string;
   tags: string[];
+  // Travel-guide content (all optional).
+  guideIntro?: string;
+  guideBestTime?: string;
+  guideThingsToDo?: string[];
+  guideTip?: string;
+  guideGallery?: string[];
+  guideSections?: { heading: string; body: string }[];
 }
 
 export type SaveResult = { error: string } | undefined;
@@ -52,6 +59,14 @@ export async function saveDestination(payload: DestinationPayload): Promise<Save
     fromPrice: Math.max(0, Math.floor(payload.fromPrice)),
     blurb: payload.blurb.trim(),
     tags: payload.tags.map((t) => t.trim()).filter(Boolean),
+    guideIntro: payload.guideIntro?.trim() || null,
+    guideBestTime: payload.guideBestTime?.trim() || null,
+    guideThingsToDo: (payload.guideThingsToDo ?? []).map((t) => t.trim()).filter(Boolean),
+    guideTip: payload.guideTip?.trim() || null,
+    guideGallery: (payload.guideGallery ?? []).map((u) => u.trim()).filter(Boolean),
+    guideSections: (payload.guideSections ?? [])
+      .map((s) => ({ heading: s.heading.trim(), body: s.body.trim() }))
+      .filter((s) => s.heading || s.body),
   };
 
   if (payload.id) {

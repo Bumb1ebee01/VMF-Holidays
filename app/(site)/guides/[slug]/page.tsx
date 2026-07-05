@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getAllDestinations, getHolidayLandings } from "@/lib/queries";
-import { getDestinationGuide } from "@/lib/data/destination-guides";
 import { formatINR } from "@/lib/utils";
 import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 import styles from "./page.module.css";
@@ -64,11 +63,19 @@ export default async function DestinationGuidePage({
   const dest = dests.find((d) => d.slug === slug);
   if (!dest) notFound();
 
-  const guide = getDestinationGuide(slug);
-  const intro = guide?.intro ?? dest.blurb;
+  // Guide content lives on the destination (admin-editable); fall back to the
+  // blurb/tags so every destination still has a usable page.
+  const intro = dest.guideIntro || dest.blurb;
   const bestTime =
-    guide?.bestTime ?? `Tell us your dates and we'll advise the best time to visit ${dest.name} for your trip.`;
-  const thingsToDo = guide?.thingsToDo ?? dest.tags.map((t) => `Experience the ${t.toLowerCase()} of ${dest.name}`);
+    dest.guideBestTime ||
+    `Tell us your dates and we'll advise the best time to visit ${dest.name} for your trip.`;
+  const thingsToDo =
+    dest.guideThingsToDo && dest.guideThingsToDo.length > 0
+      ? dest.guideThingsToDo
+      : dest.tags.map((t) => `Experience the ${t.toLowerCase()} of ${dest.name}`);
+  const tip = dest.guideTip;
+  const gallery = (dest.guideGallery ?? []).filter(Boolean);
+  const sections = (dest.guideSections ?? []).filter((s) => s.heading || s.body);
   const landings = allLandings.filter((l) => l.destinationSlug === slug);
   const moreGuides = dests.filter((d) => d.slug !== slug);
 
@@ -112,12 +119,29 @@ export default async function DestinationGuidePage({
           <p className={styles.sub}>
             {dest.country} · packages from {formatINR(dest.fromPrice)} per person
           </p>
+          {dest.tags.length > 0 && (
+            <div className={styles.heroTags}>
+              {dest.tags.slice(0, 4).map((t) => (
+                <span key={t} className={styles.heroTag}>{t}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
       <section className="section">
         <div className={`container ${styles.body}`}>
           <p className={styles.intro}>{intro}</p>
+
+          {gallery.length > 0 && (
+            <div className={styles.gallery}>
+              {gallery.slice(0, 6).map((src, i) => (
+                <div key={i} className={styles.galleryItem}>
+                  <Image src={src} alt={`${dest.name} — photo ${i + 1}`} fill sizes="(max-width: 768px) 50vw, 33vw" className={styles.galleryImg} />
+                </div>
+              ))}
+            </div>
+          )}
 
           <h2 className={styles.h2}>Best time to visit {dest.name}</h2>
           <p className={styles.para}>{bestTime}</p>
@@ -129,9 +153,16 @@ export default async function DestinationGuidePage({
             ))}
           </ul>
 
-          {guide?.tip && (
+          {sections.map((s, i) => (
+            <div key={i}>
+              {s.heading && <h2 className={styles.h2}>{s.heading}</h2>}
+              {s.body && <p className={styles.para}>{s.body}</p>}
+            </div>
+          ))}
+
+          {tip && (
             <p className={styles.tip}>
-              <strong>Insider tip:</strong> {guide.tip}
+              <strong>Insider tip:</strong> {tip}
             </p>
           )}
 

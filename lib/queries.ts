@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { db } from "./db";
 import { slugify } from "./utils";
-import type { Package, Destination, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
+import type { Package, Destination, GuideSection, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
 
 function toPackage(row: DbPackage): Package {
@@ -39,6 +39,14 @@ function toDestination(row: DbDestination): Destination {
     fromPrice: row.fromPrice,
     blurb: row.blurb,
     tags: row.tags,
+    guideIntro: row.guideIntro ?? undefined,
+    guideBestTime: row.guideBestTime ?? undefined,
+    guideThingsToDo: row.guideThingsToDo,
+    guideTip: row.guideTip ?? undefined,
+    guideGallery: row.guideGallery,
+    guideSections: Array.isArray(row.guideSections)
+      ? (row.guideSections as unknown as GuideSection[])
+      : [],
   };
 }
 

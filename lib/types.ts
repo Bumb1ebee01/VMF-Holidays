@@ -1,3 +1,8 @@
+export interface GuideSection {
+  heading: string;
+  body: string;
+}
+
 export interface Destination {
   slug: string;
   name: string;
@@ -9,6 +14,13 @@ export interface Destination {
   fromPrice: number;
   blurb: string;
   tags: string[];
+  // Travel-guide content (all optional; the guide page falls back to blurb/tags).
+  guideIntro?: string;
+  guideBestTime?: string;
+  guideThingsToDo?: string[];
+  guideTip?: string;
+  guideGallery?: string[];
+  guideSections?: GuideSection[];
 }
 
 export interface ItineraryDay {

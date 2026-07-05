@@ -125,6 +125,14 @@ model Destination {
   fromPrice Int
   blurb     String
   tags      String[]
+  // Travel guide (/guides/[slug]) — editable in admin; each field falls back to
+  // the destination's blurb/tags when empty, so every destination still has a page.
+  guideIntro      String?
+  guideBestTime   String?
+  guideThingsToDo String[] @default([])
+  guideTip        String?
+  guideGallery    String[] @default([])
+  guideSections   Json     @default("[]") // [{ heading, body }] extra prose sections
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

@@ -193,3 +193,70 @@ export function ItineraryEditor({ values, onChange }: ItineraryEditorProps) {
     </div>
   );
 }
+
+/* ---------- Sections editor (heading + body) ---------- */
+
+export interface SectionInput {
+  heading: string;
+  body: string;
+}
+
+interface SectionsEditorProps {
+  label: string;
+  values: SectionInput[];
+  onChange: (values: SectionInput[]) => void;
+}
+
+export function SectionsEditor({ label, values, onChange }: SectionsEditorProps) {
+  return (
+    <div className="form-group">
+      <span className="form-label">{label}</span>
+      <div className={styles.list}>
+        {values.map((s, i) => (
+          <div key={i} className={styles.dayCard}>
+            <div className={styles.dayHeader}>
+              <span className={styles.dayNum}>Section {i + 1}</span>
+              <button
+                type="button"
+                className={styles.removeBtn}
+                aria-label={`Remove section ${i + 1}`}
+                onClick={() => onChange(values.filter((_, j) => j !== i))}
+              >
+                ✕
+              </button>
+            </div>
+            <input
+              type="text"
+              className="form-input"
+              value={s.heading}
+              placeholder="Section heading — e.g. Getting around"
+              onChange={(e) => {
+                const next = [...values];
+                next[i] = { ...next[i], heading: e.target.value };
+                onChange(next);
+              }}
+            />
+            <textarea
+              className="form-textarea"
+              rows={3}
+              value={s.body}
+              placeholder="Section text"
+              onChange={(e) => {
+                const next = [...values];
+                next[i] = { ...next[i], body: e.target.value };
+                onChange(next);
+              }}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          className={styles.addBtn}
+          onClick={() => onChange([...values, { heading: "", body: "" }])}
+        >
+          + Add section
+        </button>
+      </div>
+    </div>
+  );
+}

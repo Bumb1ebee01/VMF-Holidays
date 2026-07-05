@@ -36,6 +36,14 @@ export default async function EditDestinationPage({
           fromPrice: dest.fromPrice,
           blurb: dest.blurb,
           tags: dest.tags,
+          guideIntro: dest.guideIntro ?? undefined,
+          guideBestTime: dest.guideBestTime ?? undefined,
+          guideThingsToDo: dest.guideThingsToDo,
+          guideTip: dest.guideTip ?? undefined,
+          guideGallery: dest.guideGallery,
+          guideSections: Array.isArray(dest.guideSections)
+            ? (dest.guideSections as { heading: string; body: string }[])
+            : [],
         }}
       />
     </div>

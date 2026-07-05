@@ -60,7 +60,8 @@
 .cardImg {
   position: relative;
   aspect-ratio: 3 / 2;
-  background: var(--surface);
+  /* Navy fallback so a missing hero image shows as a clean panel, not a broken icon. */
+  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
 }
 
 .cardImgEl {
