@@ -58,9 +58,11 @@ export const TOOLS: Tool[] = [
   {
     slug: "visa-checker",
     title: "Visa & eVisa Checker",
-    blurb: "Check visa requirements on an Indian passport for the destinations we sell.",
+    blurb:
+      "See at a glance whether a destination is visa-free, visa on arrival, eVisa or needs a visa on an Indian passport — with each country's official source.",
     icon: "passport",
-    status: "soon",
+    status: "live",
+    badge: "Indian passports",
   },
 ];
 

@@ -1,0 +1,75 @@
+/* Colour key under the checker */
+.legend {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 22px;
+  margin: 26px 0 0;
+  padding: 16px 18px;
+  border: 1px solid var(--hairline-soft);
+  border-radius: var(--radius, 16px);
+  background: var(--card-bg);
+}
+
+.legendItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--text-light, #4a5568);
+}
+
+.legendItem strong { color: var(--text); }
+
+.legendDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+.legendDot[data-cat="visa-free"] { background: #16a34a; }
+.legendDot[data-cat="visa-on-arrival"] { background: #0891b2; }
+.legendDot[data-cat="evisa"] { background: #d97706; }
+.legendDot[data-cat="visa-required"] { background: #dc2626; }
+
+/* Prominent disclaimer / terms */
+.disclaimer {
+  margin: 30px 0 0;
+  padding: 20px 22px;
+  border: 1.5px solid rgba(254, 92, 16, 0.4);
+  border-left-width: 5px;
+  border-radius: var(--radius, 16px);
+  background: rgba(254, 92, 16, 0.06);
+}
+
+.disclaimerTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--orange);
+  margin: 0 0 10px;
+}
+
+.disclaimerTitle::before {
+  content: "⚠";
+  font-size: 1.1rem;
+}
+
+.disclaimer p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.disclaimer p:last-child { margin-bottom: 0; }
+
+.disclaimer strong { color: var(--text); font-weight: 700; }
+
+@media (max-width: 640px) {
+  .legend { grid-template-columns: 1fr; }
+}
