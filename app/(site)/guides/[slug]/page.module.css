@@ -1,5 +1,5 @@
 .page {
-  background: #fff;
+  background: var(--bg);
 }
 
 .hero {
@@ -277,7 +277,7 @@
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--navy);
-  background: #fff;
+  background: var(--card-bg);
   text-decoration: none;
   transition: border-color 0.18s ease, color 0.18s ease;
 }
@@ -312,3 +312,10 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* Dark mode: --navy text is near-invisible on dark backgrounds — redirect to readable tokens. */
+:global([data-theme="dark"]) .h2 { color: var(--text); }
+:global([data-theme="dark"]) .link { color: var(--text); }
+:global([data-theme="dark"]) .faqQ { color: var(--text); }
+:global([data-theme="dark"]) .moreTitle { color: var(--text); }
+:global([data-theme="dark"]) .moreChip { color: var(--text); }
