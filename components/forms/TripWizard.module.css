@@ -1664,11 +1664,12 @@
 
 .mainScroll { flex: 1; padding: 8px 32px 24px; }
 
-/* Progress bar + save/resume (save & resume) */
-.progressRow { display: flex; align-items: center; gap: 12px; padding: 0 32px 6px; }
-.progressBar { flex: 1; height: 6px; background: var(--surface, #efebe2); border-radius: 999px; overflow: hidden; }
-.progressFill { display: block; height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-lt, #FFA333)); border-radius: 999px; transition: width 0.35s ease; }
-.progressLabel { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+/* Progress bar + save/resume. Namespaced sr* so they don't collide with the
+   legacy .progressRow/.progressLabel classes higher up in this file. */
+.srProgressRow { display: flex; align-items: center; gap: 12px; padding: 0 32px 6px; }
+.srProgressBar { flex: 1; height: 6px; background: var(--surface, #efebe2); border-radius: 999px; overflow: hidden; }
+.srProgressFill { display: block; height: 100%; background: linear-gradient(90deg, var(--orange), var(--orange-lt, #FFA333)); border-radius: 999px; transition: width 0.35s ease; }
+.srProgressLabel { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
 
 .resumeBanner {
   display: flex;

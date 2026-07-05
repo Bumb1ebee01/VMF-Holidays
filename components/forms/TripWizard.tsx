@@ -443,18 +443,18 @@ export default function TripWizard({ destinations, geography, isMember = false, 
         </div>
 
         {/* Progress bar — reflects the current step across the existing 6-step flow */}
-        <div className={styles.progressRow}>
+        <div className={styles.srProgressRow}>
           <div
-            className={styles.progressBar}
+            className={styles.srProgressBar}
             role="progressbar"
             aria-valuenow={step + 1}
             aria-valuemin={1}
             aria-valuemax={STEPS.length}
             aria-label={`Step ${step + 1} of ${STEPS.length}`}
           >
-            <span className={styles.progressFill} style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+            <span className={styles.srProgressFill} style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
           </div>
-          <span className={styles.progressLabel}>Step {step + 1} of {STEPS.length}</span>
+          <span className={styles.srProgressLabel}>Step {step + 1} of {STEPS.length}</span>
         </div>
 
         {resumePrompt && (
