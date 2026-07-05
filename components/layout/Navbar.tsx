@@ -6,22 +6,26 @@ import { useState, useEffect, useRef, Fragment } from "react";
 import { usePathname } from "next/navigation";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import AccountMenu from "./AccountMenu";
+import { LIVE_TOOLS } from "@/lib/data/tools";
 import styles from "./Navbar.module.css";
 
 const NAV_LINKS = [
   { href: "/destinations", label: "Destinations" },
   { href: "/trip-builder", label: "Build My Trip" },
   { href: "/offers", label: "Offers" },
+  { href: "/tools", label: "Travel Tools" },
   { href: "/blog", label: "Blog" },
   { href: "/travellers-club", label: "Travellers Club" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
-// Blog is kept out of the desktop top bar to save space — it lives in the
-// "Plan My Trip" dropdown below. The mobile menu (which has no dropdown) still
-// renders the full NAV_LINKS, so Blog stays reachable there.
-const TOP_NAV_LINKS = NAV_LINKS.filter((link) => link.href !== "/blog");
+// "About" and "Blog" are kept out of the desktop top bar to make room for the
+// Travel Tools dropdown — both live in the "Plan My Trip" dropdown, and the
+// mobile menu renders the full NAV_LINKS, so both stay reachable there.
+const TOP_NAV_LINKS = NAV_LINKS.filter(
+  (link) => link.href !== "/blog" && link.href !== "/about"
+);
 
 // The "Destinations" top-bar item is a dropdown → Domestic / International.
 const DESTINATION_LINKS = [
@@ -29,12 +33,17 @@ const DESTINATION_LINKS = [
   { href: "/destinations/international", label: "International" },
 ];
 
+// The "Travel Tools" top-bar item is a dropdown → every live tool, sourced from
+// the tools registry so new tools appear here automatically.
+const TOOL_LINKS = LIVE_TOOLS.map((t) => ({ href: `/tools/${t.slug}`, label: t.title }));
+
 // Pages shown in the "Plan My Trip" dropdown so visitors can jump straight to
 // any section instead of having to start in the Trip Builder.
 const PLAN_LINKS = [
   { href: "/trip-builder", label: "Build My Trip", primary: true },
   { href: "/destinations", label: "Browse Destinations" },
   { href: "/offers", label: "Offers & Deals" },
+  { href: "/tools", label: "Travel Tools" },
   { href: "/gallery", label: "Gallery" },
   { href: "/blog", label: "Travel Blog" },
   { href: "/travellers-club", label: "Travellers Club" },
@@ -53,9 +62,11 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [planOpen, setPlanOpen] = useState(false);
   const [destOpen, setDestOpen] = useState(false);
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [canHover, setCanHover] = useState(false);
   const planRef = useRef<HTMLDivElement>(null);
   const destRef = useRef<HTMLDivElement>(null);
+  const toolsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -96,10 +107,28 @@ export default function Navbar() {
     };
   }, [destOpen]);
 
+  // Close the Travel Tools dropdown on outside click, Escape, or route change.
+  useEffect(() => {
+    if (!toolsOpen) return;
+    const onDown = (e: MouseEvent) => {
+      if (toolsRef.current && !toolsRef.current.contains(e.target as Node)) setToolsOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setToolsOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [toolsOpen]);
+
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPlanOpen(false);
     setDestOpen(false);
+    setToolsOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -141,45 +170,88 @@ export default function Navbar() {
         </Link>
 
         <nav className={styles.links}>
-          {TOP_NAV_LINKS.map((link) =>
-            link.href === "/destinations" ? (
-              <div
-                key={link.href}
-                ref={destRef}
-                className={styles.navDropdown}
-                onMouseEnter={canHover ? () => setDestOpen(true) : undefined}
-                onMouseLeave={canHover ? () => setDestOpen(false) : undefined}
-              >
-                <button
-                  type="button"
-                  className={`${styles.linkTrigger} ${isActive("/destinations") ? styles.active : ""}`}
-                  aria-haspopup="menu"
-                  aria-expanded={destOpen}
-                  onClick={() => setDestOpen((o) => !o)}
+          {TOP_NAV_LINKS.map((link) => {
+            if (link.href === "/destinations") {
+              return (
+                <div
+                  key={link.href}
+                  ref={destRef}
+                  className={styles.navDropdown}
+                  onMouseEnter={canHover ? () => setDestOpen(true) : undefined}
+                  onMouseLeave={canHover ? () => setDestOpen(false) : undefined}
                 >
-                  Destinations
-                  <svg
-                    className={`${styles.linkCaret} ${destOpen ? styles.planCaretOpen : ""}`}
-                    width="12" height="12" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                  <button
+                    type="button"
+                    className={`${styles.linkTrigger} ${isActive("/destinations") ? styles.active : ""}`}
+                    aria-haspopup="menu"
+                    aria-expanded={destOpen}
+                    onClick={() => setDestOpen((o) => !o)}
                   >
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
-                </button>
-                {destOpen && (
-                  <div className={styles.navMenu} role="menu">
-                    <Link href="/destinations" role="menuitem" onClick={() => setDestOpen(false)}>
-                      All destinations
-                    </Link>
-                    {DESTINATION_LINKS.map((l) => (
-                      <Link key={l.href} href={l.href} role="menuitem" onClick={() => setDestOpen(false)}>
-                        {l.label}
+                    Destinations
+                    <svg
+                      className={`${styles.linkCaret} ${destOpen ? styles.planCaretOpen : ""}`}
+                      width="12" height="12" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                  {destOpen && (
+                    <div className={styles.navMenu} role="menu">
+                      <Link href="/destinations" role="menuitem" onClick={() => setDestOpen(false)}>
+                        All destinations
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
+                      {DESTINATION_LINKS.map((l) => (
+                        <Link key={l.href} href={l.href} role="menuitem" onClick={() => setDestOpen(false)}>
+                          {l.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            if (link.href === "/tools") {
+              return (
+                <div
+                  key={link.href}
+                  ref={toolsRef}
+                  className={styles.navDropdown}
+                  onMouseEnter={canHover ? () => setToolsOpen(true) : undefined}
+                  onMouseLeave={canHover ? () => setToolsOpen(false) : undefined}
+                >
+                  <button
+                    type="button"
+                    className={`${styles.linkTrigger} ${isActive("/tools") ? styles.active : ""}`}
+                    aria-haspopup="menu"
+                    aria-expanded={toolsOpen}
+                    onClick={() => setToolsOpen((o) => !o)}
+                  >
+                    Travel Tools
+                    <svg
+                      className={`${styles.linkCaret} ${toolsOpen ? styles.planCaretOpen : ""}`}
+                      width="12" height="12" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
+                    >
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                  {toolsOpen && (
+                    <div className={styles.navMenu} role="menu">
+                      <Link href="/tools" role="menuitem" onClick={() => setToolsOpen(false)}>
+                        All tools
+                      </Link>
+                      {TOOL_LINKS.map((l) => (
+                        <Link key={l.href} href={l.href} role="menuitem" onClick={() => setToolsOpen(false)}>
+                          {l.label}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return (
               <Link
                 key={link.href}
                 href={link.href}
@@ -188,8 +260,8 @@ export default function Navbar() {
               >
                 {link.label}
               </Link>
-            )
-          )}
+            );
+          })}
         </nav>
 
         <div className={styles.actions}>
@@ -249,28 +321,37 @@ export default function Navbar() {
 
       {mobileOpen && (
         <div className={styles.mobileMenu} id="mobile-menu">
-          {NAV_LINKS.map((link) =>
-            link.href === "/destinations" ? (
-              <Fragment key={link.href}>
-                <Link
-                  href={link.href}
-                  className={isActive(link.href) ? styles.active : ""}
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.label}
-                </Link>
-                {DESTINATION_LINKS.map((l) => (
+          {NAV_LINKS.map((link) => {
+            const subLinks =
+              link.href === "/destinations"
+                ? DESTINATION_LINKS
+                : link.href === "/tools"
+                  ? TOOL_LINKS
+                  : null;
+            if (subLinks) {
+              return (
+                <Fragment key={link.href}>
                   <Link
-                    key={l.href}
-                    href={l.href}
-                    className={`${styles.mobileSub} ${isActive(l.href) ? styles.active : ""}`}
+                    href={link.href}
+                    className={isActive(link.href) ? styles.active : ""}
                     onClick={() => setMobileOpen(false)}
                   >
-                    {l.label}
+                    {link.label}
                   </Link>
-                ))}
-              </Fragment>
-            ) : (
+                  {subLinks.map((l) => (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      className={`${styles.mobileSub} ${isActive(l.href) ? styles.active : ""}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
+                </Fragment>
+              );
+            }
+            return (
               <Link
                 key={link.href}
                 href={link.href}
@@ -279,8 +360,8 @@ export default function Navbar() {
               >
                 {link.label}
               </Link>
-            )
-          )}
+            );
+          })}
           <Link
             href="/travellers-club/dashboard"
             className={isActive("/travellers-club/dashboard") ? styles.active : ""}
