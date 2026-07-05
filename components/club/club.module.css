@@ -4,6 +4,34 @@
   gap: 16px;
 }
 
+/* Mockup-style fields + primary button, scoped to club forms only */
+.form :global(.form-label) {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+}
+.form :global(.form-input) {
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  padding: 12px 14px;
+  font-size: 15px;
+}
+.form :global(.form-input:focus) {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(254, 92, 16, 0.12);
+}
+.form :global(.btn-primary) {
+  border-radius: 10px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 13px 20px;
+  width: 100%;
+}
+
 .error {
   color: #c0341d;
   font-size: 14px;
@@ -13,7 +41,7 @@
 .refNote {
   background: rgba(254, 92, 16, 0.08);
   border: 1px solid rgba(254, 92, 16, 0.25);
-  color: var(--navy);
+  color: var(--text-light);
   padding: 12px 14px;
   border-radius: 10px;
   font-size: 14px;
@@ -25,6 +53,7 @@
   font-size: 14px;
   color: var(--muted);
   margin: 4px 0 0;
+  text-align: center;
 }
 
 .switch a {
@@ -55,20 +84,95 @@
   font-weight: 600;
 }
 
-.shareRow {
+/* ReferralShare — linkbox sits on the navy share hero (dashboard) */
+.linkbox {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 6px 6px 6px 14px;
+  flex-wrap: wrap;
 }
 
-.shareInput {
-  flex: 1 1 240px;
-  font-size: 0.9rem;
+.linkText {
+  flex: 1;
+  min-width: 200px;
+  font-size: 13.5px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: inherit;
 }
 
-@media (max-width: 560px) {
-  .shareRow :global(.btn) {
-    flex: 1 1 auto;
-  }
+.linkActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.copyBtn,
+.waBtn {
+  border-radius: 8px;
+  padding: 9px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+  transition: filter 0.15s ease, background 0.15s ease;
+}
+
+.copyBtn {
+  background: var(--orange);
+  color: #fff;
+}
+.copyBtn:hover {
+  background: #e94f08;
+}
+
+.waBtn {
+  background: #25d366;
+  color: #053b23;
+}
+.waBtn:hover {
+  filter: brightness(1.05);
+}
+
+/* Login: "or" divider + Google button */
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.orDivider::before,
+.orDivider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.googleBtn:hover {
+  background: var(--surface);
 }

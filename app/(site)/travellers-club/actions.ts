@@ -109,15 +109,17 @@ export async function joinClub(_prev: ClubFormState, formData: FormData): Promis
   redirect("/travellers-club/dashboard");
 }
 
-/** Log an existing member in. */
+/** Log an existing member in with either the email or phone they signed up with. */
 export async function loginMember(_prev: ClubFormState, formData: FormData): Promise<ClubFormState> {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const identifier = String(formData.get("identifier") ?? formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
-  if (!email || !password) return { error: "Email and password are required." };
+  if (!identifier || !password) return { error: "Enter your email or phone and your password." };
 
-  const member = await db.member.findUnique({ where: { email } });
+  const member = await db.member.findFirst({
+    where: identifier.includes("@") ? { email: identifier.toLowerCase() } : { phone: identifier },
+  });
   const valid = member && member.active && (await bcrypt.compare(password, member.passwordHash));
-  if (!valid) return { error: "Invalid email or password." };
+  if (!valid) return { error: "Invalid login details — check your email/phone and password." };
 
   await db.member.update({
     where: { id: member.id },

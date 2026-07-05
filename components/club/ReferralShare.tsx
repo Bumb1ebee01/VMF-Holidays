@@ -12,7 +12,7 @@ export default function ReferralShare({ link }: { link: string }) {
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
-      /* clipboard unavailable — the field is selectable as a fallback */
+      /* clipboard unavailable — the link is still visible to copy manually */
     }
   };
 
@@ -20,20 +20,16 @@ export default function ReferralShare({ link }: { link: string }) {
   const waHref = `https://wa.me/?text=${encodeURIComponent(waText)}`;
 
   return (
-    <div className={styles.shareRow}>
-      <input
-        readOnly
-        value={link}
-        className={`form-input ${styles.shareInput}`}
-        onFocus={(e) => e.currentTarget.select()}
-        aria-label="Your referral link"
-      />
-      <button type="button" className="btn btn-navy" onClick={copy}>
-        {copied ? "Copied!" : "Copy"}
-      </button>
-      <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
-        Share on WhatsApp
-      </a>
+    <div className={styles.linkbox}>
+      <code className={styles.linkText}>{link}</code>
+      <div className={styles.linkActions}>
+        <button type="button" className={styles.copyBtn} onClick={copy}>
+          {copied ? "Copied!" : "Copy"}
+        </button>
+        <a href={waHref} target="_blank" rel="noopener noreferrer" className={styles.waBtn}>
+          WhatsApp
+        </a>
+      </div>
     </div>
   );
 }

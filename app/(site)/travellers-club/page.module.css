@@ -1,11 +1,24 @@
 .page {
-  background: #fff;
+  background: var(--bg);
 }
 
 .hero {
-  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
-  padding: calc(var(--nav-h) + 56px) 0 72px;
+  background: linear-gradient(150deg, var(--navy) 0%, var(--navy-mid) 100%);
+  padding: calc(var(--nav-h) + 56px) 0 80px;
   color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  right: -8%;
+  top: 6%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(254, 92, 16, 0.26), transparent 70%);
+  pointer-events: none;
 }
 
 .heroInner {
@@ -13,6 +26,12 @@
   grid-template-columns: 1.1fr 0.9fr;
   gap: 48px;
   align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.heroCopy {
+  min-width: 0;
 }
 
 .title {
@@ -29,7 +48,7 @@
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.82);
   margin: 16px 0 0;
-  max-width: 30rem;
+  max-width: 32rem;
 }
 
 .benefits {
@@ -58,29 +77,37 @@
   margin: 0;
 }
 
+/* The signup / login card — soft rounded card, mockup style */
 .formCard {
-  background: #fff;
+  background: var(--card-bg);
   color: var(--text);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 32px;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-light);
 }
 
 .formTitle {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: var(--navy);
   margin: 6px 0 4px;
 }
 
-.formSub {
-  font-size: 0.9rem;
-  color: var(--muted);
-  margin: 0 0 20px;
+:global([data-theme="dark"]) .formTitle {
+  color: var(--text);
 }
 
+.formSub {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+
+/* Login page: a single centered card */
 .loginWrap {
-  max-width: 460px;
+  max-width: 440px;
+  margin: 0 auto;
 }
 
 @media (max-width: 860px) {
