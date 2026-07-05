@@ -173,13 +173,17 @@ export default function ClubTermsPage() {
         </p>
 
         <h2>7. Membership tiers</h2>
-        <p>Members progress through tiers based on completed trips and successful (rewarded) referrals:</p>
+        <p>
+          Members progress through tiers by both completing trips and making successful (rewarded) referrals —
+          every promotion requires you to travel with VMF, not only to refer:
+        </p>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>Tier</th>
                 <th>How it is reached</th>
+                <th>Max credit held</th>
                 <th>Benefits</th>
               </tr>
             </thead>
@@ -188,6 +192,7 @@ export default function ClubTermsPage() {
                 <tr key={t.tier}>
                   <td>{t.label}</td>
                   <td>{tierReach(t)}</td>
+                  <td>{creditsToRupees(t.maxBalance)}</td>
                   <td>{t.perks.join(" · ")}</td>
                 </tr>
               ))}
@@ -199,6 +204,11 @@ export default function ClubTermsPage() {
           you a confirmed reward. Tiers do not downgrade once earned, unless the account is found to be in
           breach of these terms. Some benefits (such as being featured as an Ambassador) require your separate
           consent.
+        </p>
+        <p>
+          <strong>Balance limit.</strong> Each tier sets the maximum credit you can hold at once (above). When
+          your balance is at the limit, further earnings pause until you redeem some credit against a trip or
+          reach the next tier — so credit is meant to be used, not stockpiled.
         </p>
 
         <h2>8. Nature &amp; value of credit</h2>

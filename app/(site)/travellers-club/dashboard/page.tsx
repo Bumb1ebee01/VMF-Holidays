@@ -11,6 +11,7 @@ import {
   referralLink,
   maskReferee,
   MIN_REDEMPTION,
+  balanceCapForTier,
   CAP_DOMESTIC_PCT,
   CAP_INTERNATIONAL_PCT,
   REFERRAL_REWARD,
@@ -151,6 +152,8 @@ export default async function ClubDashboardPage() {
   const tier = tierProgress(successful, member.completedTrips);
   const canRedeem = member.creditBalance >= MIN_REDEMPTION;
   const toRedeem = Math.max(MIN_REDEMPTION - member.creditBalance, 0);
+  const balanceCap = balanceCapForTier(member.tier);
+  const atBalanceCap = member.creditBalance >= balanceCap;
   const communityUrl = process.env.WHATSAPP_COMMUNITY_URL;
 
   // WI-8 badges — derived from the member's activity for display.
@@ -181,9 +184,11 @@ export default async function ClubDashboardPage() {
             <span className={styles.statLabel}>VMF Credit balance</span>
             <span className={styles.statValue}>{creditsToRupees(member.creditBalance)}</span>
             <span className={styles.statHint}>
-              {canRedeem
-                ? "Ready to redeem on your next booking"
-                : `Earn ${creditsToRupees(toRedeem)} more to start redeeming`}
+              {atBalanceCap
+                ? `At your ${tierLabel(member.tier)} limit of ${creditsToRupees(balanceCap)} — redeem or level up to hold more`
+                : canRedeem
+                  ? `Ready to redeem · ${tierLabel(member.tier)} limit ${creditsToRupees(balanceCap)}`
+                  : `Earn ${creditsToRupees(toRedeem)} more to start redeeming`}
             </span>
           </div>
           <div className={styles.statCard}>

@@ -1,5 +1,11 @@
 import { db } from "@/lib/db";
-import { ENGAGEMENT_TASKS, ENGAGEMENT_LIFETIME_CAP } from "@/lib/referral";
+import {
+  ENGAGEMENT_TASKS,
+  ENGAGEMENT_LIFETIME_CAP,
+  balanceCapForTier,
+  tierLabel,
+  creditsToRupees,
+} from "@/lib/referral";
 
 // Server-only engagement-credit engine (WI-13). Small one-time credits for light
 // actions, capped at ENGAGEMENT_LIFETIME_CAP per member and one-per-task (enforced
@@ -47,6 +53,15 @@ export async function claimEngagement(memberId: string, taskKey: string): Promis
     return { ok: true, status: "PENDING", credit: task.credit };
   }
 
+  // Balance cap: don't push the member over their tier's hold limit.
+  const capMember = await db.member.findUnique({ where: { id: memberId }, select: { creditBalance: true, tier: true } });
+  if (capMember && capMember.creditBalance + task.credit > balanceCapForTier(capMember.tier)) {
+    return {
+      ok: false,
+      error: `Your balance is at the ${tierLabel(capMember.tier)} limit of ${creditsToRupees(balanceCapForTier(capMember.tier))}. Redeem some credit or reach the next tier to claim this.`,
+    };
+  }
+
   await db.$transaction(async (tx) => {
     await tx.engagementClaim.create({
       data: { memberId, taskKey, credit: task.credit, status: "APPROVED", approvedBy: "SYSTEM_AUTO", approvedAt: new Date() },
@@ -76,6 +91,11 @@ export async function approveEngagement(claimId: string, adminId: string): Promi
     const already = prior.reduce((s, c) => s + c.credit, 0);
     if (already + claim.credit > ENGAGEMENT_LIFETIME_CAP) {
       return { error: `That would exceed the ₹${ENGAGEMENT_LIFETIME_CAP} engagement cap.` };
+    }
+
+    const mem = await tx.member.findUnique({ where: { id: claim.memberId }, select: { creditBalance: true, tier: true } });
+    if (mem && mem.creditBalance + claim.credit > balanceCapForTier(mem.tier)) {
+      return { error: `Member is at their ${tierLabel(mem.tier)} balance limit (${creditsToRupees(balanceCapForTier(mem.tier))}).` };
     }
 
     await tx.engagementClaim.update({

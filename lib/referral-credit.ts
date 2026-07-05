@@ -7,6 +7,7 @@ import {
   tierForMember,
   maxTier,
   referrerRewardForTier,
+  grantableCredit,
 } from "@/lib/referral";
 
 // Server-only credit engine for the Travellers Club. Awards happen inside a
@@ -48,7 +49,7 @@ export async function completeMemberTrip(
   return db.$transaction(async (tx) => {
     const member = await tx.member.findUnique({
       where: { id: memberId },
-      select: { id: true, name: true, completedTrips: true, tier: true, referredById: true },
+      select: { id: true, name: true, completedTrips: true, tier: true, creditBalance: true, referredById: true },
     });
     if (!member) throw new Error("Member not found");
 
@@ -92,24 +93,25 @@ export async function completeMemberTrip(
       } else if (bookingValue < MIN_WELCOME_BOOKING) {
         outcome = "BELOW_FLOOR"; // travelled, but the booking is too small to earn a welcome
       } else {
-        // ── Friend's welcome — one per person, ever ──
+        // ── Friend's welcome — one per person, ever, trimmed to their balance cap ──
         const alreadyWelcomed =
           (await tx.creditEntry.count({ where: { memberId: member.id, reason: "WELCOME_BONUS" } })) > 0;
-        if (!alreadyWelcomed) {
+        const welcomeGrant = grantableCredit(member.creditBalance, WELCOME_BONUS, member.tier);
+        if (!alreadyWelcomed && welcomeGrant > 0) {
           await tx.creditEntry.create({
             data: {
               memberId: member.id,
-              amount: WELCOME_BONUS,
+              amount: welcomeGrant,
               reason: "WELCOME_BONUS",
-              note: "Referred-friend welcome",
+              note: welcomeGrant < WELCOME_BONUS ? "Referred-friend welcome (balance cap reached)" : "Referred-friend welcome",
               approvedBy: "SYSTEM_AUTO",
             },
           });
           await tx.member.update({
             where: { id: member.id },
-            data: { creditBalance: { increment: WELCOME_BONUS }, lastActivityAt: new Date() },
+            data: { creditBalance: { increment: welcomeGrant }, lastActivityAt: new Date() },
           });
-          welcomePaid = WELCOME_BONUS;
+          welcomePaid = welcomeGrant;
         }
         outcome = "WELCOME_PAID";
         await tx.referral.update({ where: { id: inbound.id }, data: { status: "WELCOME_PAID" } });
@@ -122,29 +124,37 @@ export async function completeMemberTrip(
           } else {
             const referrer = await tx.member.findUnique({
               where: { id: referrerId },
-              select: { id: true, tier: true, completedTrips: true },
+              select: { id: true, tier: true, completedTrips: true, creditBalance: true },
             });
             const reward = referrerRewardForTier(referrer?.tier ?? "EXPLORER");
             const guardCap = (MARGIN_GUARD_PCT / 100) * tripMargin;
             if (reward <= guardCap) {
-              await tx.creditEntry.create({
-                data: {
-                  memberId: referrerId,
-                  amount: reward,
-                  reason: "REFERRAL_REWARD",
-                  note: `${member.name} completed their trip`,
-                  approvedBy: "SYSTEM_AUTO",
-                },
-              });
-              await tx.member.update({
-                where: { id: referrerId },
-                data: { creditBalance: { increment: reward }, lastActivityAt: new Date() },
-              });
+              // Trim to the referrer's tier balance cap — excess is forgone (they
+              // should redeem or climb a tier to hold more). The referral still
+              // counts toward their tier regardless of the amount credited.
+              const grant = grantableCredit(referrer?.creditBalance ?? 0, reward, referrer?.tier ?? "EXPLORER");
+              if (grant > 0) {
+                await tx.creditEntry.create({
+                  data: {
+                    memberId: referrerId,
+                    amount: grant,
+                    reason: "REFERRAL_REWARD",
+                    note: grant < reward
+                      ? `${member.name} completed their trip (balance cap reached)`
+                      : `${member.name} completed their trip`,
+                    approvedBy: "SYSTEM_AUTO",
+                  },
+                });
+                await tx.member.update({
+                  where: { id: referrerId },
+                  data: { creditBalance: { increment: grant }, lastActivityAt: new Date() },
+                });
+              }
               await tx.referral.update({
                 where: { id: inbound.id },
-                data: { status: "REWARDED", rewardAmount: reward },
+                data: { status: "REWARDED", rewardAmount: grant },
               });
-              referrerReward = reward;
+              referrerReward = grant;
               outcome = "REWARDED";
               // This referral now counts toward the referrer's tier.
               const referrerRewarded = await tx.referral.count({

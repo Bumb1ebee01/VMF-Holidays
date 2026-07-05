@@ -57,11 +57,14 @@ export const REF_COOKIE_DAYS = 60;
 // perks. The reward map and the Ambassador rule below are *derived* from this
 // table so they can never drift out of sync.
 //
-//   mode "either" → unlock on completed trips OR successful referrals. This is
-//                   what lets a loyal traveller and an active referrer both climb
-//                   without doing the other.
-//   mode "both"   → unlock needs BOTH thresholds (Ambassador only) — it can never
-//                   be reached on one metric alone.
+//   mode "both"   → unlock needs BOTH thresholds — every promotion requires
+//                   completed trips AND successful referrals, so a member must
+//                   actually travel with us to climb (not just refer).
+//   mode "either" → unlock on either metric alone (kept for flexibility; no tier
+//                   currently uses it).
+// Each tier also carries a maxBalance — the most credit a member at that tier may
+// hold. Earning that would exceed it is trimmed; redeeming or levelling up frees
+// headroom. This caps liability and nudges members to book (redeem) and climb.
 export type MemberTierValue = "EXPLORER" | "VOYAGER" | "NAVIGATOR" | "AMBASSADOR";
 export type TierMode = "either" | "both";
 
@@ -72,6 +75,7 @@ export type TierRow = {
   minTrips: number; // completed trips threshold
   mode: TierMode;
   referrerReward: number; // INR paid to a referrer who is at this tier
+  maxBalance: number; // max credit balance a member at this tier may hold (INR)
   perks: string[];
 };
 
@@ -81,8 +85,9 @@ export const TIERS: TierRow[] = [
     label: "Explorer",
     minReferrals: 0,
     minTrips: 0,
-    mode: "either",
+    mode: "both",
     referrerReward: 2000,
+    maxBalance: 10000,
     perks: ["Members' WhatsApp community", "Your referral link + rewards", "₹250 join credit"],
   },
   {
@@ -90,8 +95,9 @@ export const TIERS: TierRow[] = [
     label: "Voyager",
     minReferrals: 3,
     minTrips: 1,
-    mode: "either",
+    mode: "both",
     referrerReward: 2000,
+    maxBalance: 15000,
     perks: ["Voyager status"],
   },
   {
@@ -99,8 +105,9 @@ export const TIERS: TierRow[] = [
     label: "Navigator",
     minReferrals: 5,
     minTrips: 3,
-    mode: "either",
+    mode: "both",
     referrerReward: 2500,
+    maxBalance: 20000,
     perks: ["Early access to new deals"],
   },
   {
@@ -110,6 +117,7 @@ export const TIERS: TierRow[] = [
     minTrips: 5,
     mode: "both",
     referrerReward: 3000,
+    maxBalance: 25000,
     perks: ["Earliest access to deals", "Featured as a VMF Ambassador (with consent)"],
   },
 ];
@@ -183,6 +191,21 @@ export function tierLabel(tier: string): string {
 /** Referrer reward for a given tier value (falls back to the base reward). */
 export function referrerRewardForTier(tier: string): number {
   return REFERRER_REWARD_BY_TIER[tier as MemberTierValue] ?? REFERRAL_REWARD;
+}
+
+/** The most credit a member at this tier may hold (falls back to Explorer's cap). */
+export function balanceCapForTier(tier: string): number {
+  return tierRow(tier).maxBalance;
+}
+
+/**
+ * How much of `amount` can be credited without pushing `balance` past the member's
+ * tier cap. Returns 0 once they're at (or over) the cap — earning pauses until they
+ * redeem or climb a tier. Never negative.
+ */
+export function grantableCredit(balance: number, amount: number, tier: string): number {
+  const headroom = balanceCapForTier(tier) - balance;
+  return Math.max(0, Math.min(amount, headroom));
 }
 
 export type TierProgress = {

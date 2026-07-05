@@ -129,20 +129,22 @@ A referrer reward is paid at most once per qualifying referred friend.
 
 ## 7. Membership Tiers
 
-7.1 Members progress through tiers based on completed trips and successful (rewarded) referrals:
+7.1 Members progress through tiers by **both** completing trips **and** making successful (rewarded) referrals — every promotion requires travelling with VMF, not only referring:
 
-| Tier         | How it is reached                                   | Illustrative benefits                          |
-|--------------|-----------------------------------------------------|------------------------------------------------|
-| **Explorer** | Default on joining                                  | Members' WhatsApp community; referral link & rewards; ₹250 join credit |
-| **Voyager**  | 3 successful referrals **or** 1 completed trip      | Voyager status                                 |
-| **Navigator**| 5 successful referrals **or** 3 completed trips     | Early access to new deals                      |
-| **Ambassador**| 10 successful referrals **and** 5 completed trips  | Earliest access to deals; feature as a VMF Ambassador (with your consent) |
+| Tier         | How it is reached                                    | Max credit held | Illustrative benefits                          |
+|--------------|------------------------------------------------------|-----------------|------------------------------------------------|
+| **Explorer** | Default on joining                                   | ₹10,000         | Members' WhatsApp community; referral link & rewards; ₹250 join credit |
+| **Voyager**  | 3 successful referrals **and** 1 completed trip      | ₹15,000         | Voyager status                                 |
+| **Navigator**| 5 successful referrals **and** 3 completed trips     | ₹20,000         | Early access to new deals                      |
+| **Ambassador**| 10 successful referrals **and** 5 completed trips   | ₹25,000         | Earliest access to deals; feature as a VMF Ambassador (with your consent) |
 
 7.2 A "successful referral" means a referred friend whose completed, qualifying trip has earned you a confirmed referrer reward under Section 5.
 
-7.3 Tiers do not downgrade: once earned, a tier is retained even if the counting metrics later change, unless the account is found to be in breach of these Terms.
+7.3 **Balance limit.** Each tier sets the maximum credit you may hold at any time (see the table above). When your balance is at that limit, further earnings pause until you redeem credit against a trip or reach the next tier. Credit is intended to be used toward travel, not accumulated indefinitely.
 
-7.4 Tier benefits are provided at VMF's discretion and may be varied. Some benefits (such as being featured as an Ambassador) require your separate consent and may be withdrawn at your or VMF's request.
+7.4 Tiers do not downgrade: once earned, a tier is retained even if the counting metrics later change, unless the account is found to be in breach of these Terms.
+
+7.5 Tier benefits are provided at VMF's discretion and may be varied. Some benefits (such as being featured as an Ambassador) require your separate consent and may be withdrawn at your or VMF's request.
 
 ---
 
