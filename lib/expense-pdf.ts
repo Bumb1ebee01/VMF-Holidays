@@ -6,6 +6,7 @@ import {
   computeLedger,
   settle,
   computeBalances,
+  itemShares,
   type Category,
   type Person,
   type Currency,
@@ -135,24 +136,26 @@ export async function generateExpensePdf(data: ExpensePdfData): Promise<void> {
 
   // ── Itemised breakdown by category ──
   sectionTitle("Itemised breakdown");
+  let catNo = 0;
   for (const cat of categories) {
     if (cat.items.length === 0) continue;
+    catNo += 1;
     autoTable(doc, {
       startY: y + 2,
-      head: [[`${cat.icon}  ${cat.name}`, "Paid by", "Split", "Amount"]],
-      body: cat.items.map((it) => [
-        it.label,
-        nameById(it.paidBy),
-        `${it.sharedBy.length} ${it.sharedBy.length === 1 ? "person" : "people"}`,
-        money(it.amount, cur),
-      ]),
+      head: [[`${catNo}. ${cat.name}`, "Paid by", "Split (per person)", "Amount"]],
+      body: cat.items.map((it, idx) => {
+        const modeText =
+          it.splitMode === "exact" ? "Exact amounts" : it.splitMode === "percent" ? "By percentage" : "Split evenly";
+        const perPerson = itemShares(it).map((s) => `${nameById(s.personId)}: ${money(s.amount, cur)}`).join("\n");
+        return [`${catNo}.${idx + 1}  ${it.label}`, nameById(it.paidBy), `${modeText}\n${perPerson}`, money(it.amount, cur)];
+      }),
       foot: [["Subtotal", "", "", money(categoryTotal(cat), cur)]],
       margin: { left: margin, right: margin },
-      styles: { font: "helvetica", fontSize: 9, cellPadding: 2.2, textColor: INK, lineColor: LINE, lineWidth: 0.1 },
+      styles: { font: "helvetica", fontSize: 9, cellPadding: 2.2, textColor: INK, lineColor: LINE, lineWidth: 0.1, valign: "middle" },
       headStyles: { fillColor: NAVY, textColor: [255, 255, 255], fontStyle: "bold", fontSize: 9.5 },
       footStyles: { fillColor: [244, 241, 234], textColor: NAVY, fontStyle: "bold" },
       alternateRowStyles: { fillColor: [250, 249, 245] },
-      columnStyles: { 3: { halign: "right" }, 2: { halign: "center" } },
+      columnStyles: { 2: { fontSize: 8.5, textColor: INK, fontStyle: "bold" }, 3: { halign: "right" } },
     });
     // @ts-expect-error — lastAutoTable is added by the plugin at runtime.
     y = doc.lastAutoTable.finalY + 6;
@@ -189,7 +192,7 @@ export async function generateExpensePdf(data: ExpensePdfData): Promise<void> {
     autoTable(doc, {
       startY: y + 2,
       head: [["From", "", "To", "Amount"]],
-      body: settlements.map((s) => [nameById(s.fromId), "→", nameById(s.toId), money(s.amount, cur)]),
+      body: settlements.map((s) => [nameById(s.fromId), "pays", nameById(s.toId), money(s.amount, cur)]),
       margin: { left: margin, right: margin },
       styles: { font: "helvetica", fontSize: 9.5, cellPadding: 2.4, textColor: INK, lineColor: LINE, lineWidth: 0.1 },
       headStyles: { fillColor: ORANGE, textColor: [255, 255, 255], fontStyle: "bold" },

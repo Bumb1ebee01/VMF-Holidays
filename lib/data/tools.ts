@@ -56,38 +56,10 @@ export const TOOLS: Tool[] = [
     status: "soon",
   },
   {
-    slug: "trip-budget-estimator",
-    title: "Trip Budget Estimator",
-    blurb: "Get a realistic cost range for your trip by destination, days, group size and style.",
-    icon: "budget",
-    status: "soon",
-  },
-  {
-    slug: "tip-calculator",
-    title: "International Tip Calculator",
-    blurb: "Know the right amount to tip in the countries VMF travellers actually visit.",
-    icon: "tip",
-    status: "soon",
-  },
-  {
-    slug: "diy-vs-us",
-    title: "DIY vs. Us Calculator",
-    blurb: "Compare booking flights, hotels and activities separately against a VMF package price.",
-    icon: "compare",
-    status: "soon",
-  },
-  {
     slug: "visa-checker",
     title: "Visa & eVisa Checker",
     blurb: "Check visa requirements on an Indian passport for the destinations we sell.",
     icon: "passport",
-    status: "soon",
-  },
-  {
-    slug: "packing-checklist",
-    title: "Packing Checklist Generator",
-    blurb: "Build a packing list tailored to your trip type — honeymoon, family, adventure and more.",
-    icon: "packing",
     status: "soon",
   },
 ];

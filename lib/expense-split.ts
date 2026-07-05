@@ -42,15 +42,23 @@ export function formatMoney(minor: number, cur: Currency): string {
   return `${cur.symbol}${num}`;
 }
 
+export type SplitMode = "even" | "exact" | "percent";
+
 export interface Expense {
   id: string;
   label: string;
-  /** Amount in minor units (paise). */
+  /** Total amount in minor units (paise). */
   amount: number;
   /** Person id who paid. */
   paidBy: string;
-  /** Person ids who share this expense equally. */
+  /** Person ids who share this expense. */
   sharedBy: string[];
+  /** How the amount is split among sharedBy. Defaults to "even". */
+  splitMode?: SplitMode;
+  /** "exact" mode: each participant's exact share in paise (keys ⊆ sharedBy). */
+  exact?: Record<string, number>;
+  /** "percent" mode: each participant's percentage (keys ⊆ sharedBy, sum ≈ 100). */
+  percent?: Record<string, number>;
 }
 
 /** A named group of expense items (e.g. "Stay", "Food & Drink"). */
@@ -59,6 +67,8 @@ export interface Category {
   name: string;
   /** Emoji glyph shown on the category header. */
   icon: string;
+  /** Default split mode new items in this category inherit. Defaults to "even". */
+  splitMode?: SplitMode;
   items: Expense[];
 }
 
@@ -99,6 +109,35 @@ export function splitEqually(amount: number, n: number): number[] {
   });
 }
 
+/** Split `amount` across weights, returning integer minor units that sum to `amount`. */
+export function splitByWeights(amount: number, weights: number[]): number[] {
+  const total = weights.reduce((a, b) => a + b, 0);
+  if (total <= 0) return weights.map(() => 0);
+  const raw = weights.map((w) => (amount * w) / total);
+  const result = raw.map((v) => Math.floor(v));
+  const remainder = amount - result.reduce((a, b) => a + b, 0);
+  // Hand leftover minor units to the largest fractional parts first.
+  const order = raw
+    .map((v, i) => ({ i, frac: v - Math.floor(v) }))
+    .sort((a, b) => b.frac - a.frac);
+  for (let k = 0; k < remainder; k += 1) result[order[k % order.length].i] += 1;
+  return result;
+}
+
+/** Each participant's share of one item (minor units), honouring its split mode. */
+export function itemShares(item: Expense): { personId: string; amount: number }[] {
+  const mode = item.splitMode ?? "even";
+  if (mode === "exact" && item.exact) {
+    return item.sharedBy.map((pid) => ({ personId: pid, amount: item.exact?.[pid] ?? 0 }));
+  }
+  if (mode === "percent" && item.percent) {
+    const amts = splitByWeights(item.amount, item.sharedBy.map((pid) => item.percent?.[pid] ?? 0));
+    return item.sharedBy.map((pid, i) => ({ personId: pid, amount: amts[i] }));
+  }
+  const amts = splitEqually(item.amount, item.sharedBy.length);
+  return item.sharedBy.map((pid, i) => ({ personId: pid, amount: amts[i] }));
+}
+
 /** Net balance per person: total paid minus total share of all expenses. */
 export function computeBalances(people: Person[], expenses: Expense[]): Balance[] {
   const net = new Map<string, number>(people.map((p) => [p.id, 0]));
@@ -108,10 +147,9 @@ export function computeBalances(people: Person[], expenses: Expense[]): Balance[
     // Payer fronted the whole amount.
     net.set(e.paidBy, (net.get(e.paidBy) ?? 0) + e.amount);
     // Each sharer owes their split.
-    const shares = splitEqually(e.amount, e.sharedBy.length);
-    e.sharedBy.forEach((pid, i) => {
-      net.set(pid, (net.get(pid) ?? 0) - shares[i]);
-    });
+    for (const s of itemShares(e)) {
+      net.set(s.personId, (net.get(s.personId) ?? 0) - s.amount);
+    }
   }
 
   return people.map((p) => ({ personId: p.id, net: net.get(p.id) ?? 0 }));
@@ -132,10 +170,9 @@ export function computeLedger(people: Person[], expenses: Expense[]): PersonLedg
   for (const e of expenses) {
     if (e.amount <= 0 || e.sharedBy.length === 0) continue;
     paid.set(e.paidBy, (paid.get(e.paidBy) ?? 0) + e.amount);
-    const shares = splitEqually(e.amount, e.sharedBy.length);
-    e.sharedBy.forEach((pid, i) => {
-      share.set(pid, (share.get(pid) ?? 0) + shares[i]);
-    });
+    for (const s of itemShares(e)) {
+      share.set(s.personId, (share.get(s.personId) ?? 0) + s.amount);
+    }
   }
 
   return people.map((p) => {

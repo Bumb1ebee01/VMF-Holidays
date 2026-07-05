@@ -8,11 +8,14 @@ import {
   computeBalances,
   computeLedger,
   settle,
+  itemShares,
   currencyByCode,
   formatMoney,
   CURRENCIES,
   type Person,
   type Category,
+  type Expense,
+  type SplitMode,
 } from "@/lib/expense-split";
 import styles from "./ExpenseSplitter.module.css";
 
@@ -67,10 +70,14 @@ export default function ExpenseSplitter() {
   const [paidBy, setPaidBy] = useState("");
   const [sharedBy, setSharedBy] = useState<string[]>([]);
   const [formError, setFormError] = useState("");
+  const [draftMode, setDraftMode] = useState<SplitMode>("even");
+  const [exactInputs, setExactInputs] = useState<Record<string, string>>({});
+  const [percentInputs, setPercentInputs] = useState<Record<string, string>>({});
 
   const [newCat, setNewCat] = useState("");
   const [copied, setCopied] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
   const cur = currencyByCode(currencyCode);
 
@@ -136,6 +143,48 @@ export default function ExpenseSplitter() {
   const nameById = (id: string) => people.find((p) => p.id === id)?.name.trim() || "Someone";
   const enoughPeople = namedPeople.length >= 2;
 
+  const toggleItem = (id: string) =>
+    setExpandedItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  // Each sharer's share of one item, honouring its split mode.
+  const shareBreakdown = (it: Expense) =>
+    itemShares(it).map((s) => ({ id: s.personId, name: nameById(s.personId), amount: s.amount }));
+
+  // Compact "who" label — "Everyone (4)" when the whole group shares it, else names.
+  const sharersLabel = (it: Expense) => {
+    const all = namedPeople.length > 0 && namedPeople.every((p) => it.sharedBy.includes(p.id));
+    return all ? `Everyone (${it.sharedBy.length})` : it.sharedBy.map(nameById).join(", ");
+  };
+
+  // How an item is split, in words — for the item meta line and breakdown.
+  const modeLabel = (it: Expense) =>
+    it.splitMode === "exact" ? "exact amounts" : it.splitMode === "percent" ? "by %" : "split evenly";
+
+  // Each person's total share within a category (sum of their item shares).
+  const categoryShares = (cat: Category) => {
+    const totals = new Map<string, number>();
+    for (const it of cat.items) {
+      for (const s of itemShares(it)) totals.set(s.personId, (totals.get(s.personId) ?? 0) + s.amount);
+    }
+    return [...totals.entries()].map(([id, amount]) => ({ id, name: nameById(id), amount }));
+  };
+
+  // Live running totals for the exact / percent allocation inputs.
+  const exactTotal = namedPeople.reduce((s, p) => {
+    const v = Math.round(parseFloat(exactInputs[p.id] || "") * 100);
+    return s + (Number.isFinite(v) && v > 0 ? v : 0);
+  }, 0);
+  const percentTotal = namedPeople.reduce((s, p) => {
+    const v = parseFloat(percentInputs[p.id] || "");
+    return s + (Number.isFinite(v) && v > 0 ? v : 0);
+  }, 0);
+  const percentOk = Math.abs(percentTotal - 100) < 0.01;
+
   // ── People ──
   const addPerson = () => setPeople((prev) => [...prev, { id: uid(), name: "" }]);
   const renamePerson = (id: string, name: string) =>
@@ -168,34 +217,85 @@ export default function ExpenseSplitter() {
 
   // ── Items ──
   const openForm = (catId: string) => {
+    const cat = categories.find((c) => c.id === catId);
     setOpenCatId(catId);
     setLabel("");
     setAmount("");
     setFormError("");
     setPaidBy(namedIds[0] ?? "");
     setSharedBy(namedIds);
+    setDraftMode(cat?.splitMode ?? "even");
+    setExactInputs({});
+    setPercentInputs({});
   };
   const toggleShared = (id: string) =>
     setSharedBy((prev) => (prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]));
 
   const addItem = (catId: string) => {
-    const paise = Math.round(parseFloat(amount) * 100);
-    if (!Number.isFinite(paise) || paise <= 0) {
-      setFormError("Enter an amount greater than zero.");
-      return;
-    }
     if (!paidBy) {
       setFormError("Add at least two people first.");
       return;
     }
-    if (sharedBy.length === 0) {
-      setFormError("Pick who this is split between.");
-      return;
+    const base = { id: uid(), label: label.trim() || "Item", paidBy };
+    let item: Expense;
+
+    if (draftMode === "exact") {
+      const entries = namedPeople
+        .map((p) => ({ id: p.id, paise: Math.round(parseFloat(exactInputs[p.id] || "") * 100) }))
+        .filter((e) => Number.isFinite(e.paise) && e.paise > 0);
+      if (entries.length === 0) {
+        setFormError("Enter at least one person's amount.");
+        return;
+      }
+      item = {
+        ...base,
+        amount: entries.reduce((s, e) => s + e.paise, 0),
+        sharedBy: entries.map((e) => e.id),
+        splitMode: "exact",
+        exact: Object.fromEntries(entries.map((e) => [e.id, e.paise])),
+      };
+    } else if (draftMode === "percent") {
+      const paise = Math.round(parseFloat(amount) * 100);
+      if (!Number.isFinite(paise) || paise <= 0) {
+        setFormError("Enter the total amount.");
+        return;
+      }
+      const entries = namedPeople
+        .map((p) => ({ id: p.id, pct: parseFloat(percentInputs[p.id] || "") }))
+        .filter((e) => Number.isFinite(e.pct) && e.pct > 0);
+      const sumPct = entries.reduce((s, e) => s + e.pct, 0);
+      if (entries.length === 0 || Math.abs(sumPct - 100) > 0.01) {
+        setFormError(`Percentages must add up to 100% (currently ${sumPct || 0}%).`);
+        return;
+      }
+      item = {
+        ...base,
+        amount: paise,
+        sharedBy: entries.map((e) => e.id),
+        splitMode: "percent",
+        percent: Object.fromEntries(entries.map((e) => [e.id, e.pct])),
+      };
+    } else {
+      const paise = Math.round(parseFloat(amount) * 100);
+      if (!Number.isFinite(paise) || paise <= 0) {
+        setFormError("Enter an amount greater than zero.");
+        return;
+      }
+      if (sharedBy.length === 0) {
+        setFormError("Pick who this is split between.");
+        return;
+      }
+      item = { ...base, amount: paise, sharedBy: [...sharedBy], splitMode: "even" };
     }
-    const item = { id: uid(), label: label.trim() || "Item", amount: paise, paidBy, sharedBy: [...sharedBy] };
-    setCategories((prev) => prev.map((c) => (c.id === catId ? { ...c, items: [item, ...c.items] } : c)));
+
+    // Remember the chosen mode as the category's default for the next item.
+    setCategories((prev) =>
+      prev.map((c) => (c.id === catId ? { ...c, splitMode: draftMode, items: [item, ...c.items] } : c))
+    );
     setLabel("");
     setAmount("");
+    setExactInputs({});
+    setPercentInputs({});
     setFormError("");
   };
 
@@ -322,28 +422,64 @@ export default function ExpenseSplitter() {
                       <button type="button" className={styles.catDelete} onClick={() => removeCategory(cat.id)} aria-label={`Remove ${cat.name}`}>×</button>
                     </div>
 
+                    {cat.items.length > 0 && (
+                      <div className={styles.catShares}>
+                        {categoryShares(cat).map((s) => (
+                          <span key={s.id} className={styles.catShareChip}>
+                            {s.name} <strong>{formatMoney(s.amount, cur)}</strong>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
                     <AnimatePresence initial={false}>
                       {cat.items.length > 0 && (
                         <motion.ul className={styles.itemList} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                           <AnimatePresence initial={false}>
-                            {cat.items.map((it) => (
-                              <motion.li
-                                key={it.id}
-                                className={styles.itemRow}
-                                layout
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: "auto" }}
-                                exit={{ opacity: 0, height: 0 }}
-                                transition={{ duration: 0.2 }}
-                              >
-                                <div className={styles.itemInfo}>
-                                  <span className={styles.itemLabel}>{it.label}</span>
-                                  <span className={styles.itemMeta}>{nameById(it.paidBy)} paid · split {it.sharedBy.length}-way</span>
-                                </div>
-                                <span className={styles.itemAmt}>{formatMoney(it.amount, cur)}</span>
-                                <button type="button" className={styles.iconBtn} onClick={() => removeItem(cat.id, it.id)} aria-label={`Remove ${it.label}`}>×</button>
-                              </motion.li>
-                            ))}
+                            {cat.items.map((it) => {
+                              const open = expandedItems.has(it.id);
+                              return (
+                                <motion.li
+                                  key={it.id}
+                                  className={styles.itemRow}
+                                  layout
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: "auto" }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                >
+                                  <div className={styles.itemTop}>
+                                    <button type="button" className={styles.itemMain} onClick={() => toggleItem(it.id)} aria-expanded={open}>
+                                      <span className={`${styles.itemChevron} ${open ? styles.itemChevronOpen : ""}`} aria-hidden="true">▸</span>
+                                      <span className={styles.itemInfo}>
+                                        <span className={styles.itemLabel}>{it.label}</span>
+                                        <span className={styles.itemMeta}>{nameById(it.paidBy)} paid · {modeLabel(it)} · {sharersLabel(it)}</span>
+                                      </span>
+                                      <span className={styles.itemAmt}>{formatMoney(it.amount, cur)}</span>
+                                    </button>
+                                    <button type="button" className={styles.iconBtn} onClick={() => removeItem(cat.id, it.id)} aria-label={`Remove ${it.label}`}>×</button>
+                                  </div>
+                                  <AnimatePresence initial={false}>
+                                    {open && (
+                                      <motion.ul
+                                        className={styles.shareList}
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        transition={{ duration: 0.15 }}
+                                      >
+                                        {shareBreakdown(it).map((s) => (
+                                          <li key={s.id} className={styles.shareItem}>
+                                            <span className={styles.shareName}>{s.name}</span>
+                                            <span className={styles.shareAmt}>{formatMoney(s.amount, cur)}</span>
+                                          </li>
+                                        ))}
+                                      </motion.ul>
+                                    )}
+                                  </AnimatePresence>
+                                </motion.li>
+                              );
+                            })}
                           </AnimatePresence>
                         </motion.ul>
                       )}
@@ -359,26 +495,88 @@ export default function ExpenseSplitter() {
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.2 }}
                         >
-                          <div className={styles.formGrid}>
+                          <div className={draftMode === "exact" ? styles.formSingle : styles.formGrid}>
                             <input className={styles.input} value={label} onChange={(e) => setLabel(e.target.value)} placeholder="What for? e.g. Dinner" maxLength={40} autoFocus />
-                            <input className={styles.input} value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder={`Amount (${cur.symbol.trim()})`} />
+                            {draftMode !== "exact" && (
+                              <input className={styles.input} value={amount} onChange={(e) => setAmount(e.target.value)} inputMode="decimal" placeholder={`Total (${cur.symbol.trim()})`} />
+                            )}
                           </div>
+
                           <div className={styles.formRow}>
                             <label className={styles.miniLabel}>Paid by</label>
                             <select className={styles.input} value={paidBy} onChange={(e) => setPaidBy(e.target.value)}>
                               {namedPeople.map((p) => <option key={p.id} value={p.id}>{p.name.trim()}</option>)}
                             </select>
                           </div>
+
                           <div className={styles.formRow}>
-                            <label className={styles.miniLabel}>Split between</label>
-                            <div className={styles.chips}>
-                              {namedPeople.map((p) => (
-                                <button type="button" key={p.id} className={`${styles.chip} ${sharedBy.includes(p.id) ? styles.chipOn : ""}`} onClick={() => toggleShared(p.id)} aria-pressed={sharedBy.includes(p.id)}>
-                                  {p.name.trim()}
+                            <label className={styles.miniLabel}>How to split</label>
+                            <div className={styles.modeSeg} role="group" aria-label="Split mode">
+                              {(["even", "exact", "percent"] as SplitMode[]).map((m) => (
+                                <button
+                                  type="button"
+                                  key={m}
+                                  className={`${styles.modeBtn} ${draftMode === m ? styles.modeBtnOn : ""}`}
+                                  onClick={() => setDraftMode(m)}
+                                  aria-pressed={draftMode === m}
+                                >
+                                  {m === "even" ? "Evenly" : m === "exact" ? `Exact ${cur.symbol.trim()}` : "By %"}
                                 </button>
                               ))}
                             </div>
                           </div>
+
+                          {draftMode === "even" && (
+                            <div className={styles.formRow}>
+                              <label className={styles.miniLabel}>Split between</label>
+                              <div className={styles.chips}>
+                                {namedPeople.map((p) => (
+                                  <button type="button" key={p.id} className={`${styles.chip} ${sharedBy.includes(p.id) ? styles.chipOn : ""}`} onClick={() => toggleShared(p.id)} aria-pressed={sharedBy.includes(p.id)}>
+                                    {p.name.trim()}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {draftMode === "exact" && (
+                            <div className={styles.formRow}>
+                              <label className={styles.miniLabel}>Each person&apos;s amount</label>
+                              <div className={styles.allocList}>
+                                {namedPeople.map((p) => (
+                                  <div key={p.id} className={styles.allocRow}>
+                                    <span className={styles.allocName}>{p.name.trim()}</span>
+                                    <div className={styles.allocField}>
+                                      <span className={styles.allocAffix}>{cur.symbol.trim()}</span>
+                                      <input className={styles.allocInput} inputMode="decimal" value={exactInputs[p.id] ?? ""} onChange={(e) => setExactInputs((prev) => ({ ...prev, [p.id]: e.target.value }))} placeholder="0" />
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <p className={styles.allocFoot}>Item total: <strong>{formatMoney(exactTotal, cur)}</strong></p>
+                            </div>
+                          )}
+
+                          {draftMode === "percent" && (
+                            <div className={styles.formRow}>
+                              <label className={styles.miniLabel}>Each person&apos;s %</label>
+                              <div className={styles.allocList}>
+                                {namedPeople.map((p) => (
+                                  <div key={p.id} className={styles.allocRow}>
+                                    <span className={styles.allocName}>{p.name.trim()}</span>
+                                    <div className={styles.allocField}>
+                                      <input className={styles.allocInput} inputMode="decimal" value={percentInputs[p.id] ?? ""} onChange={(e) => setPercentInputs((prev) => ({ ...prev, [p.id]: e.target.value }))} placeholder="0" />
+                                      <span className={styles.allocAffix}>%</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              <p className={`${styles.allocFoot} ${percentOk ? "" : styles.allocWarn}`}>
+                                Total: <strong>{percentTotal || 0}%</strong> {percentOk ? "✓" : "— must be 100%"}
+                              </p>
+                            </div>
+                          )}
+
                           {formError && <p className={styles.error}>{formError}</p>}
                           <div className={styles.formActions}>
                             <button type="button" className={styles.addBtn} onClick={() => addItem(cat.id)}>Add item</button>
@@ -475,6 +673,59 @@ export default function ExpenseSplitter() {
           </section>
         </div>
       </div>
+
+      {/* ── Full breakdown ── */}
+      {items.length > 0 && (
+        <section className={styles.breakdownCard}>
+          <h2 className={styles.cardTitle}>Full breakdown</h2>
+          {categories
+            .filter((c) => c.items.length > 0)
+            .map((cat) => (
+              <div key={cat.id} className={styles.bdCat}>
+                <div className={styles.bdCatHead}>
+                  <span>{cat.name}</span>
+                  <span>{formatMoney(categoryTotal(cat), cur)}</span>
+                </div>
+                {cat.items.map((it) => (
+                  <div key={it.id} className={styles.bdItem}>
+                    <div className={styles.bdItemHead}>
+                      <span className={styles.bdItemLabel}>{it.label}</span>
+                      <span className={styles.bdItemCalc}>
+                        {it.splitMode === "exact"
+                          ? `${formatMoney(it.amount, cur)} · exact amounts`
+                          : it.splitMode === "percent"
+                            ? `${formatMoney(it.amount, cur)} · by %`
+                            : `${formatMoney(it.amount, cur)} ÷ ${it.sharedBy.length} = ${formatMoney(Math.floor(it.amount / it.sharedBy.length), cur)} each`}
+                      </span>
+                    </div>
+                    <div className={styles.bdShares}>
+                      {shareBreakdown(it).map((s) => (
+                        <span key={s.id} className={styles.bdShare}>
+                          {s.name} <strong>{formatMoney(s.amount, cur)}</strong>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+
+          <div className={styles.bdTotals}>
+            <span className={styles.summaryLabel}>Per-person totals</span>
+            {ledger.map((l) => (
+              <div key={l.personId} className={styles.bdTotalRow}>
+                <span className={styles.bdTotalName}>{nameById(l.personId)}</span>
+                <span className={styles.bdTotalMeta}>
+                  paid {formatMoney(l.paid, cur)} · owes {formatMoney(l.share, cur)}
+                </span>
+                <span className={`${styles.bdTotalNet} ${l.net === 0 ? styles.netZero : l.net > 0 ? styles.netPos : styles.netNeg}`}>
+                  {l.net === 0 ? "settled" : l.net > 0 ? `gets ${formatMoney(l.net, cur)}` : `owes ${formatMoney(l.net, cur)}`}
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }
