@@ -66,13 +66,27 @@ export type LocationTile = {
   fromPrice: number | null;
 };
 
+const isRemoteImage = (src?: string) => !!src && /^https?:\/\//.test(src);
+
 async function buildLocationTiles(
   region: "domestic" | "international",
   keyOf: (d: Destination) => string | undefined
 ): Promise<LocationTile[]> {
   const [dests, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
   const countBySlug = new Map<string, number>();
-  for (const p of packages) countBySlug.set(p.destinationSlug, (countBySlug.get(p.destinationSlug) ?? 0) + 1);
+  const pkgImageBySlug = new Map<string, string>();
+  for (const p of packages) {
+    countBySlug.set(p.destinationSlug, (countBySlug.get(p.destinationSlug) ?? 0) + 1);
+    if (isRemoteImage(p.heroImage) && !pkgImageBySlug.has(p.destinationSlug)) {
+      pkgImageBySlug.set(p.destinationSlug, p.heroImage);
+    }
+  }
+
+  // Prefer the destination's own hero when it's a real URL; otherwise fall back to
+  // one of its packages' images, so a missing/local destination image never breaks
+  // the tile. Admins can set a proper hero image to override this.
+  const tileImage = (d: Destination) =>
+    isRemoteImage(d.heroImage) ? d.heroImage : pkgImageBySlug.get(d.slug) ?? d.heroImage;
 
   const groups = new Map<string, Omit<LocationTile, "slug">>();
   for (const d of dests.filter((x) => x.region === region)) {
@@ -80,16 +94,17 @@ async function buildLocationTiles(
     if (!name) continue;
     const slug = slugify(name);
     const pkgs = countBySlug.get(d.slug) ?? 0;
+    const img = tileImage(d);
     const g = groups.get(slug);
     if (g) {
       g.packageCount += pkgs;
       g.destinationCount += 1;
-      if (!g.image) g.image = d.heroImage;
+      if (!isRemoteImage(g.image) && isRemoteImage(img)) g.image = img;
       if (d.fromPrice > 0) g.fromPrice = g.fromPrice == null ? d.fromPrice : Math.min(g.fromPrice, d.fromPrice);
     } else {
       groups.set(slug, {
         name,
-        image: d.heroImage,
+        image: img,
         packageCount: pkgs,
         destinationCount: 1,
         fromPrice: d.fromPrice > 0 ? d.fromPrice : null,
