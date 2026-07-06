@@ -292,3 +292,10 @@
 
 :global([data-theme="dark"]) .title { color: var(--text); }
 :global([data-theme="dark"]) .filterTab:hover { color: var(--text); }
+/* Resting filter pills were hardcoded white (var(--white)) — glaring on the
+   dark section. Give them a dark surface + legible label. */
+:global([data-theme="dark"]) .filterTab {
+  background: var(--card-bg);
+  border-color: var(--hairline);
+  color: var(--text-light);
+}

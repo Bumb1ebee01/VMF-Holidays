@@ -198,3 +198,15 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* Dark mode: .page is hardcoded white and .intro/.faqA use var(--text) (flips
+   near-white) → invisible; the .faqSection band flips dark and buries its navy
+   headings. Darken the page, redirect navy text, and darken the white chips. */
+:global([data-theme="dark"]) .page { background: var(--bg); }
+:global([data-theme="dark"]) .faqTitle,
+:global([data-theme="dark"]) .faqQ,
+:global([data-theme="dark"]) .linkTitle { color: var(--text); }
+:global([data-theme="dark"]) .linkChip {
+  color: var(--text);
+  background: var(--card-bg);
+}

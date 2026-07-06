@@ -141,3 +141,7 @@
     display: none;
   }
 }
+
+/* Dark mode: the solid ("light") navbar goes dark too, so the Sign-up button's
+   navy label was near-invisible on it. */
+:global([data-theme="dark"]) .light .signup { color: var(--text); }

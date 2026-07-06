@@ -96,3 +96,8 @@
 /* Dark mode — darken the section and flip the navy title */
 :global([data-theme="dark"]) .section { background: var(--bg); }
 :global([data-theme="dark"]) .title { color: var(--text); }
+/* The "view all" link was navy text + navy underline on the now-dark section. */
+:global([data-theme="dark"]) .viewAllBtn {
+  color: var(--text);
+  border-bottom-color: var(--hairline);
+}

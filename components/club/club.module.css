@@ -174,3 +174,6 @@
     flex: 1 1 auto;
   }
 }
+
+/* Dark mode: navy text on the orange-tinted referral note was near-invisible. */
+:global([data-theme="dark"]) .refNote { color: var(--text); }

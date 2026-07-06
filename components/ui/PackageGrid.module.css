@@ -44,3 +44,10 @@
   .cellReveal { animation: none; }
   .moreBtn:hover { transform: none; }
 }
+
+/* Dark mode: the "show more" pill was hardcoded white — glaring on the dark page. */
+:global([data-theme="dark"]) .moreBtn {
+  color: var(--text);
+  background: var(--card-bg);
+  border-color: var(--hairline);
+}

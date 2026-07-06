@@ -95,3 +95,9 @@
   justify-content: center;
   flex-wrap: wrap;
 }
+
+/* Dark mode: .page is hardcoded white and .a uses var(--text) (flips near-white),
+   so answers were white-on-white. Darken the page + redirect the navy headings. */
+:global([data-theme="dark"]) .page { background: var(--bg); }
+:global([data-theme="dark"]) .q,
+:global([data-theme="dark"]) .ctaTitle { color: var(--text); }

@@ -104,3 +104,10 @@
     padding: 24px;
   }
 }
+
+/* Dark mode: .page + .formCard are hardcoded white, and .formCard's body text
+   uses var(--text) (flips near-white) → the join/login form was white-on-white.
+   Darken both surfaces and redirect the navy form title. */
+:global([data-theme="dark"]) .page { background: var(--bg); }
+:global([data-theme="dark"]) .formCard { background: var(--card-bg); }
+:global([data-theme="dark"]) .formTitle { color: var(--text); }

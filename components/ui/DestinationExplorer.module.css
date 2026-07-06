@@ -293,3 +293,12 @@
   border-color: rgba(255, 255, 255, 0.15);
   color: var(--text);
 }
+/* Drill-in breadcrumb title was navy → invisible; the back / "view more" pills
+   were hardcoded white → glaring on the dark page. */
+:global([data-theme="dark"]) .crumbTitle { color: var(--text); }
+:global([data-theme="dark"]) .back,
+:global([data-theme="dark"]) .moreBtn {
+  background: var(--card-bg);
+  color: var(--text);
+  border-color: var(--hairline);
+}

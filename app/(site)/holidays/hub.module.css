@@ -81,3 +81,9 @@
 .link:hover .price {
   color: var(--orange);
 }
+
+/* Dark mode: .page is hardcoded white and .link uses var(--text) (flips
+   near-white) → the destination links were invisible. Darken the page and
+   redirect the navy group titles. */
+:global([data-theme="dark"]) .page { background: var(--bg); }
+:global([data-theme="dark"]) .groupTitle { color: var(--text); }

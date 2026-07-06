@@ -29,3 +29,7 @@
 .empty {
   color: var(--muted);
 }
+
+/* Dark mode: .page is hardcoded white, so it framed the (dark) compare table
+   in white. Darken it to match the rest of the app. */
+:global([data-theme="dark"]) .page { background: var(--bg); }

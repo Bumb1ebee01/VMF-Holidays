@@ -110,3 +110,10 @@
   font-weight: 700;
   color: var(--orange);
 }
+
+/* Dark mode: .page + .card are hardcoded white. Darken them and redirect the
+   navy group labels / card names so they stay legible. */
+:global([data-theme="dark"]) .page { background: var(--bg); }
+:global([data-theme="dark"]) .card { background: var(--card-bg); }
+:global([data-theme="dark"]) .groupLabel,
+:global([data-theme="dark"]) .cardName { color: var(--text); }

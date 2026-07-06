@@ -629,3 +629,10 @@
   .scrollLine { animation: none; }
   .marqueeTrack { animation: none; }
 }
+
+/* Dark mode: the search bar + results dropdown stay white by design (floating on
+   the always-navy hero), but their text uses var(--text) which flips near-white
+   → invisible. Pin it to navy (which never flips) so it stays dark on white. */
+:global([data-theme="dark"]) .searchInput,
+:global([data-theme="dark"]) .dropdownItem,
+:global([data-theme="dark"]) .dropdownTitle { color: var(--navy); }
