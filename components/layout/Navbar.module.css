@@ -420,6 +420,41 @@
   padding-left: calc(var(--sp-6) + var(--sp-2));
 }
 
+/* Collapsible group headers (Destinations / Travel Tools) — a tappable row with a
+   caret, styled to match the plain menu links so the menu reads as one list. */
+.mobileToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 15px var(--sp-2);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--hairline-soft);
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.mobileToggle:hover,
+.mobileToggle.active {
+  color: var(--orange);
+}
+
+.mobileCaret {
+  flex-shrink: 0;
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.mobileCaretOpen {
+  transform: rotate(180deg);
+}
+
 .mobileMenu .btn {
   margin-top: var(--sp-5);
   width: 100%;
@@ -430,6 +465,16 @@
   .links { display: none; }
   .authLinks { display: none; }
   .hamburger { display: flex; }
+  /* .links carried margin-left:auto to push the right-hand cluster over; with it
+     hidden, the actions need to claim that space themselves. */
+  .actions { margin-left: auto; }
+}
+
+/* On phones the wide "Plan My Trip" dropdown button pushes the hamburger off the
+   edge. It's redundant here — the hamburger menu already carries the same CTA —
+   so hide it and keep the hamburger reachable. */
+@media (max-width: 640px) {
+  .planWrap { display: none; }
 }
 
 @media (min-width: 1101px) {

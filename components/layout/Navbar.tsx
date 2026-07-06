@@ -61,6 +61,9 @@ export default function Navbar() {
 
   const [scrolled, setScrolled] = useState(!isHome);
   const [mobileOpen, setMobileOpen] = useState(false);
+  // Which mobile accordion group (Destinations / Travel Tools) is expanded — only
+  // one at a time so the menu stays short instead of showing every sub-item.
+  const [mobileSub, setMobileSub] = useState<string | null>(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [destOpen, setDestOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
@@ -130,6 +133,7 @@ export default function Navbar() {
     setPlanOpen(false);
     setDestOpen(false);
     setToolsOpen(false);
+    setMobileSub(null);
   }, [pathname]);
 
   useEffect(() => {
@@ -330,25 +334,45 @@ export default function Navbar() {
                   ? TOOL_LINKS
                   : null;
             if (subLinks) {
+              const open = mobileSub === link.href;
               return (
                 <Fragment key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={isActive(link.href) ? styles.active : ""}
-                    onClick={() => setMobileOpen(false)}
+                  <button
+                    type="button"
+                    className={`${styles.mobileToggle} ${isActive(link.href) ? styles.active : ""}`}
+                    aria-expanded={open}
+                    onClick={() => setMobileSub(open ? null : link.href)}
                   >
                     {link.label}
-                  </Link>
-                  {subLinks.map((l) => (
-                    <Link
-                      key={l.href}
-                      href={l.href}
-                      className={`${styles.mobileSub} ${isActive(l.href) ? styles.active : ""}`}
-                      onClick={() => setMobileOpen(false)}
+                    <svg
+                      className={`${styles.mobileCaret} ${open ? styles.mobileCaretOpen : ""}`}
+                      width="14" height="14" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"
                     >
-                      {l.label}
-                    </Link>
-                  ))}
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  </button>
+                  {open && (
+                    <>
+                      <Link
+                        href={link.href}
+                        className={`${styles.mobileSub} ${isActive(link.href) ? styles.active : ""}`}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        All {link.label.toLowerCase()}
+                      </Link>
+                      {subLinks.map((l) => (
+                        <Link
+                          key={l.href}
+                          href={l.href}
+                          className={`${styles.mobileSub} ${isActive(l.href) ? styles.active : ""}`}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          {l.label}
+                        </Link>
+                      ))}
+                    </>
+                  )}
                 </Fragment>
               );
             }
