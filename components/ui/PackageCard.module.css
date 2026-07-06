@@ -78,6 +78,43 @@
   border: 1px solid rgba(255, 255, 255, 0.22);
 }
 
+/* Stretched primary link — covers the whole card so it stays fully clickable,
+   sitting above the visual layers but below the Compare button. */
+.cardLink {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border-radius: 20px;
+}
+
+/* Secondary Compare action — always visible (works on touch, where there's no
+   hover) and stacked just under the duration pill so it never clashes. */
+.compareBtn {
+  position: absolute;
+  top: 52px;
+  right: 16px;
+  z-index: 5;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.compareBtn:hover {
+  background: var(--orange);
+  border-color: var(--orange);
+}
+
 /* Visible content */
 .content {
   position: absolute;

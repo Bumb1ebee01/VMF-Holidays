@@ -1,0 +1,349 @@
+.quiz {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Progress ── */
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--orange);
+  transition: width 0.35s ease;
+}
+
+.progressText {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.qTitle {
+  margin: 18px 0 22px;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.25;
+}
+
+/* ── Options ── */
+.options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 20px;
+  text-align: left;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.option:hover {
+  transform: translateY(-3px);
+  border-color: var(--orange);
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+}
+
+.optionActive {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px var(--orange-subtle);
+}
+
+.optionIcon {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.optionLabel {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.back {
+  align-self: flex-start;
+  margin-top: 22px;
+  padding: 6px 4px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back:hover {
+  color: var(--orange);
+}
+
+/* ── Budget: tiers + custom slider ── */
+.budget {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.sliderBox {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+}
+
+.sliderValue {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.sliderPer {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.slider {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  accent-color: var(--orange);
+}
+
+.sliderScale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.sliderBtn {
+  align-self: center;
+  min-width: 190px;
+  justify-content: center;
+}
+
+/* ── Results ── */
+.results {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.resultsHead {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.resultsTitle {
+  margin: 8px 0 10px;
+  font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.resultsSub {
+  color: var(--text-light);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
+
+.resultsGrid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  flex: 1 1 280px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-sm, 0 2px 10px rgba(0, 0, 0, 0.05));
+}
+
+.cardThumb {
+  position: relative;
+  display: block;
+  height: 160px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--surface);
+}
+
+.cardRank {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--orange);
+  border-radius: 999px;
+}
+
+.cardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  flex: 1;
+}
+
+.cardName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.2;
+}
+
+.cardCountry {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-top: -4px;
+}
+
+.cardPitch {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-light);
+  margin: 4px 0 2px;
+}
+
+.reasonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 2px 0 4px;
+}
+
+.reasonChip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--orange);
+  background: var(--orange-subtle);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.pkgRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.pkgInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pkgLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pkgTitle {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.pkgMeta {
+  font-size: 0.85rem;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.pkgBtn {
+  flex: 0 0 auto;
+}
+
+.fallback {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.fallback a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.resultsCta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.restart {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.restart:hover {
+  color: var(--orange);
+}
+
+/* --navy stays #002464 in dark mode (near-invisible on the dark canvas) — swap
+   navy-coloured headings to the adaptive text colour. */
+:global([data-theme="dark"]) .qTitle,
+:global([data-theme="dark"]) .resultsTitle,
+:global([data-theme="dark"]) .cardName,
+:global([data-theme="dark"]) .sliderValue {
+  color: var(--text);
+}
+
+@media (max-width: 620px) {
+  .card {
+    flex-basis: 100%;
+    max-width: 420px;
+  }
+}

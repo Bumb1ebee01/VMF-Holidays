@@ -32,6 +32,8 @@ export default async function ComparePage({
     highlights: pk.highlights,
     inclusions: pk.inclusions,
     exclusions: pk.exclusions,
+    featured: pk.featured,
+    badge: pk.badge ?? null,
   }));
 
   const initial = p

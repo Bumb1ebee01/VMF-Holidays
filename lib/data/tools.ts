@@ -32,6 +32,15 @@ export interface Tool {
 
 export const TOOLS: Tool[] = [
   {
+    slug: "trip-finder",
+    title: "Trip Finder — Where Should You Go?",
+    blurb:
+      "Answer four quick questions and get matched to destinations — with a trip for each — that genuinely fit your vibe, budget and who's travelling.",
+    icon: "sparkles",
+    status: "live",
+    badge: "No sign-up",
+  },
+  {
     slug: "group-expense-splitter",
     title: "Group Trip Expense Splitter",
     blurb:
@@ -39,14 +48,6 @@ export const TOOLS: Tool[] = [
     icon: "split",
     status: "live",
     badge: "No sign-up",
-  },
-  {
-    slug: "long-weekend-optimizer",
-    title: "India Long-Weekend Optimizer",
-    blurb:
-      "See every long-weekend window this year and the trips that fit each one — plan your leave around the calendar.",
-    icon: "calendar",
-    status: "soon",
   },
   {
     slug: "currency-converter",

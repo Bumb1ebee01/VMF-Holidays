@@ -13,6 +13,9 @@
   font-weight: 900;
   letter-spacing: -0.02em;
   margin: 12px 0 0;
+  /* The hero is always navy in both themes, so the h1 must stay white — otherwise it
+     inherits the global heading colour (var(--text)) and vanishes on the dark hero. */
+  color: #fff;
 }
 
 .sub {

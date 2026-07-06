@@ -103,7 +103,19 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
               <>from <strong>{formatINR(pkg.fromPrice)}</strong> per person</>
             )}
           </p>
-          <ShareTripButton title={pkg.title} />
+          <div className={styles.heroActions}>
+            <ShareTripButton title={pkg.title} />
+            <Link
+              href={`/compare?p=${pkg.slug}`}
+              className={`btn btn-primary btn--sm ${styles.compareLink}`}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                <polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" />
+              </svg>
+              Compare this package
+            </Link>
+          </div>
         </div>
       </div>
 

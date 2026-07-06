@@ -7,7 +7,7 @@ import styles from "./page.module.css";
 
 const TITLE = "Free Travel Tools";
 const DESCRIPTION =
-  "Free, no-sign-up travel tools from VMF Holidays — split group trip expenses, convert currency, plan around long weekends, estimate budgets and more. Built for Indian travellers.";
+  "Free, no-sign-up travel tools from VMF Holidays — find where to go, split group trip expenses, convert currency and check visa requirements for Indian passports. Built for Indian travellers.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -50,8 +50,8 @@ export default function ToolsHubPage() {
           <span className="eyebrow">Free travel tools</span>
           <h1 className={styles.heroTitle}>Handy tools for your trip</h1>
           <p className={styles.heroSub}>
-            Free, no-sign-up utilities to make planning easier — from splitting group expenses to
-            timing your holidays around India&apos;s long weekends.
+            Free, no-sign-up utilities to make planning easier — from finding where to go to
+            splitting group expenses, converting currency and checking visa requirements.
           </p>
         </div>
       </div>

@@ -42,6 +42,7 @@ const TOOL_LINKS = LIVE_TOOLS.map((t) => ({ href: `/tools/${t.slug}`, label: t.t
 const PLAN_LINKS = [
   { href: "/trip-builder", label: "Build My Trip", primary: true },
   { href: "/destinations", label: "Browse Destinations" },
+  { href: "/compare", label: "Compare Packages" },
   { href: "/offers", label: "Offers & Deals" },
   { href: "/tools", label: "Travel Tools" },
   { href: "/gallery", label: "Gallery" },
@@ -362,6 +363,13 @@ export default function Navbar() {
               </Link>
             );
           })}
+          <Link
+            href="/compare"
+            className={isActive("/compare") ? styles.active : ""}
+            onClick={() => setMobileOpen(false)}
+          >
+            Compare Packages
+          </Link>
           <Link
             href="/travellers-club/dashboard"
             className={isActive("/travellers-club/dashboard") ? styles.active : ""}
