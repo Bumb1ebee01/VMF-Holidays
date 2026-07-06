@@ -194,11 +194,23 @@
 :global([data-theme="dark"]) .chipActive { background: var(--orange); border-color: var(--orange); }
 
 .updated {
+  margin-top: 16px;
+}
+
+.status {
   display: flex;
   align-items: center;
   gap: 7px;
-  margin-top: 16px;
-  font-size: 0.8rem;
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-light, #4a5568);
+}
+
+.stamp {
+  margin: 4px 0 0;
+  padding-left: 15px;
+  font-size: 0.76rem;
   color: var(--muted, #7b8298);
 }
 

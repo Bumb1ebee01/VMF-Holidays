@@ -23,7 +23,7 @@ export default function CurrencyConverter({ fx }: { fx: FxRates }) {
   const [from, setFrom] = useState("INR");
   const [to, setTo] = useState("USD");
 
-  const { rates, updated, live } = fx;
+  const { rates, updated, fetchedAt, live } = fx;
   const amt = Number(amount) || 0;
 
   const rate = useMemo(() => {
@@ -122,11 +122,16 @@ export default function CurrencyConverter({ fx }: { fx: FxRates }) {
         ))}
       </div>
 
-      <p className={styles.updated}>
-        <span className={`${styles.dot} ${live ? styles.dotLive : ""}`} aria-hidden="true" />
-        {live ? "Live reference rates" : "Indicative rates (live source temporarily unavailable)"}
-        {updated ? ` · updated ${updated}` : ""}
-      </p>
+      <div className={styles.updated}>
+        <p className={styles.status}>
+          <span className={`${styles.dot} ${live ? styles.dotLive : ""}`} aria-hidden="true" />
+          {live ? "Live reference rates" : "Indicative rates (live source temporarily unavailable)"}
+        </p>
+        <p className={styles.stamp}>
+          Rates fetched {fetchedAt}
+          {updated ? ` · source updated ${updated}` : ""}
+        </p>
+      </div>
     </div>
   );
 }
