@@ -59,6 +59,27 @@ Badge classes: `.badge .badge-orange`, `.badge-navy`, `.badge-white`, `.badge-gr
 - `"use client"` only when component needs interactivity (hooks, event listeners)
 - No comments unless the WHY is non-obvious
 - No placeholder/lorem ipsum text — use real VMF Holidays copy
+- **Dark + light from the start** — see Dark Mode below; never ship a page that only works in one theme
+
+## Dark Mode (REQUIRED for every new page/component)
+
+The site ships a light **and** dark theme, toggled via `[data-theme="dark"]` on
+`<html>` (`components/ui/ThemeToggle.tsx`; persisted in `localStorage` key
+`vmf-theme`). Every new page/component must be built for **both** themes up front —
+retrofitting is how bugs slip in (whole pages rendered white, text going
+invisible). Verify by toggling the theme in the browser before committing.
+
+- **Prefer semantic tokens that auto-flip** (redefined under `[data-theme="dark"]`
+  in `globals.css`): backgrounds `--bg`, `--card-bg`, `--surface`, `--off-white`,
+  `--cream`; text `--text`, `--text-light`, `--muted`; borders `--border`, `--hairline`.
+- **These do NOT flip — misuse breaks dark mode:**
+  - `--navy` (stays `#002464`, near-black) → never a body/heading text color on a
+    themed surface. Fine only as a fixed brand color on a light/white/orange chip.
+  - `--white`, literal `#fff` / `white` → stay white. Never a page/card background
+    that should darken. Fine only as text on a permanently-navy hero/banner.
+- If a fixed navy hero or intentionally-white card is required, add the matching
+  `:global([data-theme="dark"]) .x { … }` override **in the same module** (darken
+  the surface with `--bg`/`--card-bg`, redirect navy text to `--text`).
 
 ## Next Up: Phase 2 — Homepage
 
