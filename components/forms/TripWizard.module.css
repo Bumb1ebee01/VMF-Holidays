@@ -1869,3 +1869,41 @@
 :global([data-theme="dark"]) .footerBar,
 :global([data-theme="dark"]) .railIcon { background: #0d1b33; border-color: rgba(255, 255, 255, 0.1); }
 :global([data-theme="dark"]) .railTitle { color: var(--text); }
+
+/* ══════════════════════════════════════════════════════════
+   Dark mode: brighten the two-panel builder's reading text.
+   --navy reads near-black and --muted reads dim on the dark
+   shell, so the destination tabs, experience names, step copy
+   and the "Previous" control were hard to read. Redirect them
+   to bright tokens while keeping the orange active/selected
+   states intact.
+   ══════════════════════════════════════════════════════════ */
+
+/* Filter / city / country tabs — the destination names the user reads.
+   Inactive → bright grey, hover & active → full-bright. */
+:global([data-theme="dark"]) .filterTab { color: var(--text-light); }
+:global([data-theme="dark"]) .filterTab:hover { color: var(--text); }
+:global([data-theme="dark"]) .filterTabActive { color: var(--text); }
+:global([data-theme="dark"]) .tabDone { color: #4ade80; }
+
+/* Experience pills — unselected labels were too dim to read.
+   Leave the selected (.expCardOn) pills on their orange text. */
+:global([data-theme="dark"]) .expCard:not(.expCardOn) { color: var(--text); }
+
+/* Navy-coloured heading + the "← Previous" control. */
+:global([data-theme="dark"]) .emptyExp h3,
+:global([data-theme="dark"]) .footerBack { color: var(--text); }
+:global([data-theme="dark"]) .footerBack:hover { color: var(--orange); }
+
+/* Secondary copy: lift from --muted to --text-light for legibility. */
+:global([data-theme="dark"]) .brandSub,
+:global([data-theme="dark"]) .railSub,
+:global([data-theme="dark"]) .railFoot,
+:global([data-theme="dark"]) .gcardSub,
+:global([data-theme="dark"]) .expReq,
+:global([data-theme="dark"]) .routeNote,
+:global([data-theme="dark"]) .emptyNote,
+:global([data-theme="dark"]) .emptyExp p { color: var(--text-light); }
+
+/* Approx-days chip: hairline so the navy chip lifts off the dark shell. */
+:global([data-theme="dark"]) .daysPill { border: 1px solid rgba(255, 255, 255, 0.12); }
