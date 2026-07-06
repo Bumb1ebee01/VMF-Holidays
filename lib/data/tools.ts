@@ -51,9 +51,11 @@ export const TOOLS: Tool[] = [
   {
     slug: "currency-converter",
     title: "Currency Converter",
-    blurb: "Convert Indian Rupees to any destination currency at the latest rates.",
+    blurb:
+      "Convert Indian Rupees to your destination's currency — and back — at live reference rates, updated hourly.",
     icon: "currency",
-    status: "soon",
+    status: "live",
+    badge: "Live rates",
   },
   {
     slug: "visa-checker",

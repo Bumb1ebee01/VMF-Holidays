@@ -1,0 +1,20 @@
+.disclaimer {
+  margin: 22px 0 0;
+  padding: 14px 16px;
+  border: 1px solid rgba(254, 92, 16, 0.35);
+  border-left: 4px solid var(--orange);
+  border-radius: var(--radius-lg, 12px);
+  background: rgba(254, 92, 16, 0.06);
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.disclaimer strong { color: var(--text); font-weight: 700; }
+
+.disclaimer a {
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
