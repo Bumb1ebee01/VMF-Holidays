@@ -82,8 +82,8 @@ export default async function StatePackagesPage({
             </div>
           ) : (
             <p className={styles.guideIntro}>
-              No {data.name} packages published yet — tell us what you have in mind and we&apos;ll build the trip
-              around you. <Link href="/contact">Get in touch</Link>.
+              No packages published for {data.name} yet — tell us what you have in mind and we&apos;ll build the
+              trip around you. <Link href="/contact">Get in touch</Link>.
             </p>
           )}
         </div>

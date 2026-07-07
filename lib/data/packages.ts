@@ -939,6 +939,284 @@ export const packages: Package[] = [
       },
     ],
   },
+
+  {
+    slug: "lakshadweep-lagoon-escape",
+    title: "Lakshadweep Lagoon Escape",
+    destination: "Lakshadweep",
+    destinationSlug: "lakshadweep",
+    category: "honeymoon",
+    duration: "4N / 5D",
+    nights: 4,
+    heroImage: "https://images.unsplash.com/photo-1572431447238-425af66a273b?q=80&w=2000&auto=format&fit=crop",
+    gallery: ["https://images.unsplash.com/photo-1572431447238-425af66a273b?q=80&w=2000&auto=format&fit=crop"],
+    fromPrice: 40000,
+    badge: "Island Escape",
+    featured: false,
+    highlights: [
+      "Barefoot calm on Agatti & Bangaram atolls",
+      "Snorkelling & scuba over untouched coral reefs",
+      "Glass-bottom boat rides across turquoise lagoons",
+      "Kayaking, sunset sailing and quiet beach time",
+    ],
+    inclusions: [
+      "4 nights island resort / cottage stay",
+      "All meals (breakfast, lunch & dinner)",
+      "Lakshadweep entry permit & inter-island transfers",
+      "Snorkelling gear and lagoon activities",
+    ],
+    exclusions: [
+      "Airfare to Agatti (via Kochi)",
+      "Scuba certification charges",
+      "Alcohol (dry destination) & personal expenses",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Agatti",
+        description:
+          "Fly in over a necklace of coral atolls, transfer to your island stay and ease into lagoon time with a sunset walk along the reef.",
+      },
+      {
+        day: 2,
+        title: "Reefs & Lagoons",
+        description:
+          "Snorkel or take a first scuba dive over living coral gardens, then drift across the lagoon by glass-bottom boat.",
+      },
+      {
+        day: 3,
+        title: "Bangaram & Thinnakara",
+        description:
+          "Boat to a neighbouring uninhabited islet for kayaking, swimming and a castaway-style beach picnic.",
+      },
+      {
+        day: 4,
+        title: "Leisure & Water Sports",
+        description:
+          "A free day for paddleboarding, sunset sailing or simply doing nothing on powder-soft sand.",
+      },
+      {
+        day: 5,
+        title: "Departure",
+        description:
+          "A last barefoot morning by the water before your transfer to Agatti airport.",
+      },
+    ],
+  },
+
+  {
+    slug: "sri-lanka-highlights",
+    title: "Sri Lanka Highlights",
+    destination: "Sri Lanka",
+    destinationSlug: "sri-lanka",
+    category: "family",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "https://images.unsplash.com/photo-1566296314736-6eaac1ca0cb9?q=80&w=2000&auto=format&fit=crop",
+    gallery: ["https://images.unsplash.com/photo-1566296314736-6eaac1ca0cb9?q=80&w=2000&auto=format&fit=crop"],
+    fromPrice: 38000,
+    badge: "Island Culture",
+    featured: false,
+    highlights: [
+      "Temple of the Sacred Tooth Relic, Kandy",
+      "Hill-country train ride to Nuwara Eliya",
+      "Tea plantations & 'Little England' scenery",
+      "Golden southern beaches at Bentota",
+    ],
+    inclusions: [
+      "5 nights hotel (Kandy, Nuwara Eliya & Bentota)",
+      "Daily breakfast & dinner",
+      "Private AC vehicle with English-speaking driver",
+      "Airport transfers",
+    ],
+    exclusions: [
+      "Airfare & Sri Lanka ETA visa",
+      "Entry tickets & safari charges",
+      "Lunch & personal expenses",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Colombo → Kandy",
+        description:
+          "Airport pickup and drive to the hill capital of Kandy. Evening at the lakeside Temple of the Sacred Tooth Relic.",
+      },
+      {
+        day: 2,
+        title: "Kandy Sightseeing",
+        description:
+          "Peradeniya Royal Botanical Gardens, a spice garden and a Kandyan cultural dance show before an easy lakeside evening.",
+      },
+      {
+        day: 3,
+        title: "Kandy → Nuwara Eliya",
+        description:
+          "Ride the famous hill-country train through emerald tea plantations. Tour a tea factory and stroll colonial 'Little England'.",
+      },
+      {
+        day: 4,
+        title: "Nuwara Eliya → Bentota",
+        description:
+          "Descend to the south coast. Afternoon free on Bentota's golden sands or the calm river lagoon.",
+      },
+      {
+        day: 5,
+        title: "Bentota Beach & Leisure",
+        description:
+          "A full beach day — swim, laze, or add a boat safari on the Madu River through the mangroves.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Transfer to Colombo airport for your onward flight.",
+      },
+    ],
+  },
+
+  {
+    slug: "kathmandu-pokhara-explorer",
+    title: "Kathmandu & Pokhara Explorer",
+    destination: "Nepal",
+    destinationSlug: "nepal",
+    category: "adventure",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=2000&auto=format&fit=crop",
+    gallery: ["https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=2000&auto=format&fit=crop"],
+    fromPrice: 30000,
+    badge: "Himalayan Escape",
+    featured: false,
+    highlights: [
+      "Kathmandu Durbar Square & Swayambhunath stupa",
+      "Sarangkot sunrise over the Annapurna range",
+      "Boating on Pokhara's Phewa Lake",
+      "Pashupatinath & Boudhanath temple visits",
+    ],
+    inclusions: [
+      "5 nights hotel (Kathmandu & Pokhara)",
+      "Daily breakfast",
+      "Kathmandu–Pokhara transfers",
+      "Sightseeing by private vehicle with guide",
+    ],
+    exclusions: [
+      "Airfare to Kathmandu",
+      "Monument entry fees",
+      "Lunch, dinner & personal expenses",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Kathmandu",
+        description:
+          "Airport pickup and hotel check-in. Evening aarti at the sacred riverside temple of Pashupatinath.",
+      },
+      {
+        day: 2,
+        title: "Kathmandu Valley",
+        description:
+          "Kathmandu Durbar Square, the hilltop Swayambhunath (Monkey Temple) and the vast Boudhanath stupa.",
+      },
+      {
+        day: 3,
+        title: "Kathmandu → Pokhara",
+        description:
+          "Scenic drive (or short flight) to lakeside Pokhara. Evening boating on tranquil Phewa Lake.",
+      },
+      {
+        day: 4,
+        title: "Sarangkot Sunrise",
+        description:
+          "Early rise for a golden Himalayan sunrise over Annapurna and Machapuchare, then Davis Falls and the Gupteshwor cave.",
+      },
+      {
+        day: 5,
+        title: "Pokhara → Kathmandu",
+        description:
+          "Return to Kathmandu with time for the lively bazaars of Thamel and last-minute souvenir shopping.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Transfer to Kathmandu airport for your onward flight.",
+      },
+    ],
+  },
+
+  {
+    slug: "kuala-lumpur-langkawi",
+    title: "Kuala Lumpur & Langkawi",
+    destination: "Malaysia",
+    destinationSlug: "malaysia",
+    category: "family",
+    duration: "5N / 6D",
+    nights: 5,
+    heroImage: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop",
+    gallery: ["https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=2000&auto=format&fit=crop"],
+    fromPrice: 44000,
+    badge: "City & Island",
+    featured: false,
+    highlights: [
+      "Petronas Twin Towers & KL city tour",
+      "Batu Caves' golden shrine and limestone steps",
+      "Langkawi SkyCab and SkyBridge views",
+      "Island-hopping and beaches on Langkawi",
+    ],
+    inclusions: [
+      "5 nights hotel (Kuala Lumpur & Langkawi)",
+      "Daily breakfast",
+      "KL city tour + Langkawi island-hopping tour",
+      "Inter-city flight & airport transfers",
+    ],
+    exclusions: [
+      "International airfare",
+      "Cable car & attraction tickets",
+      "Lunch, dinner & personal expenses",
+      "Travel insurance",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrive Kuala Lumpur",
+        description:
+          "Airport pickup and hotel check-in. Evening at the glittering Petronas Twin Towers and the KLCC fountains.",
+      },
+      {
+        day: 2,
+        title: "KL City & Batu Caves",
+        description:
+          "City tour taking in the Batu Caves shrine, KL Tower, the National Mosque and Merdeka Square.",
+      },
+      {
+        day: 3,
+        title: "KL → Langkawi",
+        description:
+          "Fly to the island of Langkawi. Afternoon free on Pantai Cenang beach with its warm Andaman waters.",
+      },
+      {
+        day: 4,
+        title: "Langkawi Island Hopping",
+        description:
+          "Boat tour to the Pregnant Maiden Lake and eagle-feeding bay, then the SkyCab up Mount Mat Cincang for the SkyBridge.",
+      },
+      {
+        day: 5,
+        title: "Langkawi Leisure",
+        description:
+          "A free day for the mangrove geopark, duty-free shopping or simply the beach.",
+      },
+      {
+        day: 6,
+        title: "Departure",
+        description:
+          "Transfer to Langkawi airport for your onward flight home.",
+      },
+    ],
+  },
 ];
 
 export function getPackageBySlug(slug: string) {
