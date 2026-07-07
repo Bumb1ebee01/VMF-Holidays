@@ -65,7 +65,7 @@ export const destinations: Destination[] = [
     state: "Andaman & Nicobar Islands",
     region: "domestic",
     heroImage: "https://images.unsplash.com/photo-1704314315344-cd10b9779ce6?q=80&w=2000&auto=format&fit=crop",
-    fromPrice: 34000,
+    fromPrice: 45000,
     blurb: "Turquoise lagoons, living coral reefs and powder-white sand across a remote island chain — India's tropical scuba and honeymoon frontier.",
     tags: ["Beaches", "Islands", "Scuba Diving", "Nature"],
   },

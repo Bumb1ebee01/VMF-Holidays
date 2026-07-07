@@ -218,35 +218,35 @@ export const packages: Package[] = [
     destination: "Andaman & Nicobar",
     destinationSlug: "andaman",
     category: "honeymoon",
-    duration: "5N / 6D",
-    nights: 5,
+    duration: "6N / 7D",
+    nights: 6,
     heroImage: "https://images.unsplash.com/photo-1586359716568-3e1907e4cf9f?q=80&w=2000&auto=format&fit=crop",
     gallery: [
       "https://images.unsplash.com/photo-1586359716568-3e1907e4cf9f?q=80&w=2000&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1704314315344-cd10b9779ce6?q=80&w=2000&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1586053226626-febc8817962f?q=80&w=2000&auto=format&fit=crop",
     ],
-    fromPrice: 34000,
+    fromPrice: 45000,
     badge: "Island Escape",
     featured: true,
     highlights: [
       "Radhanagar Beach, Havelock — Asia's finest white sand",
       "Cellular Jail light-and-sound show, Port Blair",
       "Scuba & snorkelling over living coral reefs",
-      "Ross & North Bay Islands by glass-bottom boat",
+      "Ross & North Bay Islands by boat",
     ],
     inclusions: [
-      "Return flights from Goa",
-      "5 nights hotel (Port Blair & Havelock)",
-      "Daily breakfast & dinner",
-      "Inter-island ferry transfers",
-      "All sightseeing by private AC vehicle",
+      "6 nights hotels (Port Blair, Havelock & Neil)",
+      "Daily buffet breakfast",
+      "All transfers & sightseeing by AC vehicle",
+      "Inter-island ferry tickets & entry permits",
+      "Arrival & departure assistance",
     ],
     exclusions: [
+      "Airfare to Port Blair",
       "Scuba diving & water-sport charges",
-      "Entry tickets & camera fees",
-      "Lunch & personal expenses",
-      "Travel insurance",
+      "Lunch, dinner & personal expenses",
+      "Camera fees & travel insurance",
     ],
     itinerary: [
       {
@@ -257,33 +257,39 @@ export const packages: Package[] = [
       },
       {
         day: 2,
-        title: "Port Blair to Havelock",
+        title: "Ross & North Bay Islands",
         description:
-          "Morning cruise to Havelock (Swaraj Dweep). Unwind at Radhanagar Beach for a golden sunset over the Bay of Bengal.",
+          "Harbour cruise to Ross Island's colonial-era ruins, then North Bay for coral viewing, glass-bottom boats and water sports.",
       },
       {
         day: 3,
-        title: "Havelock — Reefs & Sands",
+        title: "Port Blair to Havelock",
         description:
-          "Snorkelling or a first scuba dive over the coral gardens at Elephant Beach, then leisure time on Havelock's quiet shores.",
+          "Morning ferry to Havelock (Swaraj Dweep). Unwind at Radhanagar Beach for a golden sunset over the Bay of Bengal.",
       },
       {
         day: 4,
-        title: "Neil Island Day Trip",
+        title: "Havelock — Elephant Beach",
         description:
-          "Ferry across to Neil (Shaheed Dweep) for the Natural Bridge, Laxmanpur and Bharatpur beaches, and a glass-bottom boat over the reef.",
+          "Snorkelling or a first scuba dive over the coral gardens at Elephant Beach, with leisure time on Havelock's quiet shores.",
       },
       {
         day: 5,
-        title: "Ross & North Bay Islands",
+        title: "Havelock to Neil",
         description:
-          "Return to Port Blair and sail out to Ross Island's colonial-era ruins and North Bay for coral viewing and water sports.",
+          "Ferry to Neil (Shaheed Dweep) for the Natural Bridge, Laxmanpur and Bharatpur beaches, and a glass-bottom boat over the reef.",
       },
       {
         day: 6,
+        title: "Neil to Port Blair",
+        description:
+          "Return ferry to Port Blair. Free afternoon for Corbyn's Cove or last-minute island shopping.",
+      },
+      {
+        day: 7,
         title: "Departure",
         description:
-          "Time for Corbyn's Cove or last-minute shopping before your transfer to the airport for the onward flight.",
+          "Transfer to the airport for your onward flight home.",
       },
     ],
   },
