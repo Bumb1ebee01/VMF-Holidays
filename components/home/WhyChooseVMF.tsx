@@ -30,8 +30,8 @@ const REASONS = [
   },
   {
     num: "03",
-    title: "24/7 Support",
-    desc: "Your travel expert is reachable round the clock — before, during and after your journey.",
+    title: "Responsive Support",
+    desc: "Message your travel expert on WhatsApp before, during and after your journey — we reply quickly.",
     icon: (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.36 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.11 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 5.69 5.69l.41-.41a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
@@ -41,7 +41,7 @@ const REASONS = [
   {
     num: "04",
     title: "Experienced Team",
-    desc: "Travel expertise, 200+ happy trips and deep destination knowledge across India and beyond.",
+    desc: "Genuine travel expertise and deep destination knowledge across India and beyond.",
     icon: (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="8" r="4" />

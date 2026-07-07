@@ -4,15 +4,15 @@ import styles from "./page.module.css";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "VMF Holidays Pvt. Ltd. — Goa's trusted travel company. Our story, mission and why 200+ families choose us.",
+  description: "VMF Holidays Pvt. Ltd. — a Goa-based travel company. Our story, mission and the values behind every trip we plan.",
   alternates: { canonical: "/about" },
 };
 
 const STATS = [
-  { value: "200+", label: "Trips Planned" },
-  { value: "24/7", label: "Support" },
-  { value: "20+", label: "Destinations" },
-  { value: "98%", label: "Happy Clients" },
+  { value: "2025", label: "Established" },
+  { value: "25+", label: "Destinations" },
+  { value: "100%", label: "Custom Itineraries" },
+  { value: "Goa", label: "Based In" },
 ];
 
 const VALUES = [
@@ -29,8 +29,8 @@ const VALUES = [
     desc: "Based in Goa, we combine national reach with local knowledge — the best of both worlds.",
   },
   {
-    title: "Always Available",
-    desc: "Before, during and after your trip — our team is reachable round the clock on WhatsApp.",
+    title: "Reachable & Responsive",
+    desc: "Before, during and after your trip — message us on WhatsApp and we'll get back to you quickly.",
   },
 ];
 
@@ -59,10 +59,10 @@ export default function AboutPage() {
               VMF Holidays Pvt. Ltd. was founded with a simple frustration — too many travel agencies promised the world and delivered confusion, hidden costs and impersonal service.
             </p>
             <p>
-              We set out to do it differently. Based in Nagoa, Bardez, Goa, we started by helping friends and family plan trips with full transparency and personal attention. Word spread, and today we&apos;ve helped over 200 families and couples experience extraordinary journeys — domestic and international.
+              We set out to do it differently. Based in Nagoa, Bardez, Goa, we help travellers plan trips with full transparency and personal attention — from quick domestic getaways to elaborate international holidays.
             </p>
             <p>
-              Every package we sell comes with a detailed itinerary, a transparent cost breakdown and a dedicated point of contact who stays with you from planning to return.
+              Every package we sell comes with a detailed itinerary, a transparent cost breakdown and a real person you can reach from planning to return.
             </p>
           </div>
           <div className={styles.storyStats}>

@@ -198,7 +198,7 @@ export default function Hero({
               transition={{ ...SPRING, delay: 0.1 }}
             >
               We don&apos;t just plan trips — we craft journeys for those who want
-              more than a destination. Trusted by 200+ travellers across India.
+              more than a destination, planned with transparent pricing and a personal touch.
             </motion.p>
 
             <motion.div

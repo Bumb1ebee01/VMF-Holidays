@@ -132,8 +132,8 @@ Yes — most Indian travellers use the Vietnam e-visa, applied for online before
 # What's included in a VMF Vietnam package
 - Accommodation, daily breakfast and the listed meals
 - Airport and intercity transfers, plus a Ha Long Bay cruise
-- e-visa assistance and 24/7 on-trip support
-- A dedicated planner who tailors the route to you
+- e-visa assistance and responsive on-trip support
+- A planner who tailors the route to you
 
 # Best time to visit
 Vietnam is long, so the weather varies from north to south. February to April and August to October are the safest all-country windows. Tell us your dates and we'll route around the rain.
@@ -145,7 +145,7 @@ Every itinerary we sell is built around you — your dates, your pace, your budg
     slug: "travel-agency-in-goa",
     title: "Travel Agency in Goa: Why Plan With a Local Expert",
     excerpt:
-      "A Goa-based travel agency planning honeymoons, family, group and corporate trips across India and abroad — transparent pricing and 24/7 support.",
+      "A Goa-based travel agency planning honeymoons, family, group and corporate trips across India and abroad — transparent pricing and personal service.",
     coverImage: C("goa"),
     author: "VMF Holidays",
     tags: ["Goa", "Travel Agency", "Customised Packages", "About VMF"],
@@ -210,7 +210,7 @@ Our Bali honeymoon packages start from around ₹31,999 per person on a land-onl
 - Villa and hotel stays with daily breakfast
 - Private transfers and a honeymoon candlelight dinner
 - Curated experiences, plus visa-on-arrival guidance
-- 24/7 support from your dedicated planner
+- Personal support from your trip planner
 
 # Best time for a Bali honeymoon
 April to October is the dry season and the safest bet. May, June and September hit the sweet spot of good weather and softer rates.

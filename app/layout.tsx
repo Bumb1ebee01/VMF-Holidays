@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | VMF Holidays",
   },
   description:
-    "VMF Holidays is a Goa travel agency crafting customised, tailor-made holiday packages — honeymoon, family, group & corporate tours across India and worldwide. Transparent pricing, full itineraries, 24/7 support.",
+    "VMF Holidays is a Goa travel agency crafting customised, tailor-made holiday packages — honeymoon, family, group & corporate tours across India and worldwide. Transparent pricing and full itineraries, planned around you.",
   keywords: [
     "goa travel agency",
     "travel agency in calangute",

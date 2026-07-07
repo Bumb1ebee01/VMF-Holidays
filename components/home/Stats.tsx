@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./Stats.module.css";
 
 const STATS = [
-  { target: 200, suffix: "+", label: "Happy Travellers" },
-  { target: 50,  suffix: "+", label: "Destinations" },
+  { target: 25, suffix: "+", label: "Destinations" },
+  { target: 100, suffix: "%", label: "Transparent Pricing" },
 ];
 
 function StatItem({ stat, active }: { stat: typeof STATS[0]; active: boolean }) {

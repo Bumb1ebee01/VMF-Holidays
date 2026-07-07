@@ -150,9 +150,9 @@ export default function CTABanner() {
             <div className={styles.trustList}>
               {[
                 "Transparent Pricing — No Hidden Charges",
-                "Personal Travel Expert Assigned to You",
-                "24 / 7 Support Before & During Your Trip",
-                "200+ Happy Travellers & Counting",
+                "Full Itinerary Shared Before You Pay",
+                "Custom Domestic & International Trips",
+                "Real People on WhatsApp, Not Bots",
               ].map((item) => (
                 <div key={item} className={styles.trustItem}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

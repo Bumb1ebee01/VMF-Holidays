@@ -128,8 +128,8 @@ export default async function HolidayLandingPage({
         <div className="container">
           <p className={styles.intro}>
             Planning a {wordLc} trip to {dest}? Browse our handpicked {wordLc} packages below — each one
-            tailor-made to your dates, budget and travel style, with transparent pricing and a dedicated planner
-            from enquiry to return.
+            tailor-made to your dates, budget and travel style, with transparent pricing and a real person
+            to help from enquiry to return.
           </p>
           <p className={styles.guideLink}>
             First time? Read our <Link href={`/guides/${landing.destinationSlug}`}>{dest} travel guide</Link> for the
