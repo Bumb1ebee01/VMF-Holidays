@@ -13,6 +13,17 @@ const db = new PrismaClient({ adapter });
 
 async function main() {
   for (const d of destinations) {
+    // Guide content (/guides/[slug]) is sourced from this file, so it's refreshed on
+    // every re-seed. Core fields (name/blurb/tags) stay create-only so admin edits
+    // to them are never clobbered.
+    const guideData = {
+      guideIntro: d.guideIntro ?? null,
+      guideBestTime: d.guideBestTime ?? null,
+      guideThingsToDo: d.guideThingsToDo ?? [],
+      guideTip: d.guideTip ?? null,
+      guideGallery: d.guideGallery ?? [],
+      guideSections: (d.guideSections ?? []) as unknown as Prisma.InputJsonValue,
+    };
     await db.destination.upsert({
       where: { slug: d.slug },
       create: {
@@ -25,8 +36,9 @@ async function main() {
         fromPrice: d.fromPrice,
         blurb: d.blurb,
         tags: d.tags,
+        ...guideData,
       },
-      update: {},
+      update: guideData,
     });
   }
   console.log(`Seeded ${destinations.length} destinations`);
