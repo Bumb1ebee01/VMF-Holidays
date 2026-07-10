@@ -1,11 +1,14 @@
 "use server";
 
 import bcrypt from "bcryptjs";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { createMemberSession, destroyMemberSession, getCurrentMember } from "@/lib/auth/member";
+import { isRateLimited } from "@/lib/ratelimit";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { issuePasswordReset, completePasswordReset } from "@/lib/auth/password-reset";
 import { JOIN_BONUS, REF_COOKIE, normalizeCode, referrerLabel, generateReferralCode, creditsToRupees, TRAVEL_STYLES } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
 import { requestRedemption } from "@/lib/redemption";
@@ -133,6 +136,56 @@ export async function loginMember(_prev: ClubFormState, formData: FormData): Pro
 export async function logoutMember() {
   await destroyMemberSession();
   redirect("/travellers-club");
+}
+
+async function clientIp(): Promise<string> {
+  const fwd = (await headers()).get("x-forwarded-for");
+  return fwd?.split(",")[0]?.trim() || "unknown";
+}
+
+export type RequestResetState = { error?: string; sent?: boolean };
+
+/** Step 1 of password reset — email the member a reset link. Always reports success
+ *  (even for an unknown email) so accounts can't be enumerated. */
+export async function requestPasswordReset(
+  _prev: RequestResetState,
+  formData: FormData
+): Promise<RequestResetState> {
+  // Honeypot — bots fill this hidden field; report the neutral success either way.
+  if (String(formData.get("company") ?? "").trim()) return { sent: true };
+
+  const ip = await clientIp();
+  if (await isRateLimited(`pwreset:${ip}`, 5, 900)) {
+    return { error: "Too many attempts — please try again in a few minutes." };
+  }
+
+  const captchaOk = await verifyTurnstile(String(formData.get("turnstileToken") ?? ""), ip);
+  if (!captchaOk) return { error: "Verification failed — please retry." };
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase().slice(0, 200);
+  if (!EMAIL_RE.test(email)) return { error: "Please enter a valid email address." };
+
+  await issuePasswordReset(email); // silent whether or not the email is registered
+  return { sent: true };
+}
+
+export type ResetPasswordState = { error?: string; done?: boolean };
+
+/** Step 2 of password reset — validate the token and set the new password. */
+export async function resetPassword(
+  _prev: ResetPasswordState,
+  formData: FormData
+): Promise<ResetPasswordState> {
+  const token = String(formData.get("token") ?? "");
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirm") ?? "");
+
+  if (password.length < 8) return { error: "Password must be at least 8 characters." };
+  if (password !== confirm) return { error: "The two passwords don't match." };
+
+  const result = await completePasswordReset(token, password);
+  if (!result.ok) return { error: result.error };
+  return { done: true };
 }
 
 /** Live validation for the WI-15 referral-code field — returns a masked referrer label. */

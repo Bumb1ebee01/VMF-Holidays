@@ -34,6 +34,9 @@ export default function LoginForm() {
         {pending ? "Logging in…" : "Log in"}
       </button>
       <p className={styles.switch}>
+        <Link href="/travellers-club/forgot-password">Forgot password?</Link>
+      </p>
+      <p className={styles.switch}>
         New here? <Link href="/travellers-club">Join the Club</Link>
       </p>
     </form>

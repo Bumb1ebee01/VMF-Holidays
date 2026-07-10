@@ -337,6 +337,10 @@ model Member {
   lastLoginAt      DateTime?
   lastActivityAt   DateTime? // bumped on any earn/redeem/login/trip; drives 24-month expiry
   active           Boolean       @default(true)
+  // Password reset — a SHA-256 hash of a single-use token (never the raw token) and
+  // its short expiry. Both cleared once the password is changed.
+  resetTokenHash      String?
+  resetTokenExpiresAt DateTime?
   // Self-relation: which member referred this member (if any).
   referredBy       Member?       @relation("MemberReferrals", fields: [referredById], references: [id], onDelete: SetNull)
   referredById     String?

@@ -21,6 +21,17 @@
   margin: 0;
 }
 
+.resetNote {
+  background: rgba(254, 92, 16, 0.08);
+  border: 1px solid rgba(254, 92, 16, 0.25);
+  color: var(--text);
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0 0 4px;
+}
+
 .switch {
   font-size: 14px;
   color: var(--muted);
