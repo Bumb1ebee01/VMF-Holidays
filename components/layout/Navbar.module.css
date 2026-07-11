@@ -363,7 +363,12 @@
 .hamburger {
   display: none;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   gap: 5px;
+  /* 44x44 tap target (WCAG 2.5.5) — the visible bars stay centred. */
+  width: 44px;
+  height: 44px;
   padding: 4px;
   cursor: pointer;
 }

@@ -214,6 +214,7 @@ export default function Hero({
                 </svg>
                 <input
                   type="text"
+                  aria-label="Search destinations and packages"
                   className={styles.searchInput}
                   placeholder="Where do you want to go? e.g. Goa, Maldives, Dubai…"
                   value={query}

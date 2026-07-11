@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { trackLead, trackWhatsAppClick } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
@@ -24,6 +24,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [waLink, setWaLink] = useState("");
   const [captcha, setCaptcha] = useState("");
+  const uid = useId();
 
   function set(field: string, value: string) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -94,8 +95,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
       />
       <div className={styles.row}>
         <div className="form-group">
-          <label className="form-label">Full Name *</label>
+          <label className="form-label" htmlFor={`${uid}-name`}>Full Name *</label>
           <input
+            id={`${uid}-name`}
             className="form-input"
             type="text"
             required
@@ -105,8 +107,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Phone *</label>
+          <label className="form-label" htmlFor={`${uid}-phone`}>Phone *</label>
           <input
+            id={`${uid}-phone`}
             className="form-input"
             type="tel"
             required
@@ -118,8 +121,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
       </div>
 
       <div className="form-group">
-        <label className="form-label">Email *</label>
+        <label className="form-label" htmlFor={`${uid}-email`}>Email *</label>
         <input
+          id={`${uid}-email`}
           className="form-input"
           type="email"
           required
@@ -131,8 +135,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
 
       <div className={styles.row}>
         <div className="form-group">
-          <label className="form-label">Destination / Package</label>
+          <label className="form-label" htmlFor={`${uid}-dest`}>Destination / Package</label>
           <input
+            id={`${uid}-dest`}
             className="form-input"
             type="text"
             placeholder="Where do you want to go?"
@@ -141,8 +146,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
           />
         </div>
         <div className="form-group">
-          <label className="form-label">Travelers</label>
+          <label className="form-label" htmlFor={`${uid}-trav`}>Travelers</label>
           <select
+            id={`${uid}-trav`}
             className="form-select"
             value={form.travelers}
             onChange={(e) => set("travelers", e.target.value)}
@@ -156,8 +162,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
       </div>
 
       <div className="form-group">
-        <label className="form-label">Preferred Travel Dates</label>
+        <label className="form-label" htmlFor={`${uid}-dates`}>Preferred Travel Dates</label>
         <input
+          id={`${uid}-dates`}
           className="form-input"
           type="text"
           placeholder="e.g. 15 Dec – 22 Dec 2025"
@@ -167,8 +174,9 @@ export default function EnquiryForm({ packageTitle }: Props) {
       </div>
 
       <div className="form-group">
-        <label className="form-label">Message</label>
+        <label className="form-label" htmlFor={`${uid}-msg`}>Message</label>
         <textarea
+          id={`${uid}-msg`}
           className="form-textarea"
           rows={4}
           placeholder="Tell us about your travel plans, special requests, budget, etc."
