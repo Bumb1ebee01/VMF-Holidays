@@ -172,6 +172,12 @@
   color: rgba(255, 255, 255, 0.35);
 }
 
+/* The copyright <p> otherwise picks up the global paragraph colour (dark in
+   light mode) → unreadable on the navy footer. Keep it a readable faint white. */
+.bottom p {
+  color: rgba(255, 255, 255, 0.55);
+}
+
 .bottomLinks {
   display: flex;
   gap: var(--sp-6);

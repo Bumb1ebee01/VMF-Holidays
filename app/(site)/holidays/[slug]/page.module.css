@@ -48,6 +48,9 @@
 }
 
 .title {
+  /* Always on the navy/image hero — force white over the global heading colour
+     (var(--text)), which is dark in light mode and would vanish here. */
+  color: #fff;
   font-size: clamp(2rem, 4.5vw, 3rem);
   font-weight: 900;
   letter-spacing: -0.02em;
@@ -181,6 +184,7 @@
 }
 
 .ctaTitle {
+  color: #fff;
   font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 800;
   margin: 0 0 8px;

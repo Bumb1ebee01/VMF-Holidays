@@ -141,6 +141,7 @@
 }
 
 .ctaTitle {
+  color: #fff;
   font-size: var(--text-xl);
   font-weight: var(--fw-bold);
 }
