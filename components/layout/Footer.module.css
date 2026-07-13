@@ -162,6 +162,33 @@
 .waBtn { margin-top: 4px; }
 
 /* Bottom bar */
+.cities {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  padding: var(--sp-5) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: var(--text-sm);
+}
+
+.citiesLabel {
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.02em;
+}
+
+.cities a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-weight: var(--fw-light);
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.cities a:hover {
+  color: var(--orange-lt);
+}
+
 .bottom {
   display: flex;
   align-items: center;

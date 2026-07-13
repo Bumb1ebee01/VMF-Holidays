@@ -135,6 +135,11 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
                 </div>
               ))}
             </div>
+            <p className={styles.guideLink}>
+              First time in {pkg.destination}? Read our{" "}
+              <Link href={`/guides/${pkg.destinationSlug}`}>{pkg.destination} travel guide</Link>{" "}
+              for the best time to visit and top things to do.
+            </p>
           </section>
 
           {/* Itinerary */}

@@ -3,7 +3,8 @@ import Link from "next/link";
 import PackageCard from "@/components/ui/PackageCard";
 import { getPackagesByCategory, getHolidayLandings } from "@/lib/queries";
 import { getCategoryBySlug } from "@/lib/data/categories";
-import { JsonLd, breadcrumbJsonLd, itemListJsonLd } from "@/lib/seo";
+import { JsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from "@/lib/seo";
+import { formatINR } from "@/lib/utils";
 import type { TripCategorySlug } from "@/lib/types";
 import styles from "./CategoryLanding.module.css";
 
@@ -12,6 +13,30 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
   if (!category) return null;
   const pkgs = await getPackagesByCategory(slug);
   const landings = (await getHolidayLandings()).filter((l) => l.category === slug);
+
+  const label = category.label;
+  const prices = pkgs.filter((p) => !p.priceOnRequest).map((p) => p.fromPrice);
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const faqs = [
+    {
+      q: `What's included in a ${label} package from VMF Holidays?`,
+      a: `Our ${label.toLowerCase()} packages typically include hotels, transfers, sightseeing and on-trip support, with flights added on request. Every itinerary is tailor-made, so inclusions are shaped around your dates, budget and preferences.`,
+    },
+    {
+      q: `Can ${label} packages be customised?`,
+      a: `Yes — every package is a starting point. Tell us your dates, group size and what you have in mind, and we'll build the trip around you with a transparent quote.`,
+    },
+    {
+      q: `How much does a ${label} trip cost?`,
+      a: minPrice
+        ? `${label} packages with VMF Holidays start from ${formatINR(minPrice)} per person. The final price depends on your destination, travel dates, hotel category and inclusions.`
+        : `Pricing depends on your destination, dates and inclusions — tell us what you have in mind and we'll tailor a transparent quote to your budget.`,
+    },
+    {
+      q: `How do I book a ${label} trip?`,
+      a: `Send an enquiry or message us on WhatsApp for a free quote. There's no online payment — you pay us directly once you approve the itinerary.`,
+    },
+  ];
 
   return (
     <div className={styles.page}>
@@ -24,6 +49,7 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
           ...(pkgs.length > 0
             ? [itemListJsonLd(pkgs.map((p) => ({ name: p.title, path: `/packages/${p.slug}` })))]
             : []),
+          faqJsonLd(faqs),
         ]}
       />
       <div className={styles.hero}>
@@ -80,6 +106,18 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
           </section>
         </div>
       )}
+
+      <section className={`section ${styles.faqSection}`}>
+        <div className={`container ${styles.faqWrap}`}>
+          <h2 className={styles.faqTitle}>{label} Packages — FAQs</h2>
+          {faqs.map((f) => (
+            <details key={f.q} className={styles.faqItem}>
+              <summary className={styles.faqQ}>{f.q}</summary>
+              <p className={styles.faqA}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
 
       <div className={styles.cta}>
         <div className="container">

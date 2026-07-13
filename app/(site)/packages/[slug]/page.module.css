@@ -84,6 +84,17 @@
   gap: 7px;
 }
 
+.guideLink {
+  margin: 20px 0 0;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.guideLink a {
+  color: var(--orange);
+  font-weight: 600;
+}
+
 .heroPrice strong {
   color: var(--white);
   font-weight: var(--fw-regular);

@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { SITE_URL as BASE } from "@/lib/seo";
 import { getHolidayLandings, getAllDestinations } from "@/lib/queries";
 import { LIVE_TOOLS } from "@/lib/data/tools";
+import { DEPARTURE_CITIES } from "@/lib/data/cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [packages, posts, landings, dests] = await Promise.all([
@@ -77,5 +78,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...packagePages, ...postPages, ...holidayPages, ...guidePages, ...toolPages];
+  const cityPages = DEPARTURE_CITIES.map((c) => ({
+    url: `${BASE}/packages-from/${c.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...packagePages, ...postPages, ...holidayPages, ...guidePages, ...toolPages, ...cityPages];
 }

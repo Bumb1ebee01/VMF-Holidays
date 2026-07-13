@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { DEPARTURE_CITIES } from "@/lib/data/cities";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -116,6 +117,13 @@ export default function Footer() {
               WhatsApp Us
             </a>
           </div>
+        </div>
+
+        <div className={styles.cities}>
+          <span className={styles.citiesLabel}>Packages from:</span>
+          {DEPARTURE_CITIES.map((c) => (
+            <Link key={c.slug} href={`/packages-from/${c.slug}`}>{c.name}</Link>
+          ))}
         </div>
 
         <div className={styles.bottom}>
