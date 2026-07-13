@@ -110,6 +110,32 @@ export function organizationJsonLd() {
   };
 }
 
+/** Mangalore branch office — a second TravelAgency location tied to the head office
+ *  by parentOrganization, so Google understands VMF has a presence in Mangaluru too.
+ *  (Address matches the footer + the branch's own Google Business Profile.) */
+export function branchJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "@id": `${SITE_URL}/#mangalore`,
+    name: "VMF Holidays — Mangalore",
+    url: SITE_URL,
+    telephone: BUSINESS.phones[2],
+    parentOrganization: { "@id": `${SITE_URL}/#organization` },
+    address: {
+      "@type": "PostalAddress",
+      streetAddress:
+        "First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, Bendoorwell",
+      addressLocality: "Mangaluru",
+      addressRegion: "Karnataka",
+      postalCode: "575001",
+      addressCountry: "IN",
+    },
+    areaServed: { "@type": "City", name: "Mangalore" },
+    priceRange: "₹₹",
+  };
+}
+
 /** Service schema for a specific offering (e.g. the Trip Builder's customised
  *  packages) — ties the service to the TravelAgency entity. */
 export function serviceJsonLd(opts: { name: string; description: string; path: string }) {

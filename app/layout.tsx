@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
-import { JsonLd, organizationJsonLd, websiteJsonLd, SITE_URL } from "@/lib/seo";
+import { JsonLd, organizationJsonLd, websiteJsonLd, branchJsonLd, SITE_URL } from "@/lib/seo";
 import Analytics from "@/components/analytics/Analytics";
 import "./globals.css";
 
@@ -90,7 +90,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={roboto.variable} suppressHydrationWarning>
       <body>
-        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd(), branchJsonLd()]} />
         {children}
         <Analytics />
       </body>
