@@ -16,6 +16,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
     phone: "",
     email: "",
     destination: packageTitle || "",
+    timeframe: "",
     dates: "",
     travelers: "2",
     message: "",
@@ -39,6 +40,7 @@ export default function EnquiryForm({ packageTitle }: Props) {
       phone: form.phone,
       email: form.email,
       destination: form.destination,
+      timeframe: form.timeframe,
       dates: form.dates,
       travelers: form.travelers,
       message: form.message,
@@ -161,16 +163,34 @@ export default function EnquiryForm({ packageTitle }: Props) {
         </div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label" htmlFor={`${uid}-dates`}>Preferred Travel Dates</label>
-        <input
-          id={`${uid}-dates`}
-          className="form-input"
-          type="text"
-          placeholder="e.g. 15 Dec – 22 Dec 2025"
-          value={form.dates}
-          onChange={(e) => set("dates", e.target.value)}
-        />
+      <div className={styles.row}>
+        <div className="form-group">
+          <label className="form-label" htmlFor={`${uid}-when`}>When are you travelling?</label>
+          <select
+            id={`${uid}-when`}
+            className="form-select"
+            value={form.timeframe}
+            onChange={(e) => set("timeframe", e.target.value)}
+          >
+            <option value="">Select…</option>
+            <option value="Within 2 weeks">Within 2 weeks</option>
+            <option value="This month">This month</option>
+            <option value="In 1–3 months">In 1–3 months</option>
+            <option value="Later / flexible">Later / flexible</option>
+            <option value="Just exploring">Just exploring</option>
+          </select>
+        </div>
+        <div className="form-group">
+          <label className="form-label" htmlFor={`${uid}-dates`}>Preferred Travel Dates</label>
+          <input
+            id={`${uid}-dates`}
+            className="form-input"
+            type="text"
+            placeholder="e.g. 15 Dec – 22 Dec 2025"
+            value={form.dates}
+            onChange={(e) => set("dates", e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="form-group">

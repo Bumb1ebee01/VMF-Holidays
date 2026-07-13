@@ -96,6 +96,7 @@ export async function POST(request: Request) {
     travelers: clip(body.travelers, 40),
     budget: clip(body.budget, 80),
     tripLength: clip(body.tripLength, 80),
+    timeframe: clip(body.timeframe, 60),
     contactMode: clip(body.contactMode, 60),
     contactTime: clip(body.contactTime, 60),
     message: clip(body.message, 4000),
@@ -108,11 +109,18 @@ export async function POST(request: Request) {
   };
 
   // CRM: persist the lead before anything else so it's never lost
-  const source = f.packageTitle
-    ? "PACKAGE_PAGE"
-    : f.interests.length || f.budget || f.contactMode
-      ? "TRIP_WIZARD"
-      : "CONTACT_FORM";
+  const isQuestion = body.enquiryType === "question";
+  const source = isQuestion
+    ? "ASK_QUESTION"
+    : f.packageTitle
+      ? "PACKAGE_PAGE"
+      : f.interests.length || f.budget || f.contactMode
+        ? "TRIP_WIZARD"
+        : "CONTACT_FORM";
+
+  // Urgency routing: near-term travellers are flagged so the team can prioritise.
+  const URGENT_TIMEFRAMES = new Set(["Within 2 weeks", "This month"]);
+  const isUrgent = URGENT_TIMEFRAMES.has(f.timeframe);
 
   // Travellers Club referral attribution (WI-1): a first-touch ?ref cookie (set by
   // proxy.ts) credits the referrer for an enquiry — even one made without signing up.
@@ -143,6 +151,7 @@ export async function POST(request: Request) {
         travelers: f.travelers || null,
         budget: f.budget || null,
         tripLength: f.tripLength || null,
+        timeframe: f.timeframe || null,
         contactMode: f.contactMode || null,
         contactTime: f.contactTime || null,
         interests: f.interests,
@@ -179,23 +188,32 @@ export async function POST(request: Request) {
   const interest = f.packageTitle || f.destination || null;
   void sendEnquiryWhatsApp(name, phone, interest);
 
-  const subject = f.packageTitle
-    ? `New Enquiry: ${f.packageTitle} — ${name}`
-    : `New Enquiry from ${name}`;
+  const kind = isQuestion ? "Question" : "Enquiry";
+  const baseSubject = f.packageTitle
+    ? `New ${kind}: ${f.packageTitle} — ${name}`
+    : `New ${kind} from ${name}`;
+  // Push time-sensitive leads to the top of the team's inbox.
+  const subject = isUrgent ? `🔴 Travelling soon — ${baseSubject}` : baseSubject;
 
   const row = (label: string, value: string) =>
     value
       ? `<tr><td style="padding:8px 0;color:#7B8298;font-size:13px;width:140px">${label}</td><td style="padding:8px 0;font-size:14px">${esc(value)}</td></tr>`
       : "";
 
+  const urgentBanner = isUrgent
+    ? `<p style="background:#FDECEA;border-left:4px solid #C0341D;color:#8a1f10;padding:10px 14px;border-radius:6px;font-size:14px;font-weight:600;margin:0 0 16px">🔴 Travelling soon (${esc(f.timeframe)}) — please respond promptly.</p>`
+    : "";
+
   const html = `
-    <h2 style="color:#002464">New Enquiry — VMF Holidays</h2>
+    <h2 style="color:#002464">New ${kind} — VMF Holidays</h2>
+    ${urgentBanner}
     <table style="border-collapse:collapse;width:100%;max-width:560px">
       <tr><td style="padding:8px 0;color:#7B8298;font-size:13px;width:140px">Name</td><td style="padding:8px 0;font-size:14px;font-weight:600">${esc(name)}</td></tr>
       <tr><td style="padding:8px 0;color:#7B8298;font-size:13px">Phone</td><td style="padding:8px 0;font-size:14px">${esc(phone)}</td></tr>
       ${row("Email", email)}
       ${row("Package", f.packageTitle)}
       ${row("Destination", f.destination)}
+      ${row("Travelling", f.timeframe)}
       ${row("Dates", f.dates)}
       ${row("Travelers", f.travelers)}
       ${row("Approx. Length", f.tripLength)}

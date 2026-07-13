@@ -24,6 +24,7 @@ enum LeadSource {
   CONTACT_FORM
   TRIP_WIZARD
   PACKAGE_PAGE
+  ASK_QUESTION
   OTHER
 }
 
@@ -83,6 +84,7 @@ model Lead {
   travelers    String?
   budget       String?
   tripLength   String?
+  timeframe    String?    // when they're travelling — drives urgency routing
   contactMode  String?
   contactTime  String?
   interests    String[]

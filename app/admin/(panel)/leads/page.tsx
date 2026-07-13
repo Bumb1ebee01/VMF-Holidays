@@ -23,8 +23,12 @@ const SOURCE_LABELS: Record<string, string> = {
   CONTACT_FORM: "Contact Form",
   TRIP_WIZARD: "Trip Builder",
   PACKAGE_PAGE: "Package Page",
+  ASK_QUESTION: "Question",
   OTHER: "Other",
 };
+
+// Near-term travellers are flagged so the team can prioritise them.
+const URGENT_TIMEFRAMES = new Set(["Within 2 weeks", "This month"]);
 
 type Search = { status?: string; q?: string; source?: string; assignee?: string; view?: string };
 
@@ -82,7 +86,7 @@ export default async function LeadsPage({
 
   const boardLeads: BoardLead[] = leads.map((l) => ({
     id: l.id,
-    name: l.name,
+    name: (URGENT_TIMEFRAMES.has(l.timeframe ?? "") ? "🔴 " : "") + l.name,
     interest: l.packageTitle ?? l.destination ?? SOURCE_LABELS[l.source] ?? "Enquiry",
     contact: l.phone,
     assignedName: l.assignedTo?.name ?? null,
@@ -192,6 +196,23 @@ export default async function LeadsPage({
                       <Link href={`/admin/leads/${lead.id}`} className={shared.rowLink}>
                         {lead.name}
                       </Link>
+                      {URGENT_TIMEFRAMES.has(lead.timeframe ?? "") && (
+                        <span
+                          title={`Travelling: ${lead.timeframe}`}
+                          style={{
+                            marginLeft: 8,
+                            padding: "1px 8px",
+                            borderRadius: 999,
+                            fontSize: 11,
+                            fontWeight: 700,
+                            background: "#FDECEA",
+                            color: "#c0341d",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
+                          Travelling soon
+                        </span>
+                      )}
                     </td>
                     <td>
                       <div className={styles.contactCell}>
