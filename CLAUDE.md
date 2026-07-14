@@ -51,6 +51,23 @@ Button classes: `.btn .btn-primary`, `.btn-navy`, `.btn-outline`, `.btn-outline-
 Size modifiers: `.btn--sm`, `.btn--lg`, `.btn--xl`  
 Badge classes: `.badge .badge-orange`, `.badge-navy`, `.badge-white`, `.badge-green`
 
+### Orange as *text* → use `--orange-ink`, not `--orange`
+
+`--orange` (#FE5C10) only reaches **2.6–3.1:1** on our warm light surfaces — below
+the 4.5:1 WCAG minimum for body-size text. It's fine as a **fill** (`.btn-primary`
+is white-on-orange), as a **border**, and on **large display type** (≥24px, where
+3:1 applies).
+
+- Orange carrying **small text** on a light surface (eyebrows, badges, inline
+  links, outline buttons) → `color: var(--orange-ink)`. It clears 4.5:1 on every
+  light surface and auto-reverts to `--orange` in dark mode.
+- Orange text on a **navy/dark** surface → keep `--orange` or `--orange-lt`;
+  `--orange-ink` would make it *worse*. This is why the Navbar only uses
+  `--orange-ink` in its `.scrolled` (white bar) states.
+- Most sections define their **own module-scoped `.eyebrow`** rather than the
+  global one — so fixing `globals.css` alone does not fix a new section. Set the
+  colour in the module.
+
 ## Coding Conventions
 
 - CSS Modules for component-scoped styles (e.g. `Navbar.module.css`), global utilities via `globals.css`
