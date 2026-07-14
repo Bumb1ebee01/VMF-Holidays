@@ -4,22 +4,139 @@
   gap: 28px;
 }
 
-.pickers {
+/* ── Slots: the selection surface, and the page's whole control set ── */
+.slots {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
 
-.picker {
-  width: 100%;
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
 }
 
-.hint {
+.slotThumb {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--off-white);
+}
+
+.slotBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.slotTitle,
+.slotMeta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.slotTitle {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+}
+
+.slotMeta {
+  font-size: 0.78rem;
   color: var(--muted);
-  font-size: 0.95rem;
-  text-align: center;
-  padding: 24px 0;
-  margin: 0;
+}
+
+.slotPrice {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+}
+
+.slotActions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.slotChange {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease);
+}
+
+.slotChange:hover {
+  color: var(--orange-ink);
+}
+
+.slotClear {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.slotClear:hover {
+  color: var(--text);
+  border-color: var(--orange);
+}
+
+.slotEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 74px;
+  padding: 14px;
+  border: 1.5px dashed var(--border);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.slotEmpty:hover {
+  border-color: var(--orange);
+  color: var(--orange-ink);
+  background: var(--orange-subtle);
+}
+
+.slotPlus {
+  font-size: 1.3rem;
+  line-height: 1;
 }
 
 .tableWrap {
@@ -81,7 +198,7 @@
 .colPrice {
   display: block;
   font-size: 0.9rem;
-  color: var(--orange);
+  color: var(--orange-ink);
   font-weight: 600;
   margin-bottom: 10px;
 }
@@ -154,7 +271,7 @@
 
 /* ── Difference highlighting ── */
 .rowDiff .rowHead {
-  color: var(--orange);
+  color: var(--orange-ink);
   box-shadow: inset 3px 0 0 var(--orange);
 }
 
@@ -216,7 +333,7 @@
   font-weight: 700;
   letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--orange-ink);
   background: var(--orange-subtle);
   padding: 2px 8px;
   border-radius: 999px;
@@ -282,9 +399,318 @@
   color: var(--text);
 }
 
+/* ── Starter state (fewer than two chosen) ── */
+.starter {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.quick {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quickLabel {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.quickRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.quickChip {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+}
+
+.quickChip:hover {
+  border-color: var(--orange);
+  transform: translateY(-1px);
+}
+
+.quickChipLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.quickChipCat {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.compRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.compCard {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card-bg);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease),
+    box-shadow var(--dur-fast) var(--ease);
+}
+
+.compCard:hover {
+  border-color: var(--orange);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.compThumb {
+  display: block;
+  width: 100%;
+  height: 92px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--off-white);
+}
+
+.compBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px 14px;
+}
+
+.compReason {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--orange-ink);
+  background: var(--orange-subtle);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.compTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.compMeta {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+/* What the comparison actually gives you — stated before we ask for the work,
+   since everything below only appears once two packages are chosen. */
+.value {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin: 0;
+  padding: 20px;
+  list-style: none;
+  border: 1px solid var(--hairline-soft);
+  border-radius: 14px;
+  background: var(--off-white);
+}
+
+.valueItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.valueIcon {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: var(--orange-ink);
+}
+
+.valueText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.valueText strong {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Package picker ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 10, 44, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+
+.picker {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 560px;
+  max-height: min(72vh, 620px);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-xl);
+}
+
+.pickerHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.pickerSearch {
+  flex: 1 1 auto;
+}
+
+.pickerClose {
+  flex: 0 0 auto;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease);
+}
+
+.pickerClose:hover {
+  color: var(--text);
+  border-color: var(--orange);
+}
+
+.pickerList {
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.pickerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.pickerRow:hover:not(:disabled) {
+  background: var(--off-white);
+}
+
+.pickerRow:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pickerThumb {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--off-white);
+}
+
+.pickerBody {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pickerTitle {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.pickerMeta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.pickerPrice {
+  flex: 0 0 auto;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+  white-space: nowrap;
+}
+
+.pickerEmpty {
+  margin: 0;
+  padding: 36px 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 @media (max-width: 700px) {
-  .pickers {
+  .slots,
+  .compRow,
+  .value {
     grid-template-columns: 1fr;
+  }
+
+  .picker {
+    max-height: 84vh;
   }
 
   .suggestCard {
@@ -298,5 +724,17 @@
 
   .suggestActions > * {
     flex: 1 1 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quickChip,
+  .compCard {
+    transition: none;
+  }
+
+  .quickChip:hover,
+  .compCard:hover {
+    transform: none;
   }
 }
