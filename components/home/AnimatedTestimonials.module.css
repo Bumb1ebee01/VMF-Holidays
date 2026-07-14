@@ -87,6 +87,18 @@
   background: var(--orange);
 }
 
+.reviewLink {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--orange-ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.reviewLink:hover { border-bottom-color: currentColor; }
+
 /* ── Right column ─────────────────────────────────────── */
 .right {
   position: relative;

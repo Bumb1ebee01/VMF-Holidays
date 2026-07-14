@@ -29,6 +29,9 @@ interface Props {
   subtitle?: string;
   badgeText?: string;
   autoRotateInterval?: number;
+  /** Google "write a review" link. Keeps the invitation visible once real
+   *  reviews exist, so it doesn't only live in the empty state. */
+  reviewUrl?: string;
 }
 
 export default function AnimatedTestimonials({
@@ -37,6 +40,7 @@ export default function AnimatedTestimonials({
   subtitle = "Real stories from real people who trusted us with their most precious time.",
   badgeText = "Loved by travellers",
   autoRotateInterval = 6000,
+  reviewUrl,
 }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -80,6 +84,16 @@ export default function AnimatedTestimonials({
                 />
               ))}
             </div>
+            {reviewUrl && (
+              <a
+                className={styles.reviewLink}
+                href={reviewUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Travelled with us? Leave a review →
+              </a>
+            )}
           </motion.div>
 
           {/* Right: rotating testimonial card */}
