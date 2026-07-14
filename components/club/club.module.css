@@ -39,7 +39,7 @@
 }
 
 .switch a {
-  color: var(--orange);
+  color: var(--orange-ink);
   font-weight: 600;
 }
 
@@ -48,7 +48,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: var(--orange);
+  color: var(--orange-ink);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

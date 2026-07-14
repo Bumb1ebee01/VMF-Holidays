@@ -121,7 +121,7 @@
 }
 
 .scrolled .links a:hover {
-  color: var(--orange);
+  color: var(--orange-ink);
 }
 
 .links a:hover::after {
@@ -133,7 +133,7 @@
 }
 
 .scrolled .links a.active {
-  color: var(--orange);
+  color: var(--orange-ink);
 }
 
 .links a.active::after {
@@ -167,9 +167,9 @@
 
 .scrolled .linkTrigger { color: var(--text); }
 .linkTrigger:hover { color: var(--orange-lt); }
-.scrolled .linkTrigger:hover { color: var(--orange); }
+.scrolled .linkTrigger:hover { color: var(--orange-ink); }
 .linkTrigger.active { color: #fff; }
-.scrolled .linkTrigger.active { color: var(--orange); }
+.scrolled .linkTrigger.active { color: var(--orange-ink); }
 
 .linkCaret { transition: transform var(--dur-base) var(--ease); }
 
@@ -213,7 +213,7 @@
 
 .navMenu a:hover {
   background: var(--card-bg);
-  color: var(--orange);
+  color: var(--orange-ink);
 }
 
 /* Actions */
@@ -251,7 +251,7 @@
 }
 
 .scrolled .authLink:hover {
-  color: var(--orange);
+  color: var(--orange-ink);
 }
 
 .authSignup {

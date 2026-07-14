@@ -15,7 +15,7 @@
   font-weight: 500;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--orange-ink);
   margin-bottom: 16px;
 }
 
@@ -23,7 +23,7 @@
   content: '';
   width: 32px;
   height: 1px;
-  background: var(--orange);
+  background: var(--orange-ink);
 }
 
 .title {

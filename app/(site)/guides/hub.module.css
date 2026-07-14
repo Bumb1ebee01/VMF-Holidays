@@ -108,7 +108,7 @@
   margin-top: 8px;
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--orange);
+  color: var(--orange-ink);
 }
 
 /* Dark mode: .page + .card are hardcoded white. Darken them and redirect the

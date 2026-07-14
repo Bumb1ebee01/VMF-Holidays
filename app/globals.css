@@ -17,6 +17,14 @@
   --orange-subtle:rgba(254, 92, 16, 0.08);
   --yellow:       #FFEE33;
 
+  /* Brand orange reaches only 2.6–3.1:1 on our warm light surfaces — fine as a
+     fill or on large display type, short of the 4.5:1 WCAG minimum for text at
+     body size. Use this darker cast wherever orange *is* small text (eyebrows,
+     badges, outline buttons). It clears 4.5:1 on every light surface we ship,
+     and reverts to plain --orange in dark mode, where orange already scores 6:1
+     against the dark canvas. */
+  --orange-ink:   #BC3E0A;
+
   /* Neutrals — warm ivory canvas */
   --white:        #FFFFFF;
   --off-white:    #F4F1EA;
@@ -274,7 +282,7 @@ h1 em, h2 em, h3 em {
   font-weight: var(--fw-medium);
   letter-spacing: var(--track-wider);
   text-transform: uppercase;
-  color: var(--orange);
+  color: var(--orange-ink);
   margin-bottom: var(--sp-4);
 }
 
@@ -283,7 +291,7 @@ h1 em, h2 em, h3 em {
   display: block;
   width: 36px;
   height: 1px;
-  background: var(--orange);
+  background: var(--orange-ink);
 }
 
 .section-title {
@@ -405,7 +413,7 @@ h1 em, h2 em, h3 em {
 
 .btn-outline-orange {
   background: transparent;
-  color: var(--orange);
+  color: var(--orange-ink);
   border-color: var(--hairline-orange);
 }
 .btn-outline-orange:hover {
@@ -448,7 +456,7 @@ h1 em, h2 em, h3 em {
   border: 1px solid transparent;
 }
 
-.badge-orange { background: var(--orange-subtle); color: var(--orange); border-color: var(--hairline-orange); }
+.badge-orange { background: var(--orange-subtle); color: var(--orange-ink); border-color: var(--hairline-orange); }
 .badge-navy   { background: var(--navy-subtle); color: var(--navy); border-color: var(--hairline); }
 .badge-white  { background: rgba(255,255,255,0.10); color: var(--white); border-color: rgba(255,255,255,0.25); backdrop-filter: blur(6px); }
 .badge-green  { background: rgba(16, 185, 129, 0.08); color: #059669; border-color: rgba(16, 185, 129, 0.25); }
@@ -647,6 +655,11 @@ h1 em, h2 em, h3 em {
   /* Subtle overlays */
   --navy-subtle:   rgba(148, 181, 255, 0.06);
   --orange-subtle: rgba(254, 92, 16, 0.10);
+
+  /* On the dark canvas full-strength orange already clears 4.5:1, and the
+     darkened cast would read as muddy brown — so orange text goes back to
+     --orange here. */
+  --orange-ink:    var(--orange);
 
   /* Shadows (deeper on dark) */
   --shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.4);
