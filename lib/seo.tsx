@@ -120,7 +120,7 @@ export function branchJsonLd() {
     "@id": `${SITE_URL}/#mangalore`,
     name: "VMF Holidays — Mangalore",
     url: SITE_URL,
-    telephone: BUSINESS.phones[2],
+    telephone: [BUSINESS.phones[2], BUSINESS.phones[0]],
     parentOrganization: { "@id": `${SITE_URL}/#organization` },
     address: {
       "@type": "PostalAddress",

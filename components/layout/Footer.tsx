@@ -98,6 +98,10 @@ export default function Footer() {
                 <a href="tel:+919481384953">+91 94813 84953</a>
               </li>
               <li>
+                <span className={styles.contactIcon}>📞</span>
+                <a href="tel:+917499322412">+91 74993 22412</a>
+              </li>
+              <li>
                 <span className={styles.contactIcon}>📍</span>
                 <a href="https://share.google/X80AEnBxAPlLEqJs0" target="_blank" rel="noopener noreferrer">
                   First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, near St. Theresa&apos;s School &amp; Cognizant, Bendoorwell, Mangaluru, Karnataka 575001
