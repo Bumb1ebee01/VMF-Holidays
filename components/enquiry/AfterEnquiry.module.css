@@ -1,0 +1,96 @@
+.section {
+  padding: var(--sp-16) 0;
+  background: var(--off-white, #f6f7fb);
+}
+
+.head {
+  text-align: center;
+  margin-bottom: var(--sp-10);
+}
+
+.title {
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  color: var(--navy);
+  margin: var(--sp-2) 0 0;
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--sp-6);
+  counter-reset: none;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* Connector line between steps (desktop only). */
+.step:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  left: calc(44px + 8px);
+  right: calc(-1 * var(--sp-6) + 8px);
+  height: 2px;
+  background: var(--border, #e2e6ef);
+}
+
+.num {
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.stepTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin: 4px 0 0;
+}
+
+.stepBody {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-light);
+  margin: 0;
+}
+
+:global([data-theme="dark"]) .title,
+:global([data-theme="dark"]) .stepTitle {
+  color: var(--text);
+}
+
+@media (max-width: 860px) {
+  .steps {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8) var(--sp-6);
+  }
+  .step:not(:last-child)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}

@@ -32,6 +32,15 @@ export interface Tool {
 
 export const TOOLS: Tool[] = [
   {
+    slug: "budget-explorer",
+    title: "Where Can I Go? — Budget Explorer",
+    blurb:
+      "Set your budget and instantly see every destination you can travel to — from a weekend in Goa to an overwater villa in the Maldives.",
+    icon: "budget",
+    status: "live",
+    badge: "No sign-up",
+  },
+  {
     slug: "trip-finder",
     title: "Trip Finder — Where Should You Go?",
     blurb:

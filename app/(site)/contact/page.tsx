@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import EnquiryForm from "@/components/forms/EnquiryForm";
+import AfterEnquiry from "@/components/enquiry/AfterEnquiry";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -118,6 +119,8 @@ export default async function ContactPage(props: PageProps<"/contact">) {
           </div>
         </aside>
       </div>
+
+      <AfterEnquiry />
     </div>
   );
 }

@@ -113,6 +113,21 @@ model LeadNote {
   createdAt DateTime @default(now())
 }
 
+// "Notify me if the price drops" sign-ups — phone-only, no account. The team
+// reaches out when a watched package is discounted (capture-first; auto-notify later).
+model PriceAlert {
+  id            String   @id @default(cuid())
+  phone         String
+  packageSlug   String
+  packageTitle  String
+  priceAtSignup Int?
+  notified      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([packageSlug])
+  @@index([createdAt])
+}
+
 model Destination {
   id        String   @id @default(cuid())
   slug      String   @unique

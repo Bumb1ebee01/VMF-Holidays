@@ -5,6 +5,7 @@ import { formatINR } from "@/lib/utils";
 import { trackWhatsAppClick } from "@/lib/analytics";
 import type { Package } from "@/lib/types";
 import AskQuestion from "./AskQuestion";
+import PriceAlert from "./PriceAlert";
 import styles from "./EnquirySidebar.module.css";
 
 const WA_NUMBER = "917499322412";
@@ -71,6 +72,10 @@ export default function EnquirySidebar({ pkg }: { pkg: Package }) {
         </Link>
 
         <AskQuestion packageTitle={pkg.title} />
+
+        {!pkg.priceOnRequest && (
+          <PriceAlert packageSlug={pkg.slug} packageTitle={pkg.title} fromPrice={pkg.fromPrice} />
+        )}
 
         <p className={styles.note}>
           Free consultation · No booking fees · Personalised itinerary
