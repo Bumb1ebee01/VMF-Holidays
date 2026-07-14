@@ -27,6 +27,9 @@ export const BUSINESS = {
   whatsapp: "https://wa.me/917499322412",
   instagram: "https://www.instagram.com/vmfholidays/",
   facebook: "https://www.facebook.com/vmfholidays/",
+  /** Direct "write a review" link from the Google Business Profile — opens the
+   *  star-rating dialog straight away (no hunting through search results). */
+  googleReview: "https://g.page/r/CbkcG2n77-9HEAE/review",
   address: {
     street: "Mendes Vaddo, H. No 128/3/A",
     locality: "Nagoa, Bardez",
