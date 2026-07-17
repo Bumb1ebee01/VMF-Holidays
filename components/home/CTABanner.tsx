@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { trackLead } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
 import styles from "./CTABanner.module.css";
@@ -14,6 +14,7 @@ export default function CTABanner() {
   const [form, setForm] = useState({ name: "", phone: "", destination: "", message: "", company: "" });
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
   const [captcha, setCaptcha] = useState("");
+  const uid = useId();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -73,8 +74,9 @@ export default function CTABanner() {
                 />
                 <div className={styles.formRow}>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Your Name</label>
+                    <label className={styles.label} htmlFor={`${uid}-name`}>Your Name</label>
                     <input
+                      id={`${uid}-name`}
                       type="text"
                       name="name"
                       className={styles.input}
@@ -85,8 +87,9 @@ export default function CTABanner() {
                     />
                   </div>
                   <div className={styles.formGroup}>
-                    <label className={styles.label}>Phone Number</label>
+                    <label className={styles.label} htmlFor={`${uid}-phone`}>Phone Number</label>
                     <input
+                      id={`${uid}-phone`}
                       type="tel"
                       name="phone"
                       className={styles.input}
@@ -99,8 +102,9 @@ export default function CTABanner() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Where Do You Want to Go?</label>
+                  <label className={styles.label} htmlFor={`${uid}-destination`}>Where Do You Want to Go?</label>
                   <select
+                    id={`${uid}-destination`}
                     name="destination"
                     className={styles.input}
                     value={form.destination}
@@ -115,8 +119,9 @@ export default function CTABanner() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label className={styles.label}>Tell Us More (Optional)</label>
+                  <label className={styles.label} htmlFor={`${uid}-message`}>Tell Us More (Optional)</label>
                   <textarea
+                    id={`${uid}-message`}
                     name="message"
                     className={`${styles.input} ${styles.textarea}`}
                     placeholder="Budget, travel dates, number of travellers…"
