@@ -5,6 +5,7 @@ import FeaturedPackages from "@/components/home/FeaturedPackages";
 import WhyChooseVMF from "@/components/home/WhyChooseVMF";
 import TripCategories from "@/components/home/TripCategories";
 import TripFinderCTA from "@/components/home/TripFinderCTA";
+import BudgetExplorerCTA from "@/components/home/BudgetExplorerCTA";
 import TripBuilderCTA from "@/components/home/TripBuilderCTA";
 import OffersStrip from "@/components/home/OffersStrip";
 import Testimonials from "@/components/home/Testimonials";
@@ -48,6 +49,7 @@ export default async function HomePage() {
       <Stats />
       <TripCategories />
       <TripFinderCTA />
+      <BudgetExplorerCTA />
       <TripBuilderCTA />
       <FeaturedPackages />
       <Testimonials />
