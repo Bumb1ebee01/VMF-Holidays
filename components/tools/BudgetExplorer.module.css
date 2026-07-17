@@ -49,6 +49,40 @@
   color: var(--muted);
 }
 
+/* Region filter — All / In India / International segmented control. */
+.filter {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+}
+
+.filterBtn {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.filterBtn:hover {
+  color: var(--text);
+}
+
+/* Inverted fill reads as "selected" in both themes without touching brand colours. */
+.filterBtnActive,
+.filterBtnActive:hover {
+  background: var(--text);
+  color: var(--bg);
+}
+
 .summary {
   font-size: 1.05rem;
   color: var(--text);
@@ -93,12 +127,12 @@
   border-color: var(--orange);
 }
 
-.guideLink {
+/* Identity block — destination name, price, tags. */
+.head {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px;
-  text-decoration: none;
+  gap: 5px;
+  padding: 14px 16px 12px;
 }
 
 .cardHead {
@@ -126,52 +160,54 @@
   color: var(--muted);
 }
 
-.guideHint {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--orange-ink);
-}
-
-.guideLink:hover .guideHint {
-  text-decoration: underline;
-}
-
-/* Package options — the path from a budget match to a bookable trip. */
+/* Package options — the primary action: the path from a budget match to a
+   bookable trip, so it leads the card and each row reads as tappable. */
 .pkgs {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 10px;
+  gap: 6px;
+  padding: 12px;
   border-top: 1px solid var(--border);
   background: var(--off-white);
 }
 
 .pkgsLabel {
-  padding: 2px 8px 4px;
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--text-light);
 }
 
 .pkgRow {
   display: flex;
-  flex-direction: column;
-  gap: 1px;
-  padding: 7px 8px;
-  border-radius: 8px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card-bg);
   text-decoration: none;
-  transition: background 0.15s ease;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .pkgRow:hover {
-  background: var(--card-bg);
+  border-color: var(--orange);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pkgInfo {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
 }
 
 .pkgTitle {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text);
 }
 
@@ -180,8 +216,16 @@
   color: var(--muted);
 }
 
+.pkgArrow {
+  flex: 0 0 auto;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--orange-ink);
+}
+
 .pkgMore {
-  padding: 6px 8px;
+  padding: 2px 2px 0;
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--orange-ink);
@@ -190,6 +234,21 @@
 
 .pkgMore:hover {
   text-decoration: underline;
+}
+
+/* Guide — secondary, demoted below the packages. */
+.guideLink {
+  padding: 11px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  border-top: 1px solid var(--border);
+  transition: color 0.15s ease;
+}
+
+.guideLink:hover {
+  color: var(--orange-ink);
 }
 
 .cta {

@@ -22,6 +22,8 @@ export interface BudgetDestination {
   packages: BudgetPackage[];
 }
 
+type RegionFilter = "all" | "domestic" | "international";
+
 const MIN = 10000;
 const MAX = 200000;
 const STEP = 5000;
@@ -36,33 +38,41 @@ function Card({ d, budget }: { d: BudgetDestination; budget: number }) {
 
   return (
     <div className={styles.card}>
-      <Link href={`/guides/${d.slug}`} className={styles.guideLink}>
-        <span className={styles.cardHead}>
+      <div className={styles.head}>
+        <div className={styles.cardHead}>
           <span className={styles.name}>{d.name}</span>
           <span className={styles.price}>from {formatINR(d.fromPrice)}</span>
-        </span>
+        </div>
         <span className={styles.tags}>{d.tags.slice(0, 3).join(" · ")}</span>
-        <span className={styles.guideHint}>Pocket guide →</span>
-      </Link>
+      </div>
 
       {shown.length > 0 && (
         <div className={styles.pkgs}>
-          <span className={styles.pkgsLabel}>Packages in budget</span>
+          <span className={styles.pkgsLabel}>
+            {affordable.length} {affordable.length === 1 ? "package" : "packages"} in budget
+          </span>
           {shown.map((p) => (
             <Link key={p.slug} href={`/packages/${p.slug}`} className={styles.pkgRow}>
-              <span className={styles.pkgTitle}>{p.title}</span>
-              <span className={styles.pkgMeta}>
-                {p.duration} · from {formatINR(p.fromPrice)}
+              <span className={styles.pkgInfo}>
+                <span className={styles.pkgTitle}>{p.title}</span>
+                <span className={styles.pkgMeta}>
+                  {p.duration} · from {formatINR(p.fromPrice)}
+                </span>
               </span>
+              <span className={styles.pkgArrow} aria-hidden="true">→</span>
             </Link>
           ))}
           {extra > 0 && (
             <Link href={`/guides/${d.slug}`} className={styles.pkgMore}>
-              +{extra} more {extra === 1 ? "package" : "packages"} →
+              +{extra} more {extra === 1 ? "package" : "packages"}
             </Link>
           )}
         </div>
       )}
+
+      <Link href={`/guides/${d.slug}`} className={styles.guideLink}>
+        {shown.length > 0 ? `${d.name} pocket guide` : `Explore ${d.name}`} →
+      </Link>
     </div>
   );
 }
@@ -83,8 +93,15 @@ function Group({ title, items, budget }: { title: string; items: BudgetDestinati
   );
 }
 
+const REGION_TABS: { value: RegionFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "domestic", label: "In India" },
+  { value: "international", label: "International" },
+];
+
 export default function BudgetExplorer({ destinations }: { destinations: BudgetDestination[] }) {
   const [budget, setBudget] = useState(50000);
+  const [region, setRegion] = useState<RegionFilter>("all");
 
   const matches = useMemo(
     () =>
@@ -94,8 +111,13 @@ export default function BudgetExplorer({ destinations }: { destinations: BudgetD
     [destinations, budget]
   );
 
+  const showDomestic = region !== "international";
+  const showInternational = region !== "domestic";
+
   const domestic = matches.filter((d) => d.region === "domestic");
   const international = matches.filter((d) => d.region === "international");
+  const visibleCount =
+    (showDomestic ? domestic.length : 0) + (showInternational ? international.length : 0);
 
   const budgetLabel = budget >= MAX ? "₹2,00,000+" : formatINR(budget);
   const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
@@ -125,19 +147,33 @@ export default function BudgetExplorer({ destinations }: { destinations: BudgetD
         </div>
       </div>
 
+      <div className={styles.filter} role="group" aria-label="Filter destinations by region">
+        {REGION_TABS.map((tab) => (
+          <button
+            key={tab.value}
+            type="button"
+            className={`${styles.filterBtn} ${region === tab.value ? styles.filterBtnActive : ""}`}
+            aria-pressed={region === tab.value}
+            onClick={() => setRegion(tab.value)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       <p className={styles.summary}>
-        {matches.length > 0 ? (
+        {visibleCount > 0 ? (
           <>
-            <strong>{matches.length}</strong> destination{matches.length !== 1 ? "s" : ""} within{" "}
+            <strong>{visibleCount}</strong> destination{visibleCount !== 1 ? "s" : ""} within{" "}
             {budgetLabel}
           </>
         ) : (
-          <>Nothing starts under {budgetLabel} yet — nudge your budget up, or ask us for a custom plan.</>
+          <>Nothing here under {budgetLabel} yet — nudge your budget up, widen the region, or ask us for a custom plan.</>
         )}
       </p>
 
-      <Group title="In India" items={domestic} budget={budget} />
-      <Group title="International" items={international} budget={budget} />
+      {showDomestic && <Group title="In India" items={domestic} budget={budget} />}
+      {showInternational && <Group title="International" items={international} budget={budget} />}
 
       <div className={styles.cta}>
         <p className={styles.ctaText}>Prices are starting points and fully customisable to your dates and style.</p>
