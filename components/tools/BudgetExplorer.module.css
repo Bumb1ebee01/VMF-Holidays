@@ -82,18 +82,23 @@
 .card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 16px;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--card-bg);
-  text-decoration: none;
-  transition: border-color 0.18s ease, transform 0.18s ease;
+  overflow: hidden;
+  transition: border-color 0.18s ease;
 }
 
 .card:hover {
   border-color: var(--orange);
-  transform: translateY(-2px);
+}
+
+.guideLink {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  text-decoration: none;
 }
 
 .cardHead {
@@ -112,13 +117,79 @@
 .price {
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--orange);
+  color: var(--orange-ink);
   white-space: nowrap;
 }
 
 .tags {
   font-size: 0.82rem;
   color: var(--muted);
+}
+
+.guideHint {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+}
+
+.guideLink:hover .guideHint {
+  text-decoration: underline;
+}
+
+/* Package options — the path from a budget match to a bookable trip. */
+.pkgs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  background: var(--off-white);
+}
+
+.pkgsLabel {
+  padding: 2px 8px 4px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.pkgRow {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.pkgRow:hover {
+  background: var(--card-bg);
+}
+
+.pkgTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.pkgMeta {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.pkgMore {
+  padding: 6px 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+  text-decoration: none;
+}
+
+.pkgMore:hover {
+  text-decoration: underline;
 }
 
 .cta {

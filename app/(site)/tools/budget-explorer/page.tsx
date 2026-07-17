@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { getAllDestinations } from "@/lib/queries";
+import { getAllDestinations, getAllPackages } from "@/lib/queries";
 import { JsonLd, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
-import BudgetExplorer, { type BudgetDestination } from "@/components/tools/BudgetExplorer";
+import BudgetExplorer, { type BudgetDestination, type BudgetPackage } from "@/components/tools/BudgetExplorer";
 import styles from "./page.module.css";
 
 const TITLE = "Budget Explorer — Where Can I Go?";
@@ -30,7 +30,19 @@ export const metadata: Metadata = {
 };
 
 export default async function BudgetExplorerPage() {
-  const destinations = await getAllDestinations();
+  const [destinations, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+
+  // Group real, priced packages under their destination so a budget match can
+  // link straight to a bookable trip, not just the read-only guide. On-request
+  // packages have no comparable price, so they're left out of a budget tool.
+  const byDestination = new Map<string, BudgetPackage[]>();
+  for (const p of packages) {
+    if (p.priceOnRequest) continue;
+    const list = byDestination.get(p.destinationSlug) ?? [];
+    list.push({ slug: p.slug, title: p.title, duration: p.duration, fromPrice: p.fromPrice });
+    byDestination.set(p.destinationSlug, list);
+  }
+
   const data: BudgetDestination[] = destinations.map((d) => ({
     slug: d.slug,
     name: d.name,
@@ -38,6 +50,7 @@ export default async function BudgetExplorerPage() {
     region: d.region,
     fromPrice: d.fromPrice,
     tags: d.tags,
+    packages: (byDestination.get(d.slug) ?? []).sort((a, b) => a.fromPrice - b.fromPrice),
   }));
 
   return (

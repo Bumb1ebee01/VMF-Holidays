@@ -5,6 +5,13 @@ import Link from "next/link";
 import { formatINR } from "@/lib/utils";
 import styles from "./BudgetExplorer.module.css";
 
+export interface BudgetPackage {
+  slug: string;
+  title: string;
+  duration: string;
+  fromPrice: number;
+}
+
 export interface BudgetDestination {
   slug: string;
   name: string;
@@ -12,14 +19,55 @@ export interface BudgetDestination {
   region: "domestic" | "international";
   fromPrice: number;
   tags: string[];
+  packages: BudgetPackage[];
 }
 
 const MIN = 10000;
 const MAX = 200000;
 const STEP = 5000;
 const WA_NUMBER = "917499322412";
+const MAX_PACKAGES_SHOWN = 3;
 
-function Group({ title, items }: { title: string; items: BudgetDestination[] }) {
+function Card({ d, budget }: { d: BudgetDestination; budget: number }) {
+  // Only offer packages that actually fit the chosen budget, cheapest first.
+  const affordable = d.packages.filter((p) => p.fromPrice <= budget);
+  const shown = affordable.slice(0, MAX_PACKAGES_SHOWN);
+  const extra = affordable.length - shown.length;
+
+  return (
+    <div className={styles.card}>
+      <Link href={`/guides/${d.slug}`} className={styles.guideLink}>
+        <span className={styles.cardHead}>
+          <span className={styles.name}>{d.name}</span>
+          <span className={styles.price}>from {formatINR(d.fromPrice)}</span>
+        </span>
+        <span className={styles.tags}>{d.tags.slice(0, 3).join(" · ")}</span>
+        <span className={styles.guideHint}>Pocket guide →</span>
+      </Link>
+
+      {shown.length > 0 && (
+        <div className={styles.pkgs}>
+          <span className={styles.pkgsLabel}>Packages in budget</span>
+          {shown.map((p) => (
+            <Link key={p.slug} href={`/packages/${p.slug}`} className={styles.pkgRow}>
+              <span className={styles.pkgTitle}>{p.title}</span>
+              <span className={styles.pkgMeta}>
+                {p.duration} · from {formatINR(p.fromPrice)}
+              </span>
+            </Link>
+          ))}
+          {extra > 0 && (
+            <Link href={`/guides/${d.slug}`} className={styles.pkgMore}>
+              +{extra} more {extra === 1 ? "package" : "packages"} →
+            </Link>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Group({ title, items, budget }: { title: string; items: BudgetDestination[]; budget: number }) {
   if (items.length === 0) return null;
   return (
     <div className={styles.group}>
@@ -28,13 +76,7 @@ function Group({ title, items }: { title: string; items: BudgetDestination[] }) 
       </h2>
       <div className={styles.grid}>
         {items.map((d) => (
-          <Link key={d.slug} href={`/guides/${d.slug}`} className={styles.card}>
-            <div className={styles.cardHead}>
-              <span className={styles.name}>{d.name}</span>
-              <span className={styles.price}>from {formatINR(d.fromPrice)}</span>
-            </div>
-            <span className={styles.tags}>{d.tags.slice(0, 3).join(" · ")}</span>
-          </Link>
+          <Card key={d.slug} d={d} budget={budget} />
         ))}
       </div>
     </div>
@@ -94,8 +136,8 @@ export default function BudgetExplorer({ destinations }: { destinations: BudgetD
         )}
       </p>
 
-      <Group title="In India" items={domestic} />
-      <Group title="International" items={international} />
+      <Group title="In India" items={domestic} budget={budget} />
+      <Group title="International" items={international} budget={budget} />
 
       <div className={styles.cta}>
         <p className={styles.ctaText}>Prices are starting points and fully customisable to your dates and style.</p>
