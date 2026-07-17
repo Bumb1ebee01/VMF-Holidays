@@ -80,6 +80,21 @@
   margin-top: var(--sp-2);
 }
 
+/* Download & Share use the glass ghost-white style, which washes out over bright
+   hero photos (beaches, snow, sky). A dark glass scrim + a stronger border keeps
+   them legible on any image, while the orange Compare button stays the primary. */
+.heroActions :global(.btn-ghost-white) {
+  background: rgba(4, 14, 40, 0.62);
+  border-color: rgba(255, 255, 255, 0.65);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.heroActions :global(.btn-ghost-white):hover {
+  background: rgba(4, 14, 40, 0.8);
+  border-color: var(--white);
+  color: var(--white);
+}
+
 .compareLink {
   gap: 7px;
 }
