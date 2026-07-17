@@ -17,10 +17,14 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
+  /* Weighted toward the bottom, where the title, price and CTAs sit, so hero
+     text stays readable over bright photos (beaches, snow, sky) without
+     over-darkening the top of the image. */
   background: linear-gradient(
     to bottom,
-    rgba(0, 36, 100, 0.15) 0%,
-    rgba(0, 36, 100, 0.75) 100%
+    rgba(0, 36, 100, 0.1) 0%,
+    rgba(0, 36, 100, 0.4) 52%,
+    rgba(0, 36, 100, 0.85) 100%
   );
 }
 
@@ -63,13 +67,15 @@
   color: var(--white);
   line-height: var(--leading-tight);
   max-width: 760px;
+  text-shadow: 0 2px 14px rgba(0, 10, 40, 0.45);
 }
 
 .heroPrice {
   font-size: var(--text-base);
   font-weight: var(--fw-light);
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.9);
   margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 10, 40, 0.55);
 }
 
 .heroActions {
