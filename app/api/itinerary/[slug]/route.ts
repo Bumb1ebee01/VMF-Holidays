@@ -27,17 +27,31 @@ function clientIp(request: Request): string {
   return request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
+// @react-pdf can only embed PNG/JPEG. Our Cloudinary assets are sometimes served
+// as gif/webp (by original format), which render blank. Force a JPEG delivery —
+// and size/compress it while we're at it — by injecting a transform after
+// `/image/upload/`. Non-Cloudinary URLs are returned unchanged.
+function toPdfSafeImageUrl(url: string): string {
+  const marker = "/image/upload/";
+  const i = url.indexOf(marker);
+  if (i === -1) return url;
+  const head = url.slice(0, i + marker.length);
+  const tail = url.slice(i + marker.length);
+  return `${head}f_jpg,q_auto,w_1200/${tail}`;
+}
+
 /** Best-effort: fetch a remote hero image and inline it as a data URI. Never throws. */
-async function heroDataUri(url: string): Promise<string | null> {
-  if (!/^https?:\/\//i.test(url)) return null; // only remote (e.g. Cloudinary) images
+async function heroDataUri(url: string | null | undefined): Promise<string | null> {
+  if (!url || !/^https?:\/\//i.test(url)) return null; // only remote (e.g. Cloudinary) images
   try {
     const ctrl = new AbortController();
     const t = setTimeout(() => ctrl.abort(), 4000);
-    const res = await fetch(url, { signal: ctrl.signal, cache: "no-store" });
+    const res = await fetch(toPdfSafeImageUrl(url), { signal: ctrl.signal, cache: "no-store" });
     clearTimeout(t);
     if (!res.ok) return null;
     const type = res.headers.get("content-type") || "image/jpeg";
-    if (!type.startsWith("image/")) return null;
+    // Never embed a format @react-pdf can't draw (gif/webp/etc.) — it renders blank.
+    if (!/^image\/(jpeg|jpg|png)$/i.test(type)) return null;
     const buf = Buffer.from(await res.arrayBuffer());
     if (buf.length > 3_000_000) return null; // don't inline huge images
     return `data:${type};base64,${buf.toString("base64")}`;
@@ -62,14 +76,19 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
   const pkg = await getPackageBySlug(slug);
   if (!pkg) return Response.json({ error: "Package not found" }, { status: 404 });
 
-  const hero = await heroDataUri(pkg.heroImage);
-
-  // Domestic vs international drives which Terms & Conditions set the PDF carries.
+  // One lookup gives us both the T&C region and the shared destination hero.
   const dest = await db.destination.findUnique({
     where: { slug: pkg.destinationSlug },
-    select: { region: true },
+    select: { region: true, heroImage: true },
   });
   const region = dest?.region === "international" ? "international" : "domestic";
+
+  // Prefer the DESTINATION hero so every package for a destination shares one
+  // cover photo (Kerala → Kerala hero, Dubai → Dubai hero…), new packages
+  // included. Fall back to the package image when the destination image is
+  // missing or broken (some Destination.heroImage URLs 404) so the cover is
+  // never blank.
+  const hero = (await heroDataUri(dest?.heroImage)) ?? (await heroDataUri(pkg.heroImage));
 
   // ── Member path: one-click, no lead, trace-stamped ──
   const member = await getCurrentMember();
