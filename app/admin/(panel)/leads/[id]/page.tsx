@@ -19,6 +19,8 @@ const SOURCE_LABELS: Record<string, string> = {
   CONTACT_FORM: "Contact Form",
   TRIP_WIZARD: "Trip Builder",
   PACKAGE_PAGE: "Package Page",
+  ASK_QUESTION: "Question",
+  PDF_DOWNLOAD: "PDF Download",
   OTHER: "Other",
 };
 

@@ -12,6 +12,7 @@ import PackageFaq from "@/components/packages/PackageFaq";
 import EnquirySidebar from "@/components/packages/EnquirySidebar";
 import PackageCard from "@/components/ui/PackageCard";
 import ShareTripButton from "@/components/packages/ShareTripButton";
+import DownloadItineraryButton from "@/components/packages/DownloadItineraryButton";
 import styles from "./page.module.css";
 
 export async function generateStaticParams() {
@@ -104,6 +105,7 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
             )}
           </p>
           <div className={styles.heroActions}>
+            <DownloadItineraryButton slug={pkg.slug} />
             <ShareTripButton title={pkg.title} />
             <Link
               href={`/compare?p=${pkg.slug}`}

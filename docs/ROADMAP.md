@@ -11,7 +11,9 @@ VMF converts leads offline. Items are grouped by theme; status reflects this bui
 - ⬜ **Group-departures calendar** (L) — fixed-date trips with seat counts; recurring
   revenue + feeds the Travellers Club group trips.
 - ✅ **Package comparison** (M) — `/compare` page, up to 3 packages side by side.
-- ⬜ **Download itinerary as PDF** (M) — gated by email = lead capture.
+- ✅ **Download itinerary as PDF** (M) — tiered gate: logged-out = name+email lead
+  capture (source `PDF_DOWNLOAD`); logged-in member = one-click, trace-stamped.
+  Watermarked + sample disclaimer. `lib/itinerary-pdf.tsx` (reused later by the CRM).
 - ⬜ **Newsletter / email capture** (S) — store as a lead source; drip via Resend.
 - ⬜ **Sticky quote CTA / exit-intent** (S) — note: a WhatsApp float already exists.
 

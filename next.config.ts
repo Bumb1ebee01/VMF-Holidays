@@ -35,6 +35,11 @@ const nextConfig: NextConfig = {
   experimental: {
     cpus: 4,
   },
+  // The itinerary-PDF route reads bundled font + logo files at runtime; make sure
+  // Next traces them into the serverless function (they aren't statically imported).
+  outputFileTracingIncludes: {
+    "/api/itinerary/[slug]": ["./lib/fonts/**", "./public/logo-*.png"],
+  },
   // Don't advertise the framework; trims a response header on every request.
   poweredByHeader: false,
   compress: true,

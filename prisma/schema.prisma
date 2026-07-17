@@ -25,6 +25,7 @@ enum LeadSource {
   TRIP_WIZARD
   PACKAGE_PAGE
   ASK_QUESTION
+  PDF_DOWNLOAD
   OTHER
 }
 
