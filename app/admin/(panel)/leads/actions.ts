@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { requirePermission } from "@/lib/auth/user";
 import { logActivity } from "@/lib/activity";
 import { LEAD_STATUSES, type LeadStatusValue } from "@/components/admin/StatusBadge";
-import { upsertReferralStage } from "@/lib/referral-credit";
+import { LEAD_SOURCES, type LeadSourceValue } from "@/components/admin/leadMeta";
 
 export async function updateLeadStatus(leadId: string, status: string) {
   const actor = await requirePermission("leads:edit");
@@ -74,86 +74,105 @@ export async function deleteLead(leadId: string) {
   redirect("/admin/leads");
 }
 
-export type NewLeadState = { error?: string };
+export type LeadFormState = { error?: string };
 
-/** Manually add a lead (e.g. a walk-in or phone enquiry). */
-export async function createLead(_prev: NewLeadState, formData: FormData): Promise<NewLeadState> {
+const clip = (fd: FormData, key: string, max: number) =>
+  String(fd.get(key) ?? "").trim().slice(0, max);
+
+/** A `<input type="date">` value ("YYYY-MM-DD") → a Date at 09:00, or null. */
+function parseFollowUp(fd: FormData): Date | null {
+  const raw = clip(fd, "followUpAt", 20);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  const d = new Date(`${raw}T09:00:00`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * Parse + normalise the editable enquiry-detail fields shared by the manual-add
+ * and edit forms. Deliberately excludes `status` and `assignedToId` — those are
+ * owned by LeadControls (with their own leads:assign permission), so an edit
+ * never silently resets them.
+ */
+function parseLeadDetails(fd: FormData) {
+  const sourceRaw = clip(fd, "source", 30);
+  const source: LeadSourceValue = (LEAD_SOURCES as readonly string[]).includes(sourceRaw)
+    ? (sourceRaw as LeadSourceValue)
+    : "OTHER";
+  const interests = clip(fd, "interests", 400)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .slice(0, 30);
+  return {
+    name: clip(fd, "name", 100),
+    phone: clip(fd, "phone", 25),
+    email: clip(fd, "email", 200),
+    source,
+    destination: clip(fd, "destination", 200) || null,
+    packageTitle: clip(fd, "packageTitle", 200) || null,
+    dates: clip(fd, "dates", 120) || null,
+    travelers: clip(fd, "travelers", 40) || null,
+    tripLength: clip(fd, "tripLength", 80) || null,
+    timeframe: clip(fd, "timeframe", 60) || null,
+    contactMode: clip(fd, "contactMode", 60) || null,
+    contactTime: clip(fd, "contactTime", 60) || null,
+    budget: clip(fd, "budget", 80) || null,
+    hotelCategory: clip(fd, "hotelCategory", 80) || null,
+    mealPlan: clip(fd, "mealPlan", 80) || null,
+    interests,
+    message: clip(fd, "message", 4000) || null,
+  };
+}
+
+/** Manually add a lead (walk-in / phone enquiry) with the full detail set. */
+export async function createLead(_prev: LeadFormState, formData: FormData): Promise<LeadFormState> {
   const actor = await requirePermission("leads:edit");
-  const name = String(formData.get("name") ?? "").trim().slice(0, 100);
-  const phone = String(formData.get("phone") ?? "").trim().slice(0, 25);
-  const email = String(formData.get("email") ?? "").trim().slice(0, 200);
-  const destination = String(formData.get("destination") ?? "").trim().slice(0, 200);
-  const message = String(formData.get("message") ?? "").trim().slice(0, 4000);
+  const data = parseLeadDetails(formData);
+  if (!data.name || !data.phone) return { error: "Name and phone are required." };
 
-  if (!name || !phone) return { error: "Name and phone are required." };
+  // Create-only: status + assignee may be set up front.
+  const statusRaw = clip(formData, "status", 20);
+  const status: LeadStatusValue = (LEAD_STATUSES as readonly string[]).includes(statusRaw)
+    ? (statusRaw as LeadStatusValue)
+    : "NEW";
+  const assignedToId = clip(formData, "assignedToId", 40) || null;
+  const followUpAt = parseFollowUp(formData);
 
   const lead = await db.lead.create({
-    data: {
-      name,
-      phone,
-      email,
-      source: "OTHER",
-      destination: destination || null,
-      message: message || null,
-    },
+    data: { ...data, source: data.source || "OTHER", status, assignedToId, ...(followUpAt ? { followUpAt } : {}) },
   });
   await logActivity(actor, {
     action: "lead.create",
     entity: "Lead",
     entityId: lead.id,
-    detail: `Added lead ${name}`,
+    detail: `Added lead ${data.name}`,
   });
   revalidatePath("/admin/leads");
   redirect(`/admin/leads/${lead.id}`);
 }
 
-export type BookedState = { error?: string; success?: string };
-
-/**
- * Mark a lead as booked (status WON). If the lead matches a referred Travellers
- * Club member, advance their referral to BOOKED — the reward itself pays later,
- * when their trip is marked completed (rewards fire on travel, not booking).
- */
-export async function markLeadBooked(_prev: BookedState, formData: FormData): Promise<BookedState> {
+/** Edit an existing lead's enquiry details (customisation mid-journey). */
+export async function updateLead(
+  leadId: string,
+  _prev: LeadFormState,
+  formData: FormData
+): Promise<LeadFormState> {
   const actor = await requirePermission("leads:edit");
-  const leadId = String(formData.get("leadId") ?? "");
-  if (!leadId) return { error: "Missing lead." };
+  const data = parseLeadDetails(formData);
+  if (!data.name || !data.phone) return { error: "Name and phone are required." };
+  const followUpAt = parseFollowUp(formData);
 
-  const lead = await db.lead.findUnique({
+  const lead = await db.lead.update({
     where: { id: leadId },
-    select: { id: true, name: true, email: true },
+    data: { ...data, ...(followUpAt ? { followUpAt } : {}) },
   });
-  if (!lead) return { error: "Lead not found." };
-
-  await db.lead.update({ where: { id: leadId }, data: { status: "WON" } });
-
-  let msg = "No matching club member — booking recorded.";
-  if (lead.email) {
-    const member = await db.member.findUnique({
-      where: { email: lead.email.toLowerCase() },
-      select: { id: true, name: true, referredById: true },
-    });
-    if (member?.referredById) {
-      await upsertReferralStage({
-        referrerId: member.referredById,
-        refereeMemberId: member.id,
-        refereeName: member.name,
-        status: "BOOKED",
-      });
-      msg = "Club member matched — their referral is now Booked. Mark their trip completed on their member profile to release the reward.";
-      revalidatePath(`/admin/members/${member.id}`);
-    } else if (member) {
-      msg = "Club member matched (they weren't referred).";
-    }
-  }
-
   await logActivity(actor, {
-    action: "lead.booked",
+    action: "lead.update",
     entity: "Lead",
     entityId: leadId,
-    detail: `Marked ${lead.name} booked. ${msg}`,
+    detail: `Edited ${lead.name}'s details`,
   });
-  revalidatePath(`/admin/leads/${leadId}`);
   revalidatePath("/admin/leads");
-  return { success: `Marked as booked. ${msg}` };
+  revalidatePath(`/admin/leads/${leadId}`);
+  redirect(`/admin/leads/${leadId}`);
 }

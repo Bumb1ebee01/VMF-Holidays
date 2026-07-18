@@ -20,18 +20,10 @@ import {
   IconChevronRight,
   IconActivity,
 } from "@/components/admin/icons";
+import { SOURCE_LABELS } from "@/components/admin/leadMeta";
 import shared from "@/components/admin/shared.module.css";
 
 export const dynamic = "force-dynamic";
-
-const SOURCE_LABELS: Record<string, string> = {
-  CONTACT_FORM: "Contact Form",
-  TRIP_WIZARD: "Trip Builder",
-  PACKAGE_PAGE: "Package Page",
-  ASK_QUESTION: "Question",
-  PDF_DOWNLOAD: "PDF Download",
-  OTHER: "Other",
-};
 
 const ACTION_GLYPH: Record<string, string> = {
   "auth.login": "→",
@@ -63,6 +55,16 @@ function relativeTime(date: Date) {
   const days = Math.floor(hrs / 24);
   if (days < 7) return `${days}d ago`;
   return formatDateTime(date);
+}
+
+function followLabel(d: Date) {
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const day = new Date(d); day.setHours(0, 0, 0, 0);
+  const diffDays = Math.round((day.getTime() - today.getTime()) / 86400000);
+  if (diffDays === 0) return "Today";
+  if (diffDays === -1) return "1d overdue";
+  if (diffDays < 0) return `${-diffDays}d overdue`;
+  return formatDateTime(d);
 }
 
 export default async function AdminDashboard() {
@@ -111,6 +113,34 @@ export default async function AdminDashboard() {
       take: 7,
     }),
   ]);
+
+  // Open leads whose follow-up date has arrived (or passed). Fetched on its own,
+  // guarded, so it degrades to empty if the followUpAt column isn't live yet.
+  const endToday = new Date();
+  endToday.setHours(23, 59, 59, 999);
+  let followUpsDue: {
+    id: string;
+    name: string;
+    followUpAt: Date | null;
+    destination: string | null;
+    packageTitle: string | null;
+  }[] = [];
+  if (canViewLeads) {
+    try {
+      followUpsDue = await db.lead.findMany({
+        where: {
+          followUpAt: { lte: endToday },
+          status: { in: ["NEW", "CONTACTED", "QUOTED"] },
+          ...(seeAllActivity ? {} : { assignedToId: user.id }),
+        },
+        orderBy: { followUpAt: "asc" },
+        take: 8,
+        select: { id: true, name: true, followUpAt: true, destination: true, packageTitle: true },
+      });
+    } catch {
+      followUpsDue = [];
+    }
+  }
 
   const countFor = (s: string) => statusCounts.find((x) => x.status === s)?._count._all ?? 0;
   const totalLeads = statusCounts.reduce((sum, s) => sum + s._count._all, 0);
@@ -307,6 +337,44 @@ export default async function AdminDashboard() {
 
         {/* Right column */}
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--sp-5)" }}>
+          {canViewLeads && (
+            <div className={shared.card}>
+              <div className={shared.cardHead}>
+                <div>
+                  <h2 className={shared.cardTitle}>Follow-ups Due</h2>
+                  <p className={shared.cardSub}>Reach out today</p>
+                </div>
+                {followUpsDue.length > 0 && <span className={shared.kpiLabel}>{followUpsDue.length}</span>}
+              </div>
+              {followUpsDue.length === 0 ? (
+                <div className={shared.emptyState}>
+                  <IconCheck size={26} />
+                  <p>Nothing due — you&apos;re all caught up.</p>
+                </div>
+              ) : (
+                <div className={shared.miniList}>
+                  {followUpsDue.map((l) => {
+                    const overdue = l.followUpAt ? l.followUpAt.getTime() < now.getTime() : false;
+                    return (
+                      <Link key={l.id} href={`/admin/leads/${l.id}`} className={shared.miniRow}>
+                        <span className={shared.miniAvatar}>{l.name.charAt(0)}</span>
+                        <div className={shared.miniMain}>
+                          <div className={shared.miniName}>{l.name}</div>
+                          <div className={shared.miniSub}>{l.packageTitle ?? l.destination ?? "Follow up"}</div>
+                        </div>
+                        <span
+                          className={shared.miniMeta}
+                          style={overdue ? { color: "var(--orange-ink, #C0341D)", fontWeight: 600 } : undefined}
+                        >
+                          {l.followUpAt ? followLabel(l.followUpAt) : ""}
+                        </span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
           {quickActions.length > 0 && (
             <div className={shared.card}>
               <div className={shared.cardHead}>

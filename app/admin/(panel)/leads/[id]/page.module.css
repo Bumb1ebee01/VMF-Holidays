@@ -153,6 +153,41 @@
   color: var(--muted);
 }
 
+/* System event rows in the activity timeline — lighter than authored notes. */
+.event {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-3) 0;
+  border-top: 1px solid var(--border-light);
+}
+
+.eventGlyph {
+  flex: none;
+  width: 16px;
+  text-align: center;
+  color: var(--orange);
+  font-size: 12px;
+}
+
+.eventBody {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.eventText {
+  font-size: var(--text-sm);
+  color: var(--text-light, var(--muted));
+}
+
+.eventMeta {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
 .waBtn {
   width: 100%;
   justify-content: center;

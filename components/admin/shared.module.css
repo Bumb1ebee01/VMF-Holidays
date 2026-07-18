@@ -214,6 +214,18 @@
   grid-column: 1 / -1;
 }
 
+.formSection {
+  grid-column: 1 / -1;
+  margin: var(--sp-3) 0 calc(-1 * var(--sp-2));
+  font-size: 11px;
+  font-weight: var(--fw-medium);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border-light);
+}
+
 .formActions {
   display: flex;
   align-items: center;

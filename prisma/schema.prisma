@@ -52,6 +52,7 @@ model User {
   active       Boolean       @default(true)
   permissions  String[]      @default([])
   leads        Lead[]        @relation("AssignedLeads")
+  bookings     Booking[]     @relation("BookingAdvisor")
   notes        LeadNote[]
   activity     ActivityLog[]
   createdAt    DateTime      @default(now())
@@ -94,14 +95,17 @@ model Lead {
   hotelCategory String?
   mealPlan      String?
   referralCode String?    // Travellers Club code the enquiry was attributed to
+  followUpAt   DateTime?  // next scheduled follow-up — drives the "due" dashboard widget
   assignedTo   User?      @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
   assignedToId String?
   notes        LeadNote[]
+  bookings     Booking[]
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
   @@index([status])
   @@index([createdAt])
+  @@index([followUpAt])
 }
 
 model LeadNote {
@@ -112,6 +116,77 @@ model LeadNote {
   author    User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
   authorId  String?
   createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Bookings — the post-sale lifecycle. A won lead becomes a Booking (the actual
+// trip: dates, value, status) with a ledger of Payments. Reference shown to the
+// team is derived from the id (see lib/bookings.ts), so no unique-code column.
+// ─────────────────────────────────────────────────────────────────────────────
+
+enum BookingStatus {
+  CONFIRMED
+  TRAVELLING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentType {
+  ADVANCE
+  PART_PAYMENT
+  BALANCE
+  REFUND
+  OTHER
+}
+
+enum PaymentMode {
+  CASH
+  BANK_TRANSFER
+  UPI
+  CARD
+  OTHER
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  // Loose link to the originating lead (kept even if the lead is later deleted).
+  lead          Lead?         @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId        String?
+  customerName  String
+  customerPhone String?
+  customerEmail String?
+  destination   String?
+  packageTitle  String?
+  travelStart   DateTime?
+  travelEnd     DateTime?
+  pax           String?
+  totalValue    Int           @default(0) // total trip value, INR
+  status        BookingStatus @default(CONFIRMED)
+  advisor       User?         @relation("BookingAdvisor", fields: [advisorId], references: [id], onDelete: SetNull)
+  advisorId     String?
+  notes         String?
+  payments      Payment[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([status])
+  @@index([leadId])
+  @@index([travelStart])
+}
+
+model Payment {
+  id         String      @id @default(cuid())
+  booking    Booking     @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId  String
+  amount     Int // INR, always positive; REFUND rows subtract when totalling
+  type       PaymentType @default(ADVANCE)
+  mode       PaymentMode @default(CASH)
+  paidAt     DateTime    @default(now())
+  note       String?
+  recordedBy String? // user name for the audit line
+  createdAt  DateTime    @default(now())
+
+  @@index([bookingId])
 }
 
 // "Notify me if the price drops" sign-ups — phone-only, no account. The team

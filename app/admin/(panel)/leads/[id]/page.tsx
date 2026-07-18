@@ -8,6 +8,7 @@ import StatusBadge, { type LeadStatusValue } from "@/components/admin/StatusBadg
 import LeadControls from "@/components/admin/LeadControls";
 import LeadBookingPanel from "@/components/admin/LeadBookingPanel";
 import { addLeadNote } from "../actions";
+import { SOURCE_LABELS } from "@/components/admin/leadMeta";
 import { formatDateTime } from "@/lib/utils";
 import shared from "@/components/admin/shared.module.css";
 import styles from "./page.module.css";
@@ -15,14 +16,17 @@ import styles from "./page.module.css";
 export const metadata: Metadata = { title: "Lead" };
 export const dynamic = "force-dynamic";
 
-const SOURCE_LABELS: Record<string, string> = {
-  CONTACT_FORM: "Contact Form",
-  TRIP_WIZARD: "Trip Builder",
-  PACKAGE_PAGE: "Package Page",
-  ASK_QUESTION: "Question",
-  PDF_DOWNLOAD: "PDF Download",
-  OTHER: "Other",
+const ACTION_GLYPH: Record<string, string> = {
+  "lead.create": "✦",
+  "lead.status": "◆",
+  "lead.assign": "○",
+  "lead.update": "✎",
+  "lead.booked": "✓",
+  "lead.delete": "✕",
 };
+
+const formatDate = (d: Date) =>
+  d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 export default async function LeadDetailPage({
   params,
@@ -32,7 +36,7 @@ export default async function LeadDetailPage({
   const { id } = await params;
   const me = await requireUser();
 
-  const [lead, users] = await Promise.all([
+  const [lead, users, activity] = await Promise.all([
     db.lead.findUnique({
       where: { id },
       include: {
@@ -41,12 +45,20 @@ export default async function LeadDetailPage({
           orderBy: { createdAt: "desc" },
           include: { author: { select: { name: true } } },
         },
+        bookings: { select: { id: true, status: true }, orderBy: { createdAt: "desc" } },
       },
     }),
     db.user.findMany({
       where: { active: true },
       select: { id: true, name: true },
       orderBy: { name: "asc" },
+    }),
+    // The lead's own history for the activity timeline. `lead.note` events are
+    // excluded — the note bodies themselves already appear in the timeline.
+    db.activityLog.findMany({
+      where: { entity: "Lead", entityId: id, action: { not: "lead.note" } },
+      orderBy: { createdAt: "desc" },
+      take: 60,
     }),
   ]);
 
@@ -73,9 +85,30 @@ export default async function LeadDetailPage({
     ["Preferred contact", lead.contactMode ? `${lead.contactMode}${lead.contactTime ? ` · ${lead.contactTime}` : ""}` : null],
     ["Budget", lead.budget],
     ["Interests", lead.interests.length ? lead.interests.join(", ") : null],
+    ["Next follow-up", lead.followUpAt ? formatDate(lead.followUpAt) : null],
     ["Source", SOURCE_LABELS[lead.source] ?? lead.source],
     ["Received", formatDateTime(lead.createdAt)],
   ];
+
+  // Merge notes + system events into one reverse-chronological activity timeline.
+  const timeline = [
+    ...lead.notes.map((n) => ({
+      id: `n-${n.id}`,
+      at: n.createdAt,
+      who: n.author?.name ?? "Former member",
+      text: n.body,
+      kind: "note" as const,
+      action: "",
+    })),
+    ...activity.map((a) => ({
+      id: `a-${a.id}`,
+      at: a.createdAt,
+      who: a.userName,
+      text: a.detail ?? a.action.replace(/[.]/g, " "),
+      kind: "event" as const,
+      action: a.action,
+    })),
+  ].sort((a, b) => b.at.getTime() - a.at.getTime());
 
   return (
     <div>
@@ -84,7 +117,14 @@ export default async function LeadDetailPage({
           <Link href="/admin/leads" className={styles.backLink}>← All leads</Link>
           <h1 className={shared.pageTitle}>{lead.name}</h1>
         </div>
-        <StatusBadge status={lead.status as LeadStatusValue} />
+        <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
+          {can(me, "leads:edit") && (
+            <Link href={`/admin/leads/${lead.id}/edit`} className="btn btn-outline btn--sm">
+              Edit details
+            </Link>
+          )}
+          <StatusBadge status={lead.status as LeadStatusValue} />
+        </div>
       </div>
 
       <div className={styles.layout}>
@@ -110,7 +150,7 @@ export default async function LeadDetailPage({
           </div>
 
           <div className={`${shared.panel} ${shared.panelPad}`}>
-            <h2 className={styles.panelTitle}>Notes</h2>
+            <h2 className={styles.panelTitle}>Activity</h2>
             {can(me, "leads:edit") && (
               <form action={addNote} className={styles.noteForm}>
                 <textarea
@@ -124,18 +164,32 @@ export default async function LeadDetailPage({
               </form>
             )}
 
-            {lead.notes.length === 0 ? (
-              <p className={styles.noNotes}>No notes yet.</p>
+            {timeline.length === 0 ? (
+              <p className={styles.noNotes}>No activity yet.</p>
             ) : (
               <ul className={styles.noteList}>
-                {lead.notes.map((note) => (
-                  <li key={note.id} className={styles.note}>
-                    <p className={styles.noteBody}>{note.body}</p>
-                    <span className={styles.noteMeta}>
-                      {note.author?.name ?? "Former member"} · {formatDateTime(note.createdAt)}
-                    </span>
-                  </li>
-                ))}
+                {timeline.map((e) =>
+                  e.kind === "note" ? (
+                    <li key={e.id} className={styles.note}>
+                      <p className={styles.noteBody}>{e.text}</p>
+                      <span className={styles.noteMeta}>
+                        {e.who} · {formatDateTime(e.at)}
+                      </span>
+                    </li>
+                  ) : (
+                    <li key={e.id} className={styles.event}>
+                      <span className={styles.eventGlyph} aria-hidden="true">
+                        {ACTION_GLYPH[e.action] ?? "•"}
+                      </span>
+                      <div className={styles.eventBody}>
+                        <span className={styles.eventText}>{e.text}</span>
+                        <span className={styles.eventMeta}>
+                          {e.who} · {formatDateTime(e.at)}
+                        </span>
+                      </div>
+                    </li>
+                  )
+                )}
               </ul>
             )}
           </div>
@@ -153,11 +207,33 @@ export default async function LeadDetailPage({
               canDelete={can(me, "leads:delete")}
             />
           </div>
-          {can(me, "leads:edit") && (
+          {lead.bookings.length > 0 ? (
             <div className={`${shared.panel} ${shared.panelPad}`}>
-              <LeadBookingPanel leadId={lead.id} memberName={clubMember?.name ?? null} />
+              <h3 className={shared.cardTitle}>Booking</h3>
+              <p className={shared.cardSub}>This enquiry has been converted to a booking.</p>
+              <Link
+                href={`/admin/bookings/${lead.bookings[0].id}`}
+                className="btn btn-outline btn--sm"
+                style={{ marginTop: 10 }}
+              >
+                View booking →
+              </Link>
             </div>
-          )}
+          ) : can(me, "bookings:manage") ? (
+            <div className={`${shared.panel} ${shared.panelPad}`}>
+              <LeadBookingPanel
+                leadId={lead.id}
+                memberName={clubMember?.name ?? null}
+                prefill={{
+                  name: lead.name,
+                  phone: lead.phone ?? "",
+                  email: lead.email ?? "",
+                  destination: lead.destination ?? "",
+                  packageTitle: lead.packageTitle ?? "",
+                }}
+              />
+            </div>
+          ) : null}
           <a
             href={`https://wa.me/91${lead.phone.replace(/\D/g, "").slice(-10)}`}
             target="_blank"

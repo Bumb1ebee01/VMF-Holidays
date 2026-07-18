@@ -9,6 +9,8 @@ export type PermissionKey =
   | "leads:edit"
   | "leads:assign"
   | "leads:delete"
+  | "bookings:view"
+  | "bookings:manage"
   | "packages:manage"
   | "destinations:manage"
   | "testimonials:manage"
@@ -31,6 +33,8 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "leads:edit", label: "Update lead status", group: "Leads", hint: "Change status and add notes" },
   { key: "leads:assign", label: "Assign leads", group: "Leads", hint: "Assign leads to team members" },
   { key: "leads:delete", label: "Delete leads", group: "Leads", hint: "Permanently remove a lead" },
+  { key: "bookings:view", label: "View bookings", group: "Bookings", hint: "See bookings and their payment ledgers" },
+  { key: "bookings:manage", label: "Manage bookings", group: "Bookings", hint: "Create bookings, record payments, change status" },
   { key: "packages:manage", label: "Manage packages", group: "Content", hint: "Create, edit and delete packages" },
   { key: "destinations:manage", label: "Manage destinations", group: "Content", hint: "Create, edit and delete destinations" },
   { key: "testimonials:manage", label: "Manage testimonials", group: "Content", hint: "Create, edit and delete testimonials" },
