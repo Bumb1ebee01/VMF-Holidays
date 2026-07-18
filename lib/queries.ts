@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { db } from "./db";
 import { slugify } from "./utils";
-import type { Package, Destination, GuideSection, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
+import type { Package, Hotel, Destination, GuideSection, Testimonial, ItineraryDay, TripCategorySlug, BlogPost, Offer, GalleryPhoto } from "./types";
 import type { Package as DbPackage, Destination as DbDestination } from "./generated/prisma/client";
 
 function toPackage(row: DbPackage): Package {
@@ -17,6 +17,14 @@ function toPackage(row: DbPackage): Package {
     gallery: row.gallery,
     hotel: row.hotel ?? undefined,
     hotelImage: row.hotelImage ?? undefined,
+    // Prefer the multi-hotel list; fall back to the legacy single hotel so older
+    // packages still surface their hotel until they're re-saved in the CMS.
+    hotels: (() => {
+      const list = Array.isArray(row.hotels) ? (row.hotels as unknown as Hotel[]) : [];
+      const clean = list.filter((h) => h && typeof h.name === "string" && h.name.trim());
+      if (clean.length) return clean;
+      return row.hotel ? [{ name: row.hotel, image: row.hotelImage ?? undefined }] : [];
+    })(),
     fromPrice: row.fromPrice,
     priceOnRequest: row.priceOnRequest,
     highlights: row.highlights,

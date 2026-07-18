@@ -194,6 +194,75 @@ export function ItineraryEditor({ values, onChange }: ItineraryEditorProps) {
   );
 }
 
+/* ---------- Hotels editor (name + city + image, repeatable) ---------- */
+
+export interface HotelInput {
+  name: string;
+  image: string;
+  city: string;
+}
+
+interface HotelsEditorProps {
+  values: HotelInput[];
+  onChange: (values: HotelInput[]) => void;
+}
+
+export function HotelsEditor({ values, onChange }: HotelsEditorProps) {
+  const update = (i: number, patch: Partial<HotelInput>) => {
+    const next = [...values];
+    next[i] = { ...next[i], ...patch };
+    onChange(next);
+  };
+  return (
+    <div className="form-group">
+      <span className="form-label">Hotels</span>
+      <p className={styles.help}>
+        Add each hotel this trip stays at. Name and photo appear on the package page and in the
+        downloadable itinerary PDF. Add more than one for multi-city trips.
+      </p>
+      <div className={styles.list}>
+        {values.map((h, i) => (
+          <div key={i} className={styles.dayCard}>
+            <div className={styles.dayHeader}>
+              <span className={styles.dayNum}>Hotel {i + 1}</span>
+              <button
+                type="button"
+                className={styles.removeBtn}
+                aria-label={`Remove hotel ${i + 1}`}
+                onClick={() => onChange(values.filter((_, j) => j !== i))}
+              >
+                ✕
+              </button>
+            </div>
+            <input
+              type="text"
+              className="form-input"
+              value={h.city}
+              placeholder="City / stop — e.g. Munnar (optional)"
+              onChange={(e) => update(i, { city: e.target.value })}
+            />
+            <input
+              type="text"
+              className="form-input"
+              value={h.name}
+              placeholder="Hotel name — e.g. Taj Backwater Resort"
+              onChange={(e) => update(i, { name: e.target.value })}
+            />
+            <ImageUpload label="Hotel image" value={h.image} onChange={(url) => update(i, { image: url })} />
+          </div>
+        ))}
+        <button
+          type="button"
+          className={styles.addBtn}
+          onClick={() => onChange([...values, { name: "", image: "", city: "" }])}
+        >
+          + Add hotel
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- Sections editor (heading + body) ---------- */
 
 export interface SectionInput {

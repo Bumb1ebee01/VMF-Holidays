@@ -25,6 +25,7 @@ export interface PackagePayload {
   gallery: string[];
   hotel: string;
   hotelImage: string;
+  hotels: { name: string; image: string; city: string }[];
   highlights: string[];
   inclusions: string[];
   exclusions: string[];
@@ -66,6 +67,9 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
     gallery: payload.gallery.map((g) => g.trim()).filter(Boolean),
     hotel: payload.hotel.trim() || null,
     hotelImage: payload.hotelImage.trim() || null,
+    hotels: payload.hotels
+      .map((h) => ({ name: h.name.trim(), image: h.image.trim(), city: h.city.trim() }))
+      .filter((h) => h.name),
     highlights: payload.highlights.map((h) => h.trim()).filter(Boolean),
     inclusions: payload.inclusions.map((i) => i.trim()).filter(Boolean),
     exclusions: payload.exclusions.map((e) => e.trim()).filter(Boolean),

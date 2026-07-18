@@ -10,7 +10,9 @@ import {
   ImageUpload,
   StringListEditor,
   ItineraryEditor,
+  HotelsEditor,
   type ItineraryDayInput,
+  type HotelInput,
 } from "./fields";
 import { slugify } from "@/lib/utils";
 import shared from "./shared.module.css";
@@ -52,8 +54,13 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
   const [priceOnRequest, setPriceOnRequest] = useState(initial?.priceOnRequest ?? false);
   const [heroImage, setHeroImage] = useState(initial?.heroImage ?? "");
   const [gallery, setGallery] = useState<string[]>(initial?.gallery ?? []);
-  const [hotel, setHotel] = useState(initial?.hotel ?? "");
-  const [hotelImage, setHotelImage] = useState(initial?.hotelImage ?? "");
+  const [hotels, setHotels] = useState<HotelInput[]>(() => {
+    if (initial?.hotels?.length) {
+      return initial.hotels.map((h) => ({ name: h.name ?? "", image: h.image ?? "", city: h.city ?? "" }));
+    }
+    // Migrate a legacy single hotel into the list so nothing is lost on first edit.
+    return initial?.hotel ? [{ name: initial.hotel, image: initial.hotelImage ?? "", city: "" }] : [];
+  });
   const [highlights, setHighlights] = useState<string[]>(initial?.highlights ?? []);
   const [inclusions, setInclusions] = useState<string[]>(initial?.inclusions ?? []);
   const [exclusions, setExclusions] = useState<string[]>(initial?.exclusions ?? []);
@@ -77,8 +84,10 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
       priceOnRequest,
       heroImage,
       gallery,
-      hotel,
-      hotelImage,
+      hotels,
+      // Legacy single-hotel fields kept in sync (first hotel) for anything still reading them.
+      hotel: hotels[0]?.name ?? "",
+      hotelImage: hotels[0]?.image ?? "",
       highlights,
       inclusions,
       exclusions,
@@ -230,17 +239,7 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
           placeholder="/uploads/… or /images/…"
         />
         <div className={styles.spacer} />
-        <div className={shared.fieldGroup}>
-          <label className={shared.label}>Hotel name</label>
-          <input
-            className={shared.input}
-            value={hotel}
-            onChange={(e) => setHotel(e.target.value)}
-            placeholder="e.g. Taj Backwater Resort"
-          />
-        </div>
-        <div className={styles.spacer} />
-        <ImageUpload label="Hotel image" value={hotelImage} onChange={setHotelImage} />
+        <HotelsEditor values={hotels} onChange={setHotels} />
       </div>
 
       <div className={`${shared.panel} ${shared.panelPad}`}>

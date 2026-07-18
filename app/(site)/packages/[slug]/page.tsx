@@ -188,6 +188,33 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
             </div>
           </section>
 
+          {/* Hotels */}
+          {pkg.hotels && pkg.hotels.length > 0 && (
+            <section className={styles.section}>
+              <h2 className={styles.sectionTitle}>Where You&apos;ll Stay</h2>
+              <div className={styles.hotelGrid}>
+                {pkg.hotels.map((h, i) => (
+                  <div key={i} className={styles.hotelCard}>
+                    {h.image ? (
+                      <div className={styles.hotelImgWrap}>
+                        <Image src={h.image} alt={h.name} fill sizes="(max-width: 768px) 100vw, 320px" className={styles.hotelImg} />
+                      </div>
+                    ) : (
+                      <div className={`${styles.hotelImgWrap} ${styles.hotelImgEmpty}`} />
+                    )}
+                    <div className={styles.hotelInfo}>
+                      {h.city && <span className={styles.hotelCity}>{h.city}</span>}
+                      <span className={styles.hotelName}>{h.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.hotelNote}>
+                Hotels are indicative; an equivalent-category hotel may be substituted subject to availability.
+              </p>
+            </section>
+          )}
+
           {/* FAQ */}
           <PackageFaq pkg={pkg} />
 

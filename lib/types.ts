@@ -29,6 +29,12 @@ export interface ItineraryDay {
   description: string;
 }
 
+export interface Hotel {
+  name: string;
+  image?: string;
+  city?: string;
+}
+
 export interface Package {
   slug: string;
   title: string;
@@ -41,6 +47,7 @@ export interface Package {
   gallery: string[];
   hotel?: string;
   hotelImage?: string;
+  hotels?: Hotel[];
   fromPrice: number;
   priceOnRequest?: boolean;
   highlights: string[];

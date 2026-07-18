@@ -242,6 +242,15 @@ const styles = StyleSheet.create({
   dayTitle: { color: NAVY, fontSize: 11.5, fontWeight: 700 },
   dayText: { color: "#4a4a4a", marginTop: 2 },
 
+  // Hotel cards.
+  hotelRow: { flexDirection: "row", marginBottom: 12, alignItems: "flex-start" },
+  hotelImg: { width: 90, height: 66, objectFit: "cover", borderRadius: 5, marginRight: 12 },
+  hotelImgEmpty: { width: 90, height: 66, borderRadius: 5, marginRight: 12, backgroundColor: HAIR },
+  hotelBody: { flex: 1, paddingTop: 1 },
+  hotelCity: { color: ORANGE, fontSize: 8.5, fontWeight: 700, marginBottom: 2 },
+  hotelName: { color: NAVY, fontSize: 11.5, fontWeight: 700 },
+  hotelFootnote: { color: MUTED, fontSize: 8.5, marginTop: 3 },
+
   // Terms & Conditions.
   termsHeadRow: { flexDirection: "row", marginTop: 11, marginBottom: 4 },
   termsNum: { color: ORANGE, fontWeight: 700, fontSize: 10.5, width: 18 },
@@ -493,6 +502,30 @@ function Itinerary({ pkg, opts }: { pkg: Package; opts: ItineraryPdfOptions }) {
           </View>
         )}
 
+        {/* Hotels — with photos */}
+        {opts.hotels && opts.hotels.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Hotels</Text>
+            {opts.hotels.map((h, i) => (
+              <View style={styles.hotelRow} key={i} wrap={false}>
+                {h.imageDataUri ? (
+                  // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image, not an HTML img
+                  <Image src={h.imageDataUri} style={styles.hotelImg} />
+                ) : (
+                  <View style={styles.hotelImgEmpty} />
+                )}
+                <View style={styles.hotelBody}>
+                  {h.city ? <Text style={styles.hotelCity}>{h.city.toUpperCase()}</Text> : null}
+                  <Text style={styles.hotelName}>{h.name}</Text>
+                </View>
+              </View>
+            ))}
+            <Text style={styles.hotelFootnote}>
+              Hotels are indicative; an equivalent-category hotel may be substituted subject to availability.
+            </Text>
+          </View>
+        )}
+
         {/* Terms & Conditions — fresh page */}
         <View style={styles.section} break>
           <Text style={styles.sectionTitle}>{terms.title}</Text>
@@ -533,6 +566,8 @@ export interface ItineraryPdfOptions {
   traceId?: string;
   /** Data-URI of the hero image, pre-fetched by the caller (route can't rely on remote fetch inside render). */
   heroDataUri?: string | null;
+  /** Hotels with images pre-fetched to data-URIs by the caller. */
+  hotels?: { name: string; city?: string; imageDataUri?: string | null }[];
 }
 
 /** Render an itinerary PDF to a Buffer. Reused by the public route and (later) the CRM. */

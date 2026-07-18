@@ -90,6 +90,15 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
   // never blank.
   const hero = (await heroDataUri(dest?.heroImage)) ?? (await heroDataUri(pkg.heroImage));
 
+  // Pre-fetch hotel images to data URIs too — @react-pdf can't fetch during render.
+  const hotels = await Promise.all(
+    (pkg.hotels ?? []).slice(0, 8).map(async (h) => ({
+      name: h.name,
+      city: h.city,
+      imageDataUri: await heroDataUri(h.image),
+    }))
+  );
+
   // ── Member path: one-click, no lead, trace-stamped ──
   const member = await getCurrentMember();
   if (member) {
@@ -102,6 +111,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
       cover: { name: member.name },
       traceId: `member ${member.id.slice(-6).toUpperCase()}`,
       heroDataUri: hero,
+      hotels,
     });
     return pdfResponse(bytes, pkg);
   }
@@ -149,6 +159,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
     region,
     cover: { name },
     heroDataUri: hero,
+    hotels,
   });
   return pdfResponse(bytes, pkg);
 }

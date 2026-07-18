@@ -31,6 +31,13 @@ export default async function EditPackagePage({
       }))
     : [];
 
+  const hotels = (Array.isArray(pkg.hotels)
+    ? (pkg.hotels as { name?: string; image?: string; city?: string }[])
+    : []
+  )
+    .filter((h) => h && h.name)
+    .map((h) => ({ name: h.name ?? "", image: h.image ?? "", city: h.city ?? "" }));
+
   return (
     <div>
       <div className={shared.pageHeader}>
@@ -54,6 +61,9 @@ export default async function EditPackagePage({
           priceOnRequest: pkg.priceOnRequest,
           heroImage: pkg.heroImage,
           gallery: pkg.gallery,
+          hotel: pkg.hotel ?? "",
+          hotelImage: pkg.hotelImage ?? "",
+          hotels,
           highlights: pkg.highlights,
           inclusions: pkg.inclusions,
           exclusions: pkg.exclusions,

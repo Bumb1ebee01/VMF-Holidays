@@ -166,8 +166,9 @@ model Package {
   nights          Int
   heroImage       String
   gallery         String[]
-  hotel           String?
-  hotelImage      String?
+  hotel           String?      // legacy single hotel (kept for back-compat)
+  hotelImage      String?      // legacy single hotel image
+  hotels          Json         @default("[]") // [{ name, image, city }] — multiple hotels per package
   fromPrice       Int
   priceOnRequest  Boolean      @default(false)
   highlights      String[]
