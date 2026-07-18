@@ -29,7 +29,13 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image", title: `${TITLE} | VMF Holidays`, description: DESCRIPTION },
 };
 
-export default async function BudgetExplorerPage() {
+export default async function BudgetExplorerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ budget?: string }>;
+}) {
+  const { budget } = await searchParams;
+  const initialBudget = budget !== undefined ? Number(budget) : undefined;
   const [destinations, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
 
   // Group real, priced packages under their destination so a budget match can
@@ -76,7 +82,7 @@ export default async function BudgetExplorerPage() {
 
       <section className="section">
         <div className="container">
-          <BudgetExplorer destinations={data} />
+          <BudgetExplorer destinations={data} initialBudget={initialBudget} />
         </div>
       </section>
     </div>

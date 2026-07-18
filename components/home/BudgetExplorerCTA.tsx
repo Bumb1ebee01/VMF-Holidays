@@ -2,7 +2,12 @@ import Link from "next/link";
 import { FadeIn } from "@/components/ui/Motion";
 import styles from "./BudgetExplorerCTA.module.css";
 
-const AMOUNTS = ["₹25k", "₹50k", "₹1L", "₹2L+"];
+const AMOUNTS = [
+  { label: "₹25k", value: 25000 },
+  { label: "₹50k", value: 50000 },
+  { label: "₹1L", value: 100000 },
+  { label: "₹2L+", value: 200000 },
+];
 
 export default function BudgetExplorerCTA() {
   return (
@@ -17,9 +22,16 @@ export default function BudgetExplorerCTA() {
               package that fits — from a weekend in Goa to an overwater villa in the Maldives. No
               sign-up, no guesswork.
             </p>
-            <div className={styles.chips} aria-hidden="true">
+            <div className={styles.chips}>
               {AMOUNTS.map((a) => (
-                <span key={a} className={styles.chip}>{a}</span>
+                <Link
+                  key={a.value}
+                  href={`/tools/budget-explorer?budget=${a.value}`}
+                  className={styles.chip}
+                  aria-label={`See trips within ${a.label} per person`}
+                >
+                  {a.label}
+                </Link>
               ))}
             </div>
           </div>

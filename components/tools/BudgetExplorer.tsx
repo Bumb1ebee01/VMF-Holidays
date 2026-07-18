@@ -29,6 +29,16 @@ const MAX = 200000;
 const STEP = 5000;
 const WA_NUMBER = "917499322412";
 const MAX_PACKAGES_SHOWN = 3;
+const DEFAULT_BUDGET = 50000;
+
+// Accept a budget from the URL (e.g. the homepage "₹50k" chips), but never trust
+// it blindly: snap to the slider's step and clamp into range, falling back to the
+// default for anything missing or malformed.
+function clampBudget(v: number | undefined): number {
+  if (v === undefined || !Number.isFinite(v)) return DEFAULT_BUDGET;
+  const snapped = Math.round(v / STEP) * STEP;
+  return Math.min(MAX, Math.max(MIN, snapped));
+}
 
 function Card({ d, budget }: { d: BudgetDestination; budget: number }) {
   // Only offer packages that actually fit the chosen budget, cheapest first.
@@ -99,8 +109,14 @@ const REGION_TABS: { value: RegionFilter; label: string }[] = [
   { value: "international", label: "International" },
 ];
 
-export default function BudgetExplorer({ destinations }: { destinations: BudgetDestination[] }) {
-  const [budget, setBudget] = useState(50000);
+export default function BudgetExplorer({
+  destinations,
+  initialBudget,
+}: {
+  destinations: BudgetDestination[];
+  initialBudget?: number;
+}) {
+  const [budget, setBudget] = useState(() => clampBudget(initialBudget));
   const [region, setRegion] = useState<RegionFilter>("all");
 
   const matches = useMemo(

@@ -57,6 +57,14 @@
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 5px 14px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.chip:hover {
+  border-color: var(--orange);
+  color: var(--orange-ink);
+  transform: translateY(-1px);
 }
 
 .btn {
