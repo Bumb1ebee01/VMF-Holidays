@@ -1,0 +1,140 @@
+.section {
+  margin-top: var(--sp-10);
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 8px;
+}
+
+.intro {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 16px;
+  max-width: 60ch;
+}
+
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+}
+
+.note {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+  background: var(--orange-subtle);
+  border: 1px solid var(--hairline-orange);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.item {
+  border-bottom: 1px solid var(--border);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  list-style: none;
+  background: var(--card-bg);
+  transition: background var(--dur-fast) var(--ease);
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:hover {
+  background: var(--off-white);
+}
+
+.num {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: var(--orange-subtle);
+  color: var(--orange-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.heading {
+  flex: 1 1 auto;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.chevron {
+  flex: 0 0 auto;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.item[open] .chevron {
+  transform: rotate(-135deg);
+}
+
+.points {
+  margin: 0;
+  padding: 4px 16px 18px 52px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--card-bg);
+}
+
+.points li {
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-light);
+  list-style: disc;
+}
+
+.footNote {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 16px 0 0;
+}
+
+.footNote a {
+  color: var(--orange-ink);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}

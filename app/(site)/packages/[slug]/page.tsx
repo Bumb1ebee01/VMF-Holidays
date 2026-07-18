@@ -9,6 +9,7 @@ import { JsonLd, packageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import ItineraryAccordion from "@/components/packages/ItineraryAccordion";
 import CitySights from "@/components/packages/CitySights";
 import PackageFaq from "@/components/packages/PackageFaq";
+import PackageTerms from "@/components/packages/PackageTerms";
 import EnquirySidebar from "@/components/packages/EnquirySidebar";
 import PackageCard from "@/components/ui/PackageCard";
 import ShareTripButton from "@/components/packages/ShareTripButton";
@@ -62,6 +63,13 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
   if (!pkg) notFound();
 
   const related = await getRelatedPackages(pkg);
+
+  // Same lookup the itinerary PDF uses to pick the correct T&C set.
+  const dest = await db.destination.findUnique({
+    where: { slug: pkg.destinationSlug },
+    select: { region: true },
+  });
+  const region = dest?.region === "international" ? "international" : "domestic";
 
   return (
     <div className={styles.page}>
@@ -182,6 +190,9 @@ export default async function PackageDetailPage(props: PageProps<"/packages/[slu
 
           {/* FAQ */}
           <PackageFaq pkg={pkg} />
+
+          {/* Terms & Conditions (same set as the written quotation) */}
+          <PackageTerms region={region} />
         </div>
 
         {/* Sidebar */}

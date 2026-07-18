@@ -20,14 +20,35 @@ export type TourRegion = "domestic" | "international";
 
 // ---- Shared clauses (identical for both) ---------------------------------------
 
-const CANCELLATION: TermsSection = {
+// Domestic and international run different notice windows — international
+// suppliers (airlines, overseas hotels, visas) lock in money much earlier.
+// Exported so the public /terms page renders the same slab the quotation
+// enforces; the two must never diverge.
+export const DOMESTIC_CANCELLATION: TermsSection = {
   heading: "Cancellation Policy",
   points: [
-    "30 days or more before departure: 25% of the package cost will be charged as cancellation fee.",
-    "15–30 days before departure: 50% of the package cost will be charged.",
-    "7–14 days before departure: 75% of the package cost will be charged.",
-    "Less than 7 days before departure / No Show: 100% of the package cost will be charged.",
-    "Refunds (if applicable) will be processed within 10–15 working days after receiving a written cancellation request.",
+    "45 days or more before departure: 25% of the total package cost is charged as a cancellation fee.",
+    "30–44 days before departure: 50% of the package cost is charged.",
+    "15–29 days before departure: 75% of the package cost is charged.",
+    "8–14 days before departure: 90% of the package cost is charged.",
+    "7 days or less before departure, or No Show: 100% of the package cost is charged.",
+    "Cancellation charges apply to the full package cost regardless of the amount paid to date; any shortfall between the amount paid and the charge due is payable by the traveller.",
+    "Non-refundable costs — air and rail tickets, visa fees, and pre-booked or peak-season hotel nights — are charged in full at actuals, over and above the applicable cancellation fee.",
+    "Refunds, where applicable, are processed within 10–15 working days of a written cancellation request.",
+  ],
+};
+
+export const INTL_CANCELLATION: TermsSection = {
+  heading: "Cancellation Policy",
+  points: [
+    "60 days or more before departure: 25% of the total land-package cost is charged as a cancellation fee.",
+    "45–59 days before departure: 50% of the package cost is charged.",
+    "30–44 days before departure: 75% of the package cost is charged.",
+    "15–29 days before departure: 90% of the package cost is charged.",
+    "14 days or less before departure, or No Show: 100% of the package cost is charged.",
+    "Air tickets, visa fees, and non-refundable hotels are non-refundable once booked and are charged in full at actuals in every case, over and above the applicable cancellation fee.",
+    "Cancellation charges apply to the full package cost regardless of the amount paid to date; any shortfall is payable by the traveller.",
+    "Refunds, where applicable, are processed within 10–15 working days of a written cancellation request.",
   ],
 };
 
@@ -63,8 +84,9 @@ const MEALS: TermsSection = {
 const FORCE_MAJEURE: TermsSection = {
   heading: "Force Majeure & Unforeseen Events",
   points: [
-    "VMF Holidays shall not be liable for any delay, change in itinerary, or additional cost due to circumstances beyond our control — natural calamities, weather, strikes, political unrest, flight / train cancellations, or accidents.",
-    "Any additional expense arising from such situations will be borne by the traveller directly.",
+    "VMF Holidays shall not be liable for any delay, curtailment, change in itinerary, or additional cost arising from circumstances beyond our control — natural calamities, weather, strikes, political unrest, pandemics or health advisories, flight / train cancellations, or accidents.",
+    "In such events the applicable cancellation charges and any non-recoverable supplier costs still apply, and any additional expense is borne by the traveller directly.",
+    "Where feasible, VMF Holidays may at its sole discretion offer a future-travel credit for the recoverable portion; this is a goodwill measure and does not constitute an entitlement to a refund.",
   ],
 };
 
@@ -94,8 +116,8 @@ const JURISDICTION: TermsSection = {
 const AMENDMENTS: TermsSection = {
   heading: "Amendments & Changes",
   points: [
-    "Requests for date change, itinerary modification, or name change must be made at least 15 days prior to departure.",
-    "Any amendment is subject to availability and may attract additional cost.",
+    "Requests for date change, itinerary modification, or name change must be made at least 21 days prior to departure.",
+    "Any amendment is subject to availability and may attract additional cost, including any supplier re-booking charge or fare / tariff difference.",
     "No refund will be made for unused services, missed sightseeing, or early departure during the tour.",
   ],
 };
@@ -105,9 +127,10 @@ const AMENDMENTS: TermsSection = {
 const DOMESTIC_BOOKING: TermsSection = {
   heading: "Booking & Payment Policy",
   points: [
-    "To confirm your booking, an initial advance payment of 50% of the total package cost is required at the time of booking.",
-    "The balance must be paid at least 15 days prior to the departure date.",
-    "For bookings made within 15 days of departure, 100% payment is required at the time of confirmation.",
+    "To confirm your booking, a non-refundable advance of 50% of the total package cost is required at the time of booking.",
+    "The balance must be paid at least 21 days prior to the departure date.",
+    "For bookings made within 21 days of departure, 100% payment is required at the time of confirmation.",
+    "Quoted rates hold for 7 days from the date of quotation and until full payment is received; rates may be revised for changes in applicable taxes, transport / fuel costs, or hotel tariffs before full payment.",
     "Payments can be made via bank transfer, UPI, cheque, or other modes communicated by VMF Holidays.",
     "The booking stands confirmed only after receipt of payment and written acknowledgment from VMF Holidays.",
   ],
@@ -127,9 +150,9 @@ const DOMESTIC_DOCUMENTS: TermsSection = {
 const INTL_BOOKING: TermsSection = {
   heading: "Booking & Payment Policy",
   points: [
-    "To confirm your booking, an initial advance payment is required at the time of booking; the applicable percentage is confirmed on your quotation.",
-    "As international airline tickets and certain hotels / services are non-refundable once issued, a higher advance and earlier full payment may apply.",
-    "Full and final payment must be completed as per the schedule stated on your quotation, and in all cases before travel-document / visa processing.",
+    "To confirm your booking, a non-refundable advance of at least 50% of the total package cost is required at the time of booking; a higher advance may apply and is confirmed on your quotation.",
+    "As international airline tickets and certain hotels / services are non-refundable once issued, full or higher payment may be required earlier than for domestic tours.",
+    "The balance must be paid at least 45 days prior to departure, and in all cases before travel-document / visa processing; for bookings within 45 days, full payment is required at confirmation.",
     "Payments can be made via bank transfer, UPI, cheque, or other modes communicated by VMF Holidays.",
     "The booking stands confirmed only after receipt of payment and written acknowledgment from VMF Holidays.",
   ],
@@ -176,7 +199,7 @@ const INTL_INSURANCE_HEALTH: TermsSection = {
 
 const DOMESTIC_TERMS: TermsSection[] = [
   DOMESTIC_BOOKING,
-  CANCELLATION,
+  DOMESTIC_CANCELLATION,
   AMENDMENTS,
   DOMESTIC_DOCUMENTS,
   HOTELS,
@@ -190,7 +213,7 @@ const DOMESTIC_TERMS: TermsSection[] = [
 
 const INTERNATIONAL_TERMS: TermsSection[] = [
   INTL_BOOKING,
-  CANCELLATION,
+  INTL_CANCELLATION,
   AMENDMENTS,
   INTL_PASSPORT_VISA,
   INTL_FOREX,

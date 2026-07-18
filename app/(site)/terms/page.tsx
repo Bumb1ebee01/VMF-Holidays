@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { DOMESTIC_CANCELLATION } from "@/lib/itinerary-terms";
 import styles from "../privacy/page.module.css";
 
 export const metadata: Metadata = {
@@ -13,7 +14,7 @@ export default function TermsPage() {
       <div className={styles.hero}>
         <div className="container">
           <h1 className={styles.title}>Terms &amp; Conditions</h1>
-          <p className={styles.updated}>Last updated: June 2025</p>
+          <p className={styles.updated}>Last updated: July 2026</p>
         </div>
       </div>
       <div className={`container ${styles.content}`}>
@@ -21,10 +22,16 @@ export default function TermsPage() {
         <p>All bookings are confirmed only upon receipt of the deposit and a written confirmation from VMF Holidays. Verbal confirmations are not binding.</p>
 
         <h2>2. Payment Terms</h2>
-        <p>A deposit of 25% of the total package cost is required at the time of booking. The remaining balance is due 30 days before departure, unless otherwise agreed in writing.</p>
+        <p>A non-refundable advance of 50% of the total package cost confirms your booking, with the balance due at least 21 days before departure. For bookings made within 21 days of departure, full payment is required at the time of confirmation. International tours require a higher advance and earlier full payment (balance at least 45 days before departure), as stated on your quotation, because airline tickets, visas and overseas hotels are booked and paid for well in advance.</p>
 
-        <h2>3. Cancellation Policy</h2>
-        <p>Cancellations made more than 30 days before departure: 10% cancellation fee. 15–30 days before: 25% fee. 7–14 days before: 50% fee. Less than 7 days: 100% fee. Cancellation fees from airlines, hotels and third parties may apply additionally.</p>
+        <h2>3. Cancellation Policy (Domestic)</h2>
+        <p>If you need to cancel, the following charges apply — the same policy stated on your written quotation:</p>
+        <ul>
+          {DOMESTIC_CANCELLATION.points.map((point) => (
+            <li key={point}>{point}</li>
+          ))}
+        </ul>
+        <p>International tours follow a stricter cancellation schedule (higher charges further from departure, and airline / visa / hotel costs non-refundable at actuals), set out on your quotation. Cancellation fees levied by airlines, hotels and other third-party suppliers apply in addition to the above.</p>
 
         <h2>4. Changes to Bookings</h2>
         <p>Requests to change travel dates, destinations or inclusions after confirmation are subject to availability and may incur amendment fees. VMF Holidays will endeavour to accommodate changes but cannot guarantee them.</p>
