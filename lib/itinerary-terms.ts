@@ -238,5 +238,5 @@ export function getTerms(region: TourRegion): { title: string; sections: TermsSe
 export const PRICE_NOTES = [
   "Price is inclusive of all applicable taxes (GST).",
   "Rates are valid for 7 days from the date of quotation.",
-  "Booking amount is non-refundable.",
+  "100% transparent pricing — no hidden charges.",
 ];

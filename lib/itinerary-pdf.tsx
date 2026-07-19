@@ -476,6 +476,16 @@ function Itinerary({ pkg, opts }: { pkg: Package; opts: ItineraryPdfOptions }) {
           </View>
         )}
 
+        {/* Personalised notes for this customer (CRM per-customer share) */}
+        {opts.customNote?.trim() ? (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Personalised for You</Text>
+            {opts.customNote.trim().split("\n").map((line, i) => (
+              <Text key={i} style={styles.dayText}>{line || " "}</Text>
+            ))}
+          </View>
+        ) : null}
+
         {/* Inclusions — its own section */}
         {pkg.inclusions.length > 0 && (
           <View style={styles.section}>
@@ -568,6 +578,8 @@ export interface ItineraryPdfOptions {
   heroDataUri?: string | null;
   /** Hotels with images pre-fetched to data-URIs by the caller. */
   hotels?: { name: string; city?: string; imageDataUri?: string | null }[];
+  /** Free-text personalised note (CRM per-customer share) — rendered as its own section. */
+  customNote?: string;
 }
 
 /** Render an itinerary PDF to a Buffer. Reused by the public route and (later) the CRM. */

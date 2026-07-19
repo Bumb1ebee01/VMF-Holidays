@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { getAllPackages } from "@/lib/queries";
 import { requireUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
 import StatusBadge, { STATUS_LABELS, type LeadStatusValue } from "@/components/admin/StatusBadge";
 import LeadControls from "@/components/admin/LeadControls";
 import LeadBookingPanel from "@/components/admin/LeadBookingPanel";
+import LeadItineraryPanel from "@/components/admin/LeadItineraryPanel";
 import { addLeadNote } from "../actions";
 import { SOURCE_LABELS } from "@/components/admin/leadMeta";
 import { formatDateTime } from "@/lib/utils";
@@ -23,6 +25,7 @@ const ACTION_GLYPH: Record<string, string> = {
   "lead.update": "✎",
   "lead.booked": "✓",
   "lead.delete": "✕",
+  "lead.itinerary": "➤",
 };
 
 const formatDate = (d: Date) =>
@@ -36,7 +39,7 @@ export default async function LeadDetailPage({
   const { id } = await params;
   const me = await requireUser();
 
-  const [lead, users, activity] = await Promise.all([
+  const [lead, users, activity, allPackages] = await Promise.all([
     db.lead.findUnique({
       where: { id },
       include: {
@@ -60,6 +63,7 @@ export default async function LeadDetailPage({
       orderBy: { createdAt: "desc" },
       take: 60,
     }),
+    getAllPackages(),
   ]);
 
   if (!lead) notFound();
@@ -86,6 +90,17 @@ export default async function LeadDetailPage({
       : [];
 
   const addNote = addLeadNote.bind(null, lead.id);
+
+  // "Send itinerary" panel: package options (with day-by-day for per-customer
+  // edits) and a search seeded from the lead's package/destination.
+  const packageOptions = allPackages.map((p) => ({
+    slug: p.slug,
+    title: p.title,
+    destination: p.destination,
+    nights: p.nights,
+    days: p.itinerary.map((d) => ({ title: d.title, description: d.description })),
+  }));
+  const defaultQuery = (lead.packageTitle || lead.destination || "").trim();
 
   const fields: [string, string | null][] = [
     ["Phone", lead.phone],
@@ -218,6 +233,20 @@ export default async function LeadDetailPage({
               </ul>
             )}
           </div>
+
+          {can(me, "leads:edit") && (
+            <div className={`${shared.panel} ${shared.panelPad}`}>
+              <LeadItineraryPanel
+                leadId={lead.id}
+                customerName={lead.name}
+                customerPhone={lead.phone ?? ""}
+                customerEmail={lead.email}
+                defaultDates={lead.dates ?? ""}
+                defaultQuery={defaultQuery}
+                packages={packageOptions}
+              />
+            </div>
+          )}
         </div>
 
         <aside className={styles.sideCol}>
@@ -279,14 +308,6 @@ export default async function LeadDetailPage({
               />
             </div>
           ) : null}
-          <a
-            href={`https://wa.me/91${lead.phone.replace(/\D/g, "").slice(-10)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`btn btn-primary ${styles.waBtn}`}
-          >
-            WhatsApp {lead.name.split(" ")[0]}
-          </a>
         </aside>
       </div>
     </div>
