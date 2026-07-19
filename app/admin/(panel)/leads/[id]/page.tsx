@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
-import StatusBadge, { type LeadStatusValue } from "@/components/admin/StatusBadge";
+import StatusBadge, { STATUS_LABELS, type LeadStatusValue } from "@/components/admin/StatusBadge";
 import LeadControls from "@/components/admin/LeadControls";
 import LeadBookingPanel from "@/components/admin/LeadBookingPanel";
 import { addLeadNote } from "../actions";
@@ -70,6 +70,21 @@ export default async function LeadDetailPage({
     ? await db.member.findUnique({ where: { email: lead.email.toLowerCase() }, select: { name: true } })
     : null;
 
+  // Possible duplicates — other leads sharing this phone or email.
+  const dupeOr = [
+    ...(lead.phone ? [{ phone: lead.phone }] : []),
+    ...(lead.email ? [{ email: { equals: lead.email, mode: "insensitive" as const } }] : []),
+  ];
+  const duplicates =
+    dupeOr.length > 0
+      ? await db.lead.findMany({
+          where: { id: { not: lead.id }, OR: dupeOr },
+          select: { id: true, name: true, status: true, createdAt: true },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+        })
+      : [];
+
   const addNote = addLeadNote.bind(null, lead.id);
 
   const fields: [string, string | null][] = [
@@ -86,6 +101,7 @@ export default async function LeadDetailPage({
     ["Budget", lead.budget],
     ["Interests", lead.interests.length ? lead.interests.join(", ") : null],
     ["Next follow-up", lead.followUpAt ? formatDate(lead.followUpAt) : null],
+    ["Lost reason", lead.status === "LOST" ? lead.lostReason : null],
     ["Source", SOURCE_LABELS[lead.source] ?? lead.source],
     ["Received", formatDateTime(lead.createdAt)],
   ];
@@ -116,6 +132,15 @@ export default async function LeadDetailPage({
         <div>
           <Link href="/admin/leads" className={styles.backLink}>← All leads</Link>
           <h1 className={shared.pageTitle}>{lead.name}</h1>
+          {lead.tags.length > 0 && (
+            <div className={styles.tagRow}>
+              {lead.tags.map((t) => (
+                <Link key={t} href={`/admin/leads?tag=${encodeURIComponent(t)}`} className={styles.tagChip}>
+                  {t}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
           {can(me, "leads:edit") && (
@@ -196,6 +221,26 @@ export default async function LeadDetailPage({
         </div>
 
         <aside className={styles.sideCol}>
+          {duplicates.length > 0 && (
+            <div className={`${shared.panel} ${shared.panelPad}`}>
+              <h3 className={shared.cardTitle}>
+                Possible duplicate{duplicates.length === 1 ? "" : "s"}
+              </h3>
+              <p className={shared.cardSub}>Same phone or email as this lead.</p>
+              <ul className={styles.dupeList}>
+                {duplicates.map((d) => (
+                  <li key={d.id}>
+                    <Link href={`/admin/leads/${d.id}`} className={styles.dupeLink}>
+                      <span>{d.name}</span>
+                      <span className={styles.dupeMeta}>
+                        {STATUS_LABELS[d.status as LeadStatusValue]} · {formatDate(d.createdAt)}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
           <div className={`${shared.panel} ${shared.panelPad}`}>
             <LeadControls
               leadId={lead.id}

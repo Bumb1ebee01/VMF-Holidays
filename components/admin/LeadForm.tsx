@@ -31,6 +31,7 @@ export interface LeadFormValues {
   hotelCategory?: string | null;
   mealPlan?: string | null;
   interests?: string[];
+  tags?: string[];
   message?: string | null;
   followUpAt?: Date | string | null;
 }
@@ -163,6 +164,10 @@ export default function LeadForm({ action, mode, lead, users, cancelHref }: Lead
       <div className={`form-group ${shared.formFull}`}>
         <label className="form-label" htmlFor="lf-interests">Interests</label>
         <input id="lf-interests" name="interests" type="text" className="form-input" placeholder="Comma-separated — e.g. honeymoon, beaches, adventure" defaultValue={(v.interests ?? []).join(", ")} />
+      </div>
+      <div className={`form-group ${shared.formFull}`}>
+        <label className="form-label" htmlFor="lf-tags">Tags</label>
+        <input id="lf-tags" name="tags" type="text" className="form-input" placeholder="Comma-separated labels — e.g. VIP, urgent, repeat customer" defaultValue={(v.tags ?? []).join(", ")} />
       </div>
 
       {/* Contact preference */}

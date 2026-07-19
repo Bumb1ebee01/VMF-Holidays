@@ -9,7 +9,7 @@ import {
   setUserPermissions,
   type TeamActionResult,
 } from "@/app/admin/(panel)/team/actions";
-import { PERMISSIONS, type PermissionKey } from "@/lib/permissions";
+import { PERMISSIONS, ROLE_PRESETS, type PermissionKey } from "@/lib/permissions";
 import { formatDateTime } from "@/lib/utils";
 import shared from "./shared.module.css";
 import styles from "./TeamManager.module.css";
@@ -58,6 +58,12 @@ export default function TeamManager({ users, currentUserId }: TeamManagerProps) 
   function togglePermission(userId: string, key: PermissionKey, on: boolean) {
     const current = perms[userId] ?? [];
     const next = on ? [...new Set([...current, key])] : current.filter((k) => k !== key);
+    setPerms((p) => ({ ...p, [userId]: next }));
+    run(() => setUserPermissions(userId, next));
+  }
+
+  function applyPreset(userId: string, keys: PermissionKey[]) {
+    const next = [...keys];
     setPerms((p) => ({ ...p, [userId]: next }));
     run(() => setUserPermissions(userId, next));
   }
@@ -174,6 +180,21 @@ export default function TeamManager({ users, currentUserId }: TeamManagerProps) 
                   {open && !isAdmin && (
                     <tr className={styles.permRow}>
                       <td colSpan={7}>
+                        <div className={styles.presetBar}>
+                          <span className={styles.presetLabel}>Apply role preset</span>
+                          {ROLE_PRESETS.map((pr) => (
+                            <button
+                              key={pr.key}
+                              type="button"
+                              className={styles.presetBtn}
+                              title={pr.hint}
+                              disabled={pending}
+                              onClick={() => applyPreset(u.id, pr.keys)}
+                            >
+                              {pr.label}
+                            </button>
+                          ))}
+                        </div>
                         <div className={styles.permPanel}>
                           {PERMISSION_GROUPS.map((group) => (
                             <div key={group} className={styles.permGroup}>

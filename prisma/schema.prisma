@@ -90,11 +90,13 @@ model Lead {
   contactMode  String?
   contactTime  String?
   interests    String[]
+  tags         String[]   @default([]) // free-form labels for segmenting (honeymoon, VIP, urgent…)
   message      String?
   packageTitle String?
   hotelCategory String?
   mealPlan      String?
   referralCode String?    // Travellers Club code the enquiry was attributed to
+  lostReason   String?    // why a LOST lead was lost — for pipeline analysis
   followUpAt   DateTime?  // next scheduled follow-up — drives the "due" dashboard widget
   assignedTo   User?      @relation("AssignedLeads", fields: [assignedToId], references: [id], onDelete: SetNull)
   assignedToId String?

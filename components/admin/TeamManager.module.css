@@ -153,3 +153,33 @@
   }
   .permPanel { gap: var(--sp-4); }
 }
+
+/* Role-preset bar above the permission checkboxes. */
+.presetBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 var(--sp-2) var(--sp-4);
+  margin-bottom: var(--sp-3);
+  border-bottom: 1px dashed var(--border);
+}
+.presetLabel {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-right: 4px;
+}
+.presetBtn {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy-mid, var(--text));
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+}
+.presetBtn:hover:not(:disabled) { border-color: var(--orange); color: var(--orange-ink, var(--orange)); }
+.presetBtn:disabled { opacity: 0.5; cursor: default; }

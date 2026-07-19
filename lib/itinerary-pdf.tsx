@@ -306,7 +306,7 @@ function Watermark({ variant }: { variant: ItineraryVariant }) {
   );
 }
 
-function Footer({ traceId }: { traceId?: string }) {
+function Footer({ traceId, disclaimer }: { traceId?: string; disclaimer?: string }) {
   return (
     <View style={styles.footerWrap} fixed>
       {traceId ? (
@@ -316,7 +316,7 @@ function Footer({ traceId }: { traceId?: string }) {
       ) : null}
       <View style={styles.footer}>
         <View style={styles.footerLeft}>
-          <Text style={styles.disclaimer}>{DISCLAIMER}</Text>
+          <Text style={styles.disclaimer}>{disclaimer ?? DISCLAIMER}</Text>
           <Text style={styles.contact}>
             VMF Holidays Pvt. Ltd. · {PHONE_1} · info@vmfholidays.com · Nagoa, Bardez, Goa 403516
           </Text>
@@ -578,4 +578,150 @@ export function renderItineraryPdf(pkg: Package, opts: ItineraryPdfOptions): Pro
 /** Safe, descriptive download filename, e.g. "vmf-goa-honeymoon-itinerary.pdf". */
 export function itineraryFilename(pkg: Package): string {
   return `vmf-${pkg.slug}-itinerary.pdf`.replace(/[^a-z0-9.-]/gi, "-").toLowerCase();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Quotation PDF — a per-customer commercial quote generated from a Booking.
+// Reuses this module's fonts, logo, T&C, footer and CTAs; the body is a price /
+// payment summary rather than a day-by-day itinerary.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const qStyles = StyleSheet.create({
+  priceBox: { marginTop: 20, borderWidth: 1, borderColor: HAIR, borderRadius: 8 },
+  priceRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 9,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: HAIR,
+  },
+  priceRowLast: { borderBottomWidth: 0 },
+  totalRow: { backgroundColor: CREAM },
+  priceLabel: { color: INK, fontSize: 11 },
+  priceVal: { color: INK, fontSize: 11, fontWeight: 700 },
+  totalLabel: { color: NAVY, fontSize: 12, fontWeight: 700 },
+  totalVal: { color: NAVY, fontSize: 13, fontWeight: 700 },
+  balanceVal: { color: ORANGE, fontSize: 13, fontWeight: 700 },
+  validity: { color: MUTED, fontSize: 9, marginTop: 12, lineHeight: 1.5 },
+});
+
+export interface QuotationData {
+  /** Human reference e.g. "VMF-AB12CD". */
+  ref: string;
+  customerName: string;
+  destination: string;
+  packageTitle?: string | null;
+  /** Pre-formatted, e.g. "12 Nov – 19 Nov 2026". */
+  travelDates?: string | null;
+  pax?: string | null;
+  region: TourRegion;
+  totalValue: number;
+  collected?: number;
+  /** Pre-formatted validity date, e.g. "30 Jul 2026". */
+  validUntil?: string | null;
+  heroDataUri?: string | null;
+}
+
+function Quotation({ data }: { data: QuotationData }) {
+  const terms = getTerms(data.region);
+  const collected = data.collected ?? 0;
+  const balance = Math.max(0, data.totalValue - collected);
+  const title = data.packageTitle || data.destination;
+  const metaLine = [data.travelDates, data.pax].filter(Boolean).join("  ·  ") || data.destination;
+
+  return (
+    <Document title={`Quotation ${data.ref} — VMF Holidays`} author="VMF Holidays" subject="Quotation">
+      <Page size="A4" style={styles.page} wrap>
+        <Watermark variant="quote" />
+
+        {/* Cover */}
+        <View>
+          <View style={styles.coverBand}>
+            {LOGO_WHITE ? (
+              // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image, not an HTML img
+              <Image src={LOGO_WHITE} style={styles.logo} />
+            ) : (
+              <Text style={{ color: "#fff", fontSize: 18, fontWeight: 700 }}>VMF Holidays</Text>
+            )}
+            <Text style={styles.bandTagline}>DISCOVER YOUR{"\n"}WORLD, YOUR WAY</Text>
+          </View>
+          {data.heroDataUri ? (
+            <>
+              {/* eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image, not an HTML img */}
+              <Image src={data.heroDataUri} style={styles.heroImg} />
+              <View style={styles.heroRule} />
+            </>
+          ) : (
+            <View style={styles.heroRule} />
+          )}
+
+          <View style={styles.coverBody}>
+            <Text style={styles.eyebrow}>Quotation · {data.ref}</Text>
+            <Text style={styles.coverTitle}>{title}</Text>
+            <Text style={styles.coverMeta}>{metaLine}</Text>
+
+            <View style={styles.forBox}>
+              <Text style={styles.forLabel}>Prepared for</Text>
+              <Text style={styles.forName}>{data.customerName}</Text>
+            </View>
+
+            <View style={qStyles.priceBox}>
+              <View style={[qStyles.priceRow, qStyles.totalRow]}>
+                <Text style={qStyles.totalLabel}>Total trip value</Text>
+                <Text style={qStyles.totalVal}>{money(data.totalValue)}</Text>
+              </View>
+              {collected > 0 ? (
+                <View style={qStyles.priceRow}>
+                  <Text style={qStyles.priceLabel}>Received</Text>
+                  <Text style={qStyles.priceVal}>{money(collected)}</Text>
+                </View>
+              ) : null}
+              <View style={[qStyles.priceRow, qStyles.priceRowLast]}>
+                <Text style={qStyles.priceLabel}>Balance due</Text>
+                <Text style={qStyles.balanceVal}>{money(balance)}</Text>
+              </View>
+            </View>
+
+            <Text style={qStyles.validity}>
+              {data.validUntil ? `This quotation is valid until ${data.validUntil}. ` : ""}
+              Prices are indicative and subject to availability at the time of confirmation.
+            </Text>
+
+            <View style={styles.ctaRow}>
+              <Link src={WA} style={styles.ctaPrimary}>Confirm on WhatsApp</Link>
+              <Link src={TEL} style={styles.ctaOutline}>Call {PHONE_1}</Link>
+            </View>
+          </View>
+        </View>
+
+        {/* T&C + closing CTA */}
+        <View style={styles.section} break>
+          <Text style={styles.sectionTitle}>{terms.title}</Text>
+          {terms.sections.map((sec, i) => (
+            <View key={i} wrap={false}>
+              <View style={styles.termsHeadRow}>
+                <Text style={styles.termsNum}>{i + 1}.</Text>
+                <Text style={styles.termsHead}>{sec.heading}</Text>
+              </View>
+              {sec.points.map((p, j) => (
+                <View style={styles.termsPoint} key={j}>
+                  <Text style={styles.termsDot}>•</Text>
+                  <Text style={styles.termsText}>{p}</Text>
+                </View>
+              ))}
+            </View>
+          ))}
+          <ClosingCta />
+        </View>
+
+        <Footer disclaimer="Quotation subject to availability and final confirmation by VMF Holidays. Not a tax invoice. Final pricing may vary with travel dates, hotel category and customisation." />
+      </Page>
+    </Document>
+  );
+}
+
+/** Render a quotation PDF to a Buffer. Called from the CRM booking route. */
+export function renderQuotationPdf(data: QuotationData): Promise<Buffer> {
+  return renderToBuffer(<Quotation data={data} />);
 }

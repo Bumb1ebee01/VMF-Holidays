@@ -40,7 +40,15 @@ export default function LeadControls({
                 type="button"
                 disabled={pending || !canEdit || active}
                 className={`${styles.pill} ${styles[`pill${s}`]} ${active ? styles.pillActive : ""}`}
-                onClick={() => startTransition(() => updateLeadStatus(leadId, s))}
+                onClick={() => {
+                  let reason: string | undefined;
+                  if (s === "LOST") {
+                    const r = window.prompt("Why was this lead lost? (optional — e.g. price, timing, went elsewhere)");
+                    if (r === null) return; // cancelled — leave the status unchanged
+                    reason = r;
+                  }
+                  startTransition(() => updateLeadStatus(leadId, s, reason));
+                }}
               >
                 {STATUS_LABELS[s as LeadStatusValue]}
               </button>

@@ -54,6 +54,44 @@ export const DEFAULT_MEMBER_PERMISSIONS: PermissionKey[] = [
 
 export const ALL_PERMISSION_KEYS = PERMISSIONS.map((p) => p.key);
 
+// Role presets — one click fills a member's permission set; every individual
+// toggle stays adjustable afterwards. Admins implicitly hold everything, so
+// presets only apply to MEMBER accounts.
+export interface RolePreset {
+  key: string;
+  label: string;
+  hint: string;
+  keys: PermissionKey[];
+}
+
+export const ROLE_PRESETS: RolePreset[] = [
+  {
+    key: "sales",
+    label: "Sales",
+    hint: "Work leads end-to-end and create bookings",
+    keys: ["leads:view", "leads:edit", "leads:assign", "bookings:view", "bookings:manage"],
+  },
+  {
+    key: "operations",
+    label: "Operations",
+    hint: "Fulfil trips: bookings, payments and lead follow-up",
+    keys: ["leads:view", "leads:edit", "bookings:view", "bookings:manage", "activity:view-all"],
+  },
+  {
+    key: "marketing",
+    label: "Marketing",
+    hint: "Blog, offers, gallery and site content",
+    keys: ["posts:manage", "offers:manage", "gallery:manage", "testimonials:manage", "packages:manage", "destinations:manage"],
+  },
+  {
+    key: "full",
+    label: "Full access",
+    hint: "Every permission (short of the Admin role)",
+    keys: ALL_PERMISSION_KEYS,
+  },
+  { key: "none", label: "Clear all", hint: "Remove every permission", keys: [] },
+];
+
 interface PermissionSubject {
   role: "ADMIN" | "MEMBER";
   permissions?: string[] | null;

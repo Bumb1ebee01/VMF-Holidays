@@ -68,6 +68,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           <p className={shared.pageSub}>{booking.customerName}</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
+          <a href={`/api/quotation/${booking.id}`} className="btn btn-outline btn--sm" download>
+            Quotation PDF
+          </a>
           {canManage ? (
             <BookingStatusControl bookingId={booking.id} status={booking.status} />
           ) : (

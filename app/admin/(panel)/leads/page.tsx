@@ -3,13 +3,14 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
-import StatusBadge, {
+import {
   LEAD_STATUSES,
   STATUS_LABELS,
   type LeadStatusValue,
 } from "@/components/admin/StatusBadge";
 import LeadFilters from "@/components/admin/LeadFilters";
 import LeadBoard, { type BoardLead } from "@/components/admin/LeadBoard";
+import LeadBulkTable, { type BulkRow } from "@/components/admin/LeadBulkTable";
 import { IconInbox } from "@/components/admin/icons";
 import { formatDateTime } from "@/lib/utils";
 import type { LeadSource } from "@/lib/generated/prisma/client";
@@ -30,7 +31,7 @@ const SOURCE_LABELS: Record<string, string> = {
 // Near-term travellers are flagged so the team can prioritise them.
 const URGENT_TIMEFRAMES = new Set(["Within 2 weeks", "This month"]);
 
-type Search = { status?: string; q?: string; source?: string; assignee?: string; view?: string };
+type Search = { status?: string; q?: string; source?: string; assignee?: string; view?: string; tag?: string };
 
 export default async function LeadsPage({
   searchParams,
@@ -38,7 +39,7 @@ export default async function LeadsPage({
   searchParams: Promise<Search>;
 }) {
   const me = await requireUser();
-  const { status, q, source, assignee, view } = await searchParams;
+  const { status, q, source, assignee, view, tag } = await searchParams;
   const isBoard = view === "board";
   const activeStatus = LEAD_STATUSES.includes(status as LeadStatusValue)
     ? (status as LeadStatusValue)
@@ -49,6 +50,7 @@ export default async function LeadsPage({
     ...(activeStatus && !isBoard ? { status: activeStatus } : {}),
     ...(source ? { source: source as LeadSource } : {}),
     ...(assignee ? { assignedToId: assignee } : {}),
+    ...(tag ? { tags: { has: tag } } : {}),
     ...(q
       ? {
           OR: [
@@ -74,15 +76,29 @@ export default async function LeadsPage({
 
   const buildHref = (overrides: Partial<Search>) => {
     const params = new URLSearchParams();
-    const merged: Search = { status, q, source, assignee, view, ...overrides };
+    const merged: Search = { status, q, source, assignee, view, tag, ...overrides };
     if (merged.status) params.set("status", merged.status);
     if (merged.q) params.set("q", merged.q);
     if (merged.source) params.set("source", merged.source);
     if (merged.assignee) params.set("assignee", merged.assignee);
     if (merged.view) params.set("view", merged.view);
+    if (merged.tag) params.set("tag", merged.tag);
     const qs = params.toString();
     return qs ? `/admin/leads?${qs}` : "/admin/leads";
   };
+
+  const tableRows: BulkRow[] = leads.map((l) => ({
+    id: l.id,
+    name: l.name,
+    phone: l.phone,
+    email: l.email,
+    interest: l.packageTitle ?? l.destination ?? SOURCE_LABELS[l.source] ?? "—",
+    source: SOURCE_LABELS[l.source] ?? l.source,
+    assignedName: l.assignedTo?.name ?? null,
+    status: l.status,
+    when: formatDateTime(l.createdAt),
+    urgent: URGENT_TIMEFRAMES.has(l.timeframe ?? ""),
+  }));
 
   const boardLeads: BoardLead[] = leads.map((l) => ({
     id: l.id,
@@ -103,6 +119,15 @@ export default async function LeadsPage({
           <p className={shared.pageSub}>
             {leads.length} {leads.length === 1 ? "enquiry" : "enquiries"}
             {activeStatus && !isBoard ? ` · ${STATUS_LABELS[activeStatus]}` : ""}
+            {tag ? (
+              <>
+                {" · tagged "}
+                <strong>{tag}</strong>{" "}
+                <Link href={buildHref({ tag: undefined })} style={{ color: "var(--orange-ink, var(--orange))" }}>
+                  clear
+                </Link>
+              </>
+            ) : null}
           </p>
         </div>
         <div className={styles.headActions}>
@@ -169,68 +194,20 @@ export default async function LeadsPage({
         ) : (
           <LeadBoard leads={boardLeads} canEdit={can(me, "leads:edit")} />
         )
-      ) : (
+      ) : leads.length === 0 ? (
         <div className={shared.panel}>
-          {leads.length === 0 ? (
-            <div className={shared.emptyState}>
-              <IconInbox size={28} />
-              <p>No leads match these filters.</p>
-            </div>
-          ) : (
-            <table className={`${shared.table} ${shared.tableHover}`}>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Contact</th>
-                  <th>Interest</th>
-                  <th>Source</th>
-                  <th>Assigned</th>
-                  <th>Status</th>
-                  <th>Received</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leads.map((lead) => (
-                  <tr key={lead.id}>
-                    <td>
-                      <Link href={`/admin/leads/${lead.id}`} className={shared.rowLink}>
-                        {lead.name}
-                      </Link>
-                      {URGENT_TIMEFRAMES.has(lead.timeframe ?? "") && (
-                        <span
-                          title={`Travelling: ${lead.timeframe}`}
-                          style={{
-                            marginLeft: 8,
-                            padding: "1px 8px",
-                            borderRadius: 999,
-                            fontSize: 11,
-                            fontWeight: 700,
-                            background: "#FDECEA",
-                            color: "#c0341d",
-                            whiteSpace: "nowrap",
-                          }}
-                        >
-                          Travelling soon
-                        </span>
-                      )}
-                    </td>
-                    <td>
-                      <div className={styles.contactCell}>
-                        <span>{lead.phone}</span>
-                        <span className={styles.contactSub}>{lead.email}</span>
-                      </div>
-                    </td>
-                    <td>{lead.packageTitle ?? lead.destination ?? "—"}</td>
-                    <td>{SOURCE_LABELS[lead.source] ?? lead.source}</td>
-                    <td>{lead.assignedTo?.name ?? "—"}</td>
-                    <td><StatusBadge status={lead.status as LeadStatusValue} /></td>
-                    <td className={styles.dateCell}>{formatDateTime(lead.createdAt)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <div className={shared.emptyState}>
+            <IconInbox size={28} />
+            <p>No leads match these filters.</p>
+          </div>
         </div>
+      ) : (
+        <LeadBulkTable
+          rows={tableRows}
+          users={users}
+          canEdit={can(me, "leads:edit")}
+          canAssign={can(me, "leads:assign")}
+        />
       )}
     </div>
   );
