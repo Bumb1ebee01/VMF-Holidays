@@ -491,6 +491,7 @@ h1 em, h2 em, h3 em {
   display: flex;
   flex-direction: column;
   gap: var(--sp-2);
+  min-width: 0; /* allow fields (esp. type=date, which has a wide intrinsic min) to shrink inside flex/grid rows instead of overflowing */
 }
 
 .form-label {
