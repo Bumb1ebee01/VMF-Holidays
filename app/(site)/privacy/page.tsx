@@ -60,7 +60,9 @@ export default function PrivacyPage() {
           itinerary, book a trip, or message us on WhatsApp, phone or email, you share details like your name, phone
           number, email, destination and travel preferences, dates, the number and ages of travellers, hotel and meal
           preferences, budget, and any notes you add. We use these to understand the trip you want and tailor it to you.
-          When you book, we collect the further details needed to confirm your trip and process payment.
+          When you book, we collect the further details needed to confirm your trip and arrange payment. We take
+          payments directly — by bank transfer, UPI or cheque — so we don&apos;t collect or store card or bank-account
+          numbers on this website.
         </p>
         <p>
           <strong>Your Travellers Club account.</strong> If you join our Travellers Club, we store your name, email,
@@ -104,9 +106,6 @@ export default function PrivacyPage() {
           <li>
             <strong>Travel partners</strong> — hotels, airlines, transport and activity providers — purely to fulfil your
             booking, and only the details they need.
-          </li>
-          <li>
-            <strong>Payment processors</strong> — to collect payments securely. We do not store your full card details.
           </li>
           <li>
             <strong>Trusted service providers</strong> who run parts of our platform for us, under contract and to our
