@@ -35,7 +35,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "Invalid email or password." };
   }
 
-  await createSession(user.id);
+  await createSession(user.id, user.sessionVersion);
   await logActivity(
     { id: user.id, name: user.name },
     { action: "auth.login", entity: "Session", detail: `${user.name} signed in` }

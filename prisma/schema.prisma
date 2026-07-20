@@ -50,6 +50,7 @@ model User {
   passwordHash String
   role         Role          @default(MEMBER)
   active       Boolean       @default(true)
+  sessionVersion Int         @default(0) // bump to invalidate a user's existing JWT sessions (password reset / forced sign-out)
   permissions  String[]      @default([])
   leads        Lead[]        @relation("AssignedLeads")
   bookings     Booking[]     @relation("BookingAdvisor")

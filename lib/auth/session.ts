@@ -20,8 +20,8 @@ function getSecret() {
   return new TextEncoder().encode(secret);
 }
 
-export async function createSession(userId: string) {
-  const token = await new SignJWT({ sub: userId })
+export async function createSession(userId: string, sessionVersion = 0) {
+  const token = await new SignJWT({ sub: userId, ver: sessionVersion })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime(`${SESSION_DAYS}d`)
@@ -47,6 +47,23 @@ export async function getSessionUserId(): Promise<string | null> {
   const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) return null;
   return verifySessionToken(token);
+}
+
+/** Full session claims (user id + session version) for stateful revocation checks. */
+export async function getSessionClaims(): Promise<{ userId: string; ver: number } | null> {
+  const jar = await cookies();
+  const token = jar.get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, getSecret());
+    if (typeof payload.sub !== "string") return null;
+    // Tokens issued before versioning have no `ver` claim → treat as 0 (default),
+    // so existing sessions keep working until a version bump revokes them.
+    const ver = typeof payload.ver === "number" ? payload.ver : 0;
+    return { userId: payload.sub, ver };
+  } catch {
+    return null;
+  }
 }
 
 export async function verifySessionToken(token: string): Promise<string | null> {

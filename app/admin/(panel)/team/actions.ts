@@ -65,14 +65,31 @@ export async function resetUserPassword(userId: string, newPassword: string): Pr
 
   const user = await db.user.update({
     where: { id: userId },
-    data: { passwordHash: await bcrypt.hash(newPassword, 12) },
+    data: { passwordHash: await bcrypt.hash(newPassword, 12), sessionVersion: { increment: 1 } },
   });
   await logActivity(admin, {
     action: "user.password",
     entity: "User",
     entityId: userId,
-    detail: `Reset password for ${user.name}`,
+    detail: `Reset password for ${user.name} (existing sessions ended)`,
   });
+  return { ok: true };
+}
+
+/** Force-invalidate all of a user's active sessions (they must log in again). */
+export async function signOutUserEverywhere(userId: string): Promise<TeamActionResult> {
+  const admin = await requireAdmin();
+  const user = await db.user.update({
+    where: { id: userId },
+    data: { sessionVersion: { increment: 1 } },
+  });
+  await logActivity(admin, {
+    action: "user.signout",
+    entity: "User",
+    entityId: userId,
+    detail: `Signed ${user.name} out of all devices`,
+  });
+  revalidatePath("/admin/team");
   return { ok: true };
 }
 

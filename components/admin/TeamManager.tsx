@@ -5,6 +5,7 @@ import {
   createUser,
   setUserActive,
   resetUserPassword,
+  signOutUserEverywhere,
   setUserRole,
   setUserPermissions,
   type TeamActionResult,
@@ -174,6 +175,22 @@ export default function TeamManager({ users, currentUserId }: TeamManagerProps) 
                             {u.active ? "Deactivate" : "Reactivate"}
                           </button>
                         )}
+                        <button
+                          type="button"
+                          className={styles.smallBtn}
+                          disabled={pending}
+                          onClick={() => {
+                            if (
+                              confirm(
+                                `Sign ${isSelf ? "yourself" : u.name} out of all devices? ${isSelf ? "You" : "They"}'ll need to log in again.`
+                              )
+                            ) {
+                              run(() => signOutUserEverywhere(u.id));
+                            }
+                          }}
+                        >
+                          Sign out everywhere
+                        </button>
                       </div>
                     </td>
                   </tr>
