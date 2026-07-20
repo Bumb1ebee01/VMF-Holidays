@@ -1,10 +1,12 @@
 "use server";
 
 import bcrypt from "bcryptjs";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { createSession, destroySession, getSessionUserId } from "@/lib/auth/session";
 import { logActivity } from "@/lib/activity";
+import { isRateLimited } from "@/lib/ratelimit";
 
 export type LoginState = { error?: string };
 
@@ -14,6 +16,17 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
 
   if (!email || !password) {
     return { error: "Email and password are required." };
+  }
+
+  // Brute-force guard: cap admin login attempts per IP (shared Upstash limiter
+  // when configured, else in-memory). Counts every attempt in the window.
+  const hdrs = await headers();
+  const ip =
+    hdrs.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    hdrs.get("x-real-ip")?.trim() ||
+    "unknown";
+  if (await isRateLimited(`admin-login:${ip}`, 10, 900)) {
+    return { error: "Too many attempts. Please wait a few minutes and try again." };
   }
 
   const user = await db.user.findUnique({ where: { email } });
