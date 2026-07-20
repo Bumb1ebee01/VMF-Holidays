@@ -36,6 +36,10 @@ export const BUSINESS = {
     region: "Goa",
     postalCode: "403516",
     country: "IN",
+    /** Canonical one-line NAP string. Local SEO wants the address byte-identical
+     *  everywhere (site, schema, emails, Google Business Profile), so prefer this
+     *  over retyping it — that's how the surfaces drift apart. */
+    full: "Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India",
   },
   geo: { lat: 15.5439, lng: 73.7553 },
 } as const;
@@ -65,8 +69,8 @@ export function organizationJsonLd() {
     priceRange: "₹₹",
     address: {
       "@type": "PostalAddress",
-      streetAddress: `${BUSINESS.address.street}, ${BUSINESS.address.locality}`,
-      addressLocality: "Nagoa",
+      streetAddress: BUSINESS.address.street,
+      addressLocality: BUSINESS.address.locality,
       addressRegion: BUSINESS.address.region,
       postalCode: BUSINESS.address.postalCode,
       addressCountry: BUSINESS.address.country,

@@ -16,13 +16,19 @@ See `PLAN.md` for the full phased build plan.
 | Phone 1 | +91 7499322412 |
 | Phone 2 | +91 9270354828 |
 | Email | info@vmfholidays.com |
-| Address | Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India |
+| Address (Goa HQ) | Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India |
+| Mangalore branch | First Floor, Lotus Paradise Plaza, Shop No. 116, Door No. 15, 23-1429/43, Bendoorwell, Mangaluru, Karnataka 575001 |
+| Mangalore phone | +91 9481384953 |
 | Founded | 3 July 2025 |
 | WhatsApp | https://wa.me/917499322412 |
 
 > NAP note: use the address above **verbatim** everywhere (site, schema, emails,
 > Google Business Profile). Do not reintroduce "Calangute" / "Nagva". The company
 > was founded 3 July 2025 — never claim tenure beyond that ("Since 2016" etc.).
+>
+> The canonical one-line string lives in code as `BUSINESS.address.full`
+> (`lib/seo.tsx`) — import it rather than retyping the address, which is how the
+> surfaces drift apart in the first place.
 
 ## What's Already Built (Phase 1 ✅)
 

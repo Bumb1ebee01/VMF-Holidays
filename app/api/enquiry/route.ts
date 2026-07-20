@@ -6,6 +6,7 @@ import { isRateLimited } from "@/lib/ratelimit";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { REF_COOKIE, normalizeCode } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
+import { BUSINESS } from "@/lib/seo";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -225,7 +226,7 @@ export async function POST(request: Request) {
       ${row("Message", f.message)}
     </table>
     <hr style="border:none;border-top:1px solid #E2E6EF;margin:24px 0"/>
-    <p style="font-size:12px;color:#7B8298">VMF Holidays Pvt. Ltd. — Mendes Vaddo, Nagoa, Bardez, Goa 403516</p>
+    <p style="font-size:12px;color:#7B8298">${BUSINESS.legalName} — ${BUSINESS.address.full}</p>
   `;
 
   if (!resend) {
@@ -269,7 +270,7 @@ export async function POST(request: Request) {
           <a href="https://wa.me/917499322412" style="display:inline-block;background:#FE5C10;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:10px">Chat on WhatsApp</a>
         </div>
         <p style="font-size:11px;color:#7B8298;text-align:center;margin:18px 0 0">
-          VMF Holidays Pvt. Ltd. — Nagoa, Bardez, Goa 403516, India
+          ${BUSINESS.legalName} — ${BUSINESS.address.full}
         </p>
       </div>
     `;

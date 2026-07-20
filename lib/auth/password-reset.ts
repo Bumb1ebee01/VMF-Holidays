@@ -3,7 +3,7 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
-import { APP_URL, SITE_NAME } from "@/lib/seo";
+import { APP_URL, SITE_NAME, BUSINESS } from "@/lib/seo";
 
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -86,7 +86,7 @@ function resetEmailHtml(name: string, link: string): string {
           <p style="margin:0 0 20px;font-size:13px;word-break:break-all"><a href="${link}" style="color:#002464">${link}</a></p>
           <p style="margin:0;font-size:13px;color:#7b8298;line-height:1.6">Didn't request this? You can safely ignore this email — your password won't change.</p>
         </td></tr>
-        <tr><td style="padding:18px 28px;background:#f4f1ea;font-size:12px;color:#7b8298">VMF Holidays Pvt. Ltd. · Nagoa, Bardez, Goa</td></tr>
+        <tr><td style="padding:18px 28px;background:#f4f1ea;font-size:12px;color:#7b8298">${BUSINESS.legalName} · ${BUSINESS.address.full}</td></tr>
       </table>
     </td></tr>
   </table></body></html>`;
