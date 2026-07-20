@@ -4,7 +4,7 @@ import styles from "./page.module.css";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "VMF Holidays privacy & cookie policy — how we collect, use, share, retain and protect your personal data, and your rights under India's DPDP Act, 2023.",
+    "How VMF Holidays collects, uses, shares, protects and retains your personal data — in plain language — and your rights under India's DPDP Act, 2023.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -18,122 +18,190 @@ export default function PrivacyPage() {
         </div>
       </div>
       <div className={`container ${styles.content}`}>
+        <p className={styles.lead}>
+          The trips we plan are personal — and so is the information you share to make them happen. This page explains, in
+          plain language, what we collect, why we collect it, how we look after it, and the choices and rights you have.
+          No jargon, no surprises.
+        </p>
         <p>
-          VMF Holidays Pvt. Ltd. (&ldquo;VMF Holidays&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) is the data fiduciary
-          for the personal data you share with us. This policy explains what we collect, why, how long we keep it, who
-          we share it with, and the rights you have under India&apos;s Digital Personal Data Protection Act, 2023 (the
-          &ldquo;DPDP Act&rdquo;). By using this website or sharing your details with us, you consent to the practices
-          described here.
+          VMF Holidays Pvt. Ltd. (&ldquo;VMF Holidays&rdquo;, &ldquo;we&rdquo;, &ldquo;us&rdquo;) is a travel company
+          based in Goa, India, and we are the people responsible for your personal data — your &ldquo;data
+          fiduciary&rdquo; under India&apos;s Digital Personal Data Protection Act, 2023 (the &ldquo;DPDP Act&rdquo;).
+          This policy covers this website and the ways you get in touch with us.
         </p>
 
-        <h2>1. Information We Collect</h2>
+        <div className={styles.promise}>
+          <h2>Our Privacy Promise</h2>
+          <p>Your trust is the most valuable thing we hold. So here is our promise to you:</p>
+          <ul>
+            <li>We only ever ask for information we genuinely need to plan and deliver your trip.</li>
+            <li>
+              We will <strong>never sell or rent your personal data</strong> — to anyone, for any reason.
+            </li>
+            <li>
+              We share your details only with the partners who actually make your trip happen (your hotel, airline or
+              transport provider), and only the specific details they need.
+            </li>
+            <li>
+              Inside VMF, only the team members helping with your booking can see your information, and they are bound to
+              keep it confidential.
+            </li>
+            <li>We hold the companies that help us run our website to the same standard we hold ourselves.</li>
+            <li>
+              You stay in control — you can ask to see, correct or delete your data, or withdraw your consent, at any
+              time.
+            </li>
+          </ul>
+        </div>
+
+        <h2>1. What We Collect — and Why</h2>
         <p>
-          We collect information you provide directly when you fill out an enquiry or Trip Builder form, download a
-          sample itinerary, create a Travellers Club account, contact us via WhatsApp, phone or email, or book a
-          package. This includes your name, phone number, email address, travel preferences, dates and traveller
-          details, and — for bookings — the information needed to process your trip and payment. We also collect limited
-          technical data (such as your IP address) to keep the site secure and, only with your consent, analytics data
-          (see Cookies below).
+          <strong>Things you tell us.</strong> When you send an enquiry, use the Trip Builder, download a sample
+          itinerary, book a trip, or message us on WhatsApp, phone or email, you share details like your name, phone
+          number, email, destination and travel preferences, dates, the number and ages of travellers, hotel and meal
+          preferences, budget, and any notes you add. We use these to understand the trip you want and tailor it to you.
+          When you book, we collect the further details needed to confirm your trip and process payment.
+        </p>
+        <p>
+          <strong>Your Travellers Club account.</strong> If you join our Travellers Club, we store your name, email,
+          phone and a password — the password only ever in encrypted (hashed) form, so no one at VMF can read it.
+        </p>
+        <p>
+          <strong>Things we notice automatically.</strong> When you browse the site, we collect your IP address and
+          basic usage information (pages visited, roughly how long, and your device or browser type). We use this to keep
+          the site secure and working properly, and — only if you agree to analytics cookies — to understand what&apos;s
+          useful and improve it.
         </p>
 
         <h2>2. How We Use Your Information</h2>
+        <p>We use what we collect to:</p>
+        <ul>
+          <li>reply to your enquiry and put together itineraries and quotes for you;</li>
+          <li>keep in touch about your booking and your travel;</li>
+          <li>process payments and send confirmations;</li>
+          <li>look after you before, during and after your trip;</li>
+          <li>meet our legal, tax and accounting obligations;</li>
+          <li>keep this website secure and make it better;</li>
+          <li>and, only if you have opted in, send you travel ideas and offers you can unsubscribe from at any time.</li>
+        </ul>
+        <p>We only ever use your data for the purpose you shared it with us for.</p>
+
+        <h2>3. Your Consent — and How to Withdraw It</h2>
         <p>
-          We use your information to: respond to your enquiry and prepare and send itineraries and quotes; communicate
-          with you about your booking; process payments; provide customer support; meet legal and tax obligations; keep
-          our services and this site secure; and — only where you have opted in — send you relevant travel offers and
-          updates. We use your data only for the purposes for which you provided it.
+          Where the law requires it, we process your data on the basis of the consent you give when you tick the box on a
+          form or create an account. You can <strong>withdraw that consent as easily as you gave it</strong>, by emailing{" "}
+          <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>. We&apos;ll stop the relevant processing —
+          although we may keep certain records where the law requires, and withdrawing consent doesn&apos;t undo anything
+          done beforehand.
         </p>
 
-        <h2>3. Consent &amp; Its Withdrawal</h2>
+        <h2>4. Who We Share It With</h2>
         <p>
-          Where the law requires consent, we process your personal data on the basis of the consent you give when you
-          submit a form or create an account. You may <strong>withdraw your consent at any time</strong> — as easily as
-          you gave it — by emailing <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>. Withdrawing consent
-          does not affect processing already carried out, and we may still retain data where the law requires.
-        </p>
-
-        <h2>4. How We Share Your Information</h2>
-        <p>
-          We <strong>do not sell or rent</strong> your personal data. We share it only as needed to run our services:
+          We do <strong>not</strong> sell or rent your personal data. We share it only where it&apos;s needed to run your
+          trip and our services:
         </p>
         <ul>
           <li>
-            <strong>Travel partners</strong> (hotels, airlines, transport and activity providers) — solely to fulfil
-            your booking.
+            <strong>Travel partners</strong> — hotels, airlines, transport and activity providers — purely to fulfil your
+            booking, and only the details they need.
           </li>
           <li>
-            <strong>Payment processors</strong> — to collect payments securely; we do not store full card details.
+            <strong>Payment processors</strong> — to collect payments securely. We do not store your full card details.
           </li>
           <li>
-            <strong>Service providers (data processors)</strong> who operate our platform on our behalf, under
-            contract: hosting and database (Neon, Vercel), image delivery (Cloudinary), transactional email (Resend),
-            and — only if you accept analytics cookies — Google Analytics.
+            <strong>Trusted service providers</strong> who run parts of our platform for us, under contract and to our
+            standards: our database and hosting (Neon, Vercel), image delivery (Cloudinary), our email (Resend), and —
+            only if you accept analytics cookies — Google Analytics.
           </li>
-          <li>Authorities, where we are legally required to disclose.</li>
+          <li>
+            <strong>Authorities</strong>, where we are legally required to disclose.
+          </li>
         </ul>
 
-        <h2>5. Data Retention</h2>
+        <h2>5. How We Protect Your Data</h2>
+        <ul>
+          <li>All traffic between you and our servers is encrypted using SSL/TLS.</li>
+          <li>Passwords are stored only as one-way hashes — we can&apos;t see or recover them.</li>
+          <li>Access to your details inside VMF is limited to the team members handling your trip.</li>
+          <li>The service providers we use are held to confidentiality and security commitments in our contracts.</li>
+        </ul>
+
+        <h2>6. How Long We Keep It</h2>
         <p>
-          We keep your personal data only for as long as needed for the purposes above — typically for the duration of
-          our relationship and for a reasonable period afterwards to meet legal, accounting and dispute-resolution
-          requirements — after which it is deleted or anonymised. You may ask us to erase your data sooner (see Your
-          Rights).
+          We keep your personal data only for as long as we need it — typically for the length of our relationship and a
+          reasonable period afterwards to meet legal, accounting and dispute-resolution requirements — after which it is
+          deleted or anonymised. You can ask us to delete your data sooner at any time (see Your Rights).
         </p>
 
-        <h2>6. Cookies</h2>
+        <h2>7. Cookies</h2>
         <p>
-          We use <strong>essential cookies</strong> that are necessary for the site to function (for example, to keep
-          you signed in, remember your theme, and attribute referrals) — these do not require consent. We use{" "}
-          <strong>analytics cookies</strong> (Google Analytics) only if you accept them via our cookie banner; you can
-          decline and still use the full site, and you can change your choice at any time by clearing your browser
-          storage for this site. We do not use advertising cookies.
+          A cookie is a small text file a website stores on your device to remember things between visits. We use two
+          kinds:
         </p>
+        <ul>
+          <li>
+            <strong>Essential cookies</strong> — needed for the site to work, such as keeping you signed in, remembering
+            your light/dark preference, and attributing a referral. These don&apos;t require consent.
+          </li>
+          <li>
+            <strong>Analytics cookies</strong> (Google Analytics) — used only if you accept them via our cookie banner.
+            You can decline and still use the full site, and change your mind at any time by clearing this site&apos;s
+            storage in your browser.
+          </li>
+        </ul>
+        <p>We do not use advertising or tracking cookies.</p>
 
-        <h2>7. Your Rights</h2>
+        <h2>8. Your Rights</h2>
         <p>Under the DPDP Act, you have the right to:</p>
         <ul>
-          <li>access a summary of the personal data we hold about you and how we process it;</li>
-          <li>have inaccurate or incomplete data corrected or completed;</li>
-          <li>have your data erased where it is no longer needed;</li>
-          <li>withdraw consent at any time;</li>
-          <li>nominate another person to exercise your rights in the event of death or incapacity; and</li>
-          <li>raise a grievance and, if unsatisfied, escalate to the Data Protection Board of India.</li>
+          <li>ask for a summary of the personal data we hold about you and how we use it;</li>
+          <li>have anything inaccurate or incomplete corrected or completed;</li>
+          <li>have your data erased when it&apos;s no longer needed;</li>
+          <li>withdraw your consent at any time;</li>
+          <li>nominate someone to exercise your rights on your behalf if you die or are incapacitated; and</li>
+          <li>
+            raise a grievance with us and, if you&apos;re not satisfied, escalate it to the Data Protection Board of
+            India.
+          </li>
         </ul>
         <p>
-          To exercise any of these, email <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>. We respond
-          within the timelines required by law.
+          To exercise any of these, just email <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a> — we&apos;ll
+          respond within the timelines the law requires.
         </p>
 
-        <h2>8. Children&apos;s Data</h2>
+        <h2>9. Children&apos;s Privacy</h2>
         <p>
-          Our services are intended for adults. We do not knowingly collect the personal data of a child (under 18)
-          without verifiable parental or guardian consent. If you believe a child has provided us data without such
-          consent, contact us and we will delete it.
+          Our services are meant for adults. We do not knowingly collect the personal data of a child (under 18) without
+          verifiable consent from a parent or guardian. If you believe a child has shared data with us without that
+          consent, please contact us and we&apos;ll delete it.
         </p>
 
-        <h2>9. Data Security</h2>
+        <h2>10. Where Your Data Is Processed</h2>
         <p>
-          We apply reasonable technical and organisational safeguards to protect your data. All traffic between your
-          browser and our servers is encrypted via SSL/TLS, access to personal data is restricted to authorised staff,
-          and passwords are stored only in hashed form.
+          Some of the trusted providers who help us run this site process data on servers that may be located outside
+          India. Wherever your data is handled, we take steps to keep it protected in line with this policy.
         </p>
 
-        <h2>10. Changes to This Policy</h2>
+        <h2>11. Changes to This Policy</h2>
         <p>
-          We may update this policy from time to time. Material changes will be posted on this page with a revised
-          &ldquo;last updated&rdquo; date.
+          We may update this policy from time to time. If we make a material change, we&apos;ll post it on this page with
+          a new &ldquo;last updated&rdquo; date, and we won&apos;t use your existing data in a materially different way
+          without your consent.
         </p>
 
-        <h2>11. Grievance Officer &amp; Contact</h2>
+        <h2>12. Talk to Us — and Our Grievance Officer</h2>
         <p>
-          For any privacy question, request, or grievance, contact our Grievance Officer:
-          <br />
+          We&apos;re happy to answer any question about your privacy, or help you exercise your rights. For anything —
+          including a formal grievance — reach our Grievance Officer:
+        </p>
+        <p>
           Grievance Officer, VMF Holidays Pvt. Ltd.
           <br />
           Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India
           <br />
-          Email: <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a> · Phone:{" "}
-          <a href="tel:+917499322412">+91 7499322412</a>
+          Email: <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>
+          <br />
+          Phone / WhatsApp: <a href="tel:+917499322412">+91 7499322412</a>
         </p>
       </div>
     </div>
