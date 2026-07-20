@@ -128,7 +128,19 @@ export function splitByWeights(amount: number, weights: number[]): number[] {
 export function itemShares(item: Expense): { personId: string; amount: number }[] {
   const mode = item.splitMode ?? "even";
   if (mode === "exact" && item.exact) {
-    return item.sharedBy.map((pid) => ({ personId: pid, amount: item.exact?.[pid] ?? 0 }));
+    const shares = item.sharedBy.map((pid) => ({ personId: pid, amount: item.exact?.[pid] ?? 0 }));
+    // Exact entries that don't add up to the item total would let computeBalances
+    // credit the payer more (or less) than it debits everyone else, so money would
+    // appear or vanish from the group. The add-item form derives the total from the
+    // entries so they always agree, but restored localStorage or a future edit path
+    // could disagree — whatever is unallocated belongs to whoever fronted it.
+    const remainder = item.amount - shares.reduce((s, x) => s + x.amount, 0);
+    if (remainder !== 0) {
+      const payerShare = shares.find((s) => s.personId === item.paidBy);
+      if (payerShare) payerShare.amount += remainder;
+      else shares.push({ personId: item.paidBy, amount: remainder });
+    }
+    return shares;
   }
   if (mode === "percent" && item.percent) {
     const amts = splitByWeights(item.amount, item.sharedBy.map((pid) => item.percent?.[pid] ?? 0));

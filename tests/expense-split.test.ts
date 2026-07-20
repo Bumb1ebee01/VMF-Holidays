@@ -103,6 +103,66 @@ describe("itemShares", () => {
     ]);
   });
 
+  it("gives an under-allocated remainder to whoever paid", () => {
+    // 3,000 spent but only 2,500 assigned — the stray 500 belongs to the payer,
+    // otherwise it silently vanishes from the group's books.
+    const shares = itemShares({
+      ...base,
+      paidBy: "a",
+      sharedBy: ["a", "b"],
+      splitMode: "exact",
+      exact: { a: 1000, b: 1500 },
+    });
+    expect(shares).toEqual([
+      { personId: "a", amount: 1500 },
+      { personId: "b", amount: 1500 },
+    ]);
+    expect(sum(shares.map((s) => s.amount))).toBe(3000);
+  });
+
+  it("takes an over-allocation back off the payer", () => {
+    const shares = itemShares({
+      ...base,
+      paidBy: "a",
+      sharedBy: ["a", "b"],
+      splitMode: "exact",
+      exact: { a: 2000, b: 2000 },
+    });
+    expect(shares).toEqual([
+      { personId: "a", amount: 1000 },
+      { personId: "b", amount: 2000 },
+    ]);
+    expect(sum(shares.map((s) => s.amount))).toBe(3000);
+  });
+
+  it("adds the payer in when they weren't sharing but money is unallocated", () => {
+    const shares = itemShares({
+      ...base,
+      paidBy: "c",
+      sharedBy: ["a", "b"],
+      splitMode: "exact",
+      exact: { a: 1000, b: 1000 },
+    });
+    expect(shares).toContainEqual({ personId: "c", amount: 1000 });
+    expect(sum(shares.map((s) => s.amount))).toBe(3000);
+  });
+
+  it("leaves well-formed exact splits completely untouched", () => {
+    // The normal path through the app: the form derives the total from the
+    // entries, so there is never a remainder and nothing is adjusted.
+    const shares = itemShares({
+      ...base,
+      paidBy: "a",
+      sharedBy: ["a", "b"],
+      splitMode: "exact",
+      exact: { a: 2000, b: 1000 },
+    });
+    expect(shares).toEqual([
+      { personId: "a", amount: 2000 },
+      { personId: "b", amount: 1000 },
+    ]);
+  });
+
   it("converts percentages into amounts that sum to the total", () => {
     const shares = itemShares({
       ...base,
@@ -162,6 +222,33 @@ describe("computeBalances", () => {
         sharedBy: ["b", "c"],
         splitMode: "exact",
         exact: { b: 1500, c: 1000 },
+      },
+    ];
+    expect(sum(computeBalances(people, expenses).map((b) => b.net))).toBe(0);
+  });
+
+  it("still nets to zero when exact amounts don't add up to the item total", () => {
+    // The regression this fix exists for: malformed exact data used to create or
+    // destroy money, because the payer was credited the full amount while the
+    // shares summed to something else.
+    const expenses: Expense[] = [
+      {
+        id: "1",
+        label: "Under-allocated",
+        amount: 5000,
+        paidBy: "a",
+        sharedBy: ["b", "c"],
+        splitMode: "exact",
+        exact: { b: 1000, c: 1000 },
+      },
+      {
+        id: "2",
+        label: "Over-allocated",
+        amount: 2000,
+        paidBy: "b",
+        sharedBy: ["a", "b"],
+        splitMode: "exact",
+        exact: { a: 2000, b: 2000 },
       },
     ];
     expect(sum(computeBalances(people, expenses).map((b) => b.net))).toBe(0);
