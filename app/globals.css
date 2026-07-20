@@ -12,6 +12,7 @@
   --navy-deep:    #001A4A;
   --navy-subtle:  rgba(0, 36, 100, 0.06);
   --orange:       #FE5C10;
+  --orange-btn:   #CE440B; /* deeper orange for primary-button fills: white text clears WCAG AA (4.71:1); brand --orange is only 3.11:1 */
   --orange-lt:    #FFA333;
   --orange-pale:  #FFDDB3;
   --orange-subtle:rgba(254, 92, 16, 0.08);
@@ -379,9 +380,9 @@ h1 em, h2 em, h3 em {
 .btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: var(--orange);
+  background: var(--orange-btn);
   color: var(--white);
-  border-color: var(--orange);
+  border-color: var(--orange-btn);
 }
 .btn-primary:hover {
   background: var(--navy);
@@ -395,8 +396,8 @@ h1 em, h2 em, h3 em {
   border-color: var(--navy);
 }
 .btn-navy:hover {
-  background: var(--orange);
-  border-color: var(--orange);
+  background: var(--orange-btn);
+  border-color: var(--orange-btn);
   box-shadow: 0 12px 32px rgba(254, 92, 16, 0.30);
 }
 
