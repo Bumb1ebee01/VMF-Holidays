@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import ConsentCheckbox from "@/components/ui/ConsentCheckbox";
 import styles from "./DownloadItineraryButton.module.css";
 
 // Tiered itinerary-PDF download (ROADMAP item). Shown to everyone; the gate
@@ -133,6 +134,7 @@ export default function DownloadItineraryButton({ slug }: { slug: string }) {
                   required
                 />
               </label>
+              <ConsentCheckbox context="about my enquiry" />
               {error && <p className={styles.error}>{error}</p>}
               <div className={styles.actions}>
                 <button type="button" className="btn btn-outline btn--sm" onClick={() => setOpen(false)} disabled={busy}>

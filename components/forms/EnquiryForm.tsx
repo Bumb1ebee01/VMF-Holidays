@@ -4,6 +4,7 @@ import { useState, useId } from "react";
 import { buildWhatsAppLink } from "@/lib/whatsapp";
 import { trackLead, trackWhatsAppClick } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
+import ConsentCheckbox from "@/components/ui/ConsentCheckbox";
 import styles from "./EnquiryForm.module.css";
 
 interface Props {
@@ -212,6 +213,8 @@ export default function EnquiryForm({ packageTitle }: Props) {
       )}
 
       <Turnstile onVerify={setCaptcha} />
+
+      <ConsentCheckbox context="about my enquiry" />
 
       <button
         type="submit"

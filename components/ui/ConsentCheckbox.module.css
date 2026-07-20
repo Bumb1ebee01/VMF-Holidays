@@ -1,0 +1,23 @@
+.wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+.box {
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--orange);
+  cursor: pointer;
+}
+
+.link {
+  color: var(--orange-ink);
+  text-decoration: underline;
+}

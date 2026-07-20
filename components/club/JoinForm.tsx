@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState, useState, useTransition } from "react";
 import { joinClub, checkReferralCode, type ClubFormState, type RefCheck } from "@/app/(site)/travellers-club/actions";
+import ConsentCheckbox from "@/components/ui/ConsentCheckbox";
 import styles from "./club.module.css";
 
 const initial: ClubFormState = {};
@@ -106,6 +107,8 @@ export default function JoinForm({ refCode = "", refName = "" }: { refCode?: str
       )}
 
       {state.error && <p className={styles.error}>{state.error}</p>}
+
+      <ConsentCheckbox name="consent" context="about my membership and trips" />
 
       <button type="submit" className="btn btn-primary btn--lg" disabled={pending}>
         {pending ? "Creating your account…" : "Join the Club — it's free"}

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import { JsonLd, organizationJsonLd, websiteJsonLd, branchJsonLd, SITE_URL } from "@/lib/seo";
 import Analytics from "@/components/analytics/Analytics";
+import CookieConsent from "@/components/ui/CookieConsent";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -93,6 +94,7 @@ export default function RootLayout({
         <JsonLd data={[organizationJsonLd(), websiteJsonLd(), branchJsonLd()]} />
         {children}
         <Analytics />
+        <CookieConsent />
       </body>
     </html>
   );

@@ -42,3 +42,23 @@
   line-height: var(--leading-relaxed);
   margin: 0;
 }
+
+.content ul {
+  margin: 0;
+  padding-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  list-style: disc;
+}
+
+.content li {
+  font-size: var(--text-base);
+  color: var(--text-light);
+  line-height: var(--leading-relaxed);
+}
+
+.content a {
+  color: var(--orange-ink);
+  text-decoration: underline;
+}

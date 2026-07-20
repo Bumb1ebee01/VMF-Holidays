@@ -1,0 +1,38 @@
+.banner {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: min(680px, calc(100vw - 32px));
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18);
+}
+
+.text {
+  margin: 0;
+  flex: 1;
+  min-width: 220px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
+.link {
+  color: var(--orange-ink);
+  text-decoration: underline;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
