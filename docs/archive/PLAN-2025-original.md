@@ -1,3 +1,28 @@
+> # ⛔ ARCHIVED — DO NOT FOLLOW THIS DOCUMENT
+>
+> **This is the original 2025 build plan. It is historical only, and parts of it
+> are now wrong. Archived 21 July 2026. Flagged for deletion — keep it only as
+> long as someone wants the record.**
+>
+> Why it must not be followed:
+>
+> 1. **Everything below marked 🔲 is already built.** Phases 2–10 all shipped —
+>    homepage, packages, package detail, destinations, trip builder, about,
+>    contact, category landings, privacy, terms, sitemap, robots, WhatsApp float.
+> 2. **It tells you to make tenure claims that are false.** Phase 2 asks for trust
+>    badges reading "10+ Years Experience" / "500+ Happy Travellers", and Phase 7
+>    asks for "years in business". VMF was founded **3 July 2025** — never claim
+>    tenure beyond that. This rule is in `CLAUDE.md` and it overrides this file.
+> 3. **The business details table at the bottom is wrong.** "Phone 2" lists a
+>    number that appears nowhere on the live site, and the tagline has a stray
+>    comma. The authoritative sources are `CLAUDE.md` and `BUSINESS` in
+>    `lib/seo.tsx` — never this file.
+>
+> For the current state of the project, read `CLAUDE.md`. For a returning
+> developer's orientation, read `SHAUN-CATCHUP.md`.
+
+---
+
 # VMF Holidays — Website Build Plan
 
 ## Project Overview

@@ -5,7 +5,8 @@
 ## What This Is
 Travel agency website for VMF Holidays Pvt. Ltd., Goa, India.
 Next.js App Router. Brand: Navy `#002464` + Orange `#FE5C10` | Font: Roboto.
-See `PLAN.md` for the full phased build plan.
+The site is fully built and live. (The original phased build plan is archived at
+`docs/archive/PLAN-2025-original.md` — historical only, do not follow it.)
 
 ## Business Details
 

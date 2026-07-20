@@ -1,3 +1,20 @@
+> # ⛔ ARCHIVED — DO NOT FOLLOW THIS DOCUMENT
+>
+> **Original Phase 2 homepage plan, historical only. Archived 21 July 2026.
+> Flagged for deletion — keep it only as long as someone wants the record.**
+>
+> It describes a state of the repo that no longer exists ("the Navbar, Footer,
+> and components directory do not exist yet" — they all do, and the homepage
+> shipped long ago). It also proposes a **"500+ Trips Planned"** trust badge;
+> that claim was never shipped and must not be, since VMF was founded
+> **3 July 2025** and unverifiable volume/tenure claims are forbidden by
+> `CLAUDE.md`.
+>
+> For the current state of the project, read `CLAUDE.md`. For a returning
+> developer's orientation, read `SHAUN-CATCHUP.md`.
+
+---
+
 # Plan: VMF Holidays — Phase 2 Homepage
 
 ## Context

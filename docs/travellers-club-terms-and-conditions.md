@@ -2,7 +2,7 @@
 
 **VMF Holidays Pvt. Ltd.**
 Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India
-Email: info@vmfholidays.com · Phone: +91 7499322412 / +91 8788324054
+Email: info@vmfholidays.com · Phone: +91 7499322412
 
 **Version 1.0 · Effective 4 July 2026**
 
@@ -312,7 +312,7 @@ Any balance above the applicable cap remains in your account for future eligible
 **VMF Holidays Pvt. Ltd.**
 Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India
 Email: info@vmfholidays.com
-Phone: +91 7499322412 / +91 8788324054
+Phone: +91 7499322412
 WhatsApp: https://wa.me/917499322412
 
 Questions, grievances, or requests relating to the Club may be sent to the contact details above and will be addressed in accordance with applicable law.
