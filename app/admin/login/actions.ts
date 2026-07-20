@@ -4,7 +4,12 @@ import bcrypt from "bcryptjs";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { createSession, destroySession, getSessionUserId } from "@/lib/auth/session";
+import {
+  createSession,
+  destroySession,
+  getSessionUserId,
+  createTwoFactorPending,
+} from "@/lib/auth/session";
 import { logActivity } from "@/lib/activity";
 import { isRateLimited } from "@/lib/ratelimit";
 
@@ -33,6 +38,13 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   const valid = user && user.active && (await bcrypt.compare(password, user.passwordHash));
   if (!valid) {
     return { error: "Invalid email or password." };
+  }
+
+  // Password is correct but it isn't a session yet: users with 2FA on get a
+  // short-lived pending ticket and must clear the second step first.
+  if (user.totpEnabled) {
+    await createTwoFactorPending(user.id);
+    redirect("/admin/login/verify");
   }
 
   await createSession(user.id, user.sessionVersion);

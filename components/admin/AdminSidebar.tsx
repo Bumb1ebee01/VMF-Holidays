@@ -19,6 +19,7 @@ import {
   IconTeam,
   IconWallet,
   IconTarget,
+  IconShield,
   IconExternal,
   type AdminIcon,
 } from "./icons";
@@ -70,6 +71,7 @@ const GROUPS: NavGroup[] = [
       { href: "/admin/reports", label: "Reports", icon: IconTarget, perm: "activity:view-all" },
       { href: "/admin/activity", label: "Activity", icon: IconActivity },
       { href: "/admin/team", label: "Team", icon: IconTeam, adminOnly: true },
+      { href: "/admin/security", label: "Security", icon: IconShield },
     ],
   },
 ];

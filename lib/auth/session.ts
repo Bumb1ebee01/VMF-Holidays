@@ -74,3 +74,42 @@ export async function verifySessionToken(token: string): Promise<string | null> 
     return null;
   }
 }
+
+// ── Two-factor: a short-lived "password OK, awaiting 2FA code" ticket ──────────
+// Set after a correct password when the user has 2FA on; exchanged for a real
+// session once the TOTP/backup code is verified. Never grants access on its own.
+const TWOFA_COOKIE = "vmf_2fa";
+
+export async function createTwoFactorPending(userId: string) {
+  const token = await new SignJWT({ sub: userId, purpose: "2fa" })
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("5m")
+    .sign(getSecret());
+  const jar = await cookies();
+  jar.set(TWOFA_COOKIE, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 300,
+  });
+}
+
+export async function getTwoFactorPending(): Promise<string | null> {
+  const jar = await cookies();
+  const token = jar.get(TWOFA_COOKIE)?.value;
+  if (!token) return null;
+  try {
+    const { payload } = await jwtVerify(token, getSecret());
+    if (payload.purpose !== "2fa" || typeof payload.sub !== "string") return null;
+    return payload.sub;
+  } catch {
+    return null;
+  }
+}
+
+export async function clearTwoFactorPending() {
+  const jar = await cookies();
+  jar.delete(TWOFA_COOKIE);
+}

@@ -51,6 +51,9 @@ model User {
   role         Role          @default(MEMBER)
   active       Boolean       @default(true)
   sessionVersion Int         @default(0) // bump to invalidate a user's existing JWT sessions (password reset / forced sign-out)
+  totpEnabled  Boolean       @default(false) // admin 2FA (opt-in per user)
+  totpSecret   String?       // AES-256-GCM encrypted TOTP secret; null until enrolled
+  totpBackupCodes String[]   @default([]) // bcrypt-hashed single-use recovery codes
   permissions  String[]      @default([])
   leads        Lead[]        @relation("AssignedLeads")
   bookings     Booking[]     @relation("BookingAdvisor")
