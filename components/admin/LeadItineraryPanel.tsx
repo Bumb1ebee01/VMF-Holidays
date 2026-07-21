@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import shared from "./shared.module.css";
 import styles from "./LeadItineraryPanel.module.css";
 import { ItineraryEditor, type ItineraryDayInput } from "./fields";
+import { normalizeWhatsAppNumber } from "@/lib/contact";
 
 interface PkgOption {
   slug: string;
@@ -40,8 +41,7 @@ export default function LeadItineraryPanel({
 }) {
   const router = useRouter();
   const firstName = customerName.trim().split(/\s+/)[0] || customerName;
-  const phoneDigits = customerPhone.replace(/\D/g, "").slice(-10);
-  const waNumber = phoneDigits.length === 10 ? `91${phoneDigits}` : null;
+  const waNumber = normalizeWhatsAppNumber(customerPhone);
   const email = customerEmail?.trim() || null;
 
   const [query, setQuery] = useState(defaultQuery);

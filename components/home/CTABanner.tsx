@@ -93,7 +93,7 @@ export default function CTABanner() {
                       type="tel"
                       name="phone"
                       className={styles.input}
-                      placeholder="+91 XXXXX XXXXX"
+                      placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={handleChange}
                       required

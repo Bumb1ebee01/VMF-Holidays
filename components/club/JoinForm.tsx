@@ -5,6 +5,7 @@ import { useActionState, useState, useTransition } from "react";
 import { joinClub, checkReferralCode, type ClubFormState, type RefCheck } from "@/app/(site)/travellers-club/actions";
 import ConsentCheckbox from "@/components/ui/ConsentCheckbox";
 import styles from "./club.module.css";
+import { PHONE_HINT } from "@/lib/contact";
 
 const initial: ClubFormState = {};
 
@@ -60,9 +61,10 @@ export default function JoinForm({ refCode = "", refName = "" }: { refCode?: str
           type="tel"
           className="form-input"
           autoComplete="tel"
-          placeholder="+91 XXXXX XXXXX"
+          placeholder="+91 98765 43210"
           required
         />
+        <p className="form-hint">{PHONE_HINT}</p>
       </div>
       <div className="form-group">
         <label className="form-label" htmlFor="cf-password">Create a password</label>

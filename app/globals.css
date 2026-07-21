@@ -503,6 +503,14 @@ h1 em, h2 em, h3 em {
   color: var(--text-lighter);
 }
 
+/* Small guidance under a field — e.g. that any country's phone number is fine. */
+.form-hint {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
 .form-input,
 .form-select,
 .form-textarea {

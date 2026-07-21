@@ -11,6 +11,7 @@ import {
   telHref,
   mailtoHref,
   whatsappLink,
+  normalizeWhatsAppNumber,
 } from "@/lib/contact";
 import { BUSINESS } from "@/lib/seo";
 
@@ -60,6 +61,49 @@ describe("telHref / mailtoHref", () => {
 
   it("builds a mailto for the business address", () => {
     expect(mailtoHref()).toBe(`mailto:${EMAIL}`);
+  });
+});
+
+describe("normalizeWhatsAppNumber", () => {
+  it("assumes India only for a bare 10-digit number", () => {
+    expect(normalizeWhatsAppNumber("98765 43210")).toBe("919876543210");
+  });
+
+  it("strips the leading 0 of an Indian STD-style number", () => {
+    expect(normalizeWhatsAppNumber("098765 43210")).toBe("919876543210");
+  });
+
+  it("leaves an international number completely alone", () => {
+    // The regression this exists for: taking "the last 10 digits" rewrote a UK
+    // number into an Indian one and would have sent a customer's itinerary to a
+    // stranger.
+    expect(normalizeWhatsAppNumber("+44 7700 900123")).toBe("447700900123");
+    expect(normalizeWhatsAppNumber("+1 (415) 555-2671")).toBe("14155552671");
+    expect(normalizeWhatsAppNumber("+971 50 123 4567")).toBe("971501234567");
+  });
+
+  it("never produces an Indian number from a non-Indian one", () => {
+    for (const raw of ["+44 7700 900123", "+1 415 555 2671", "+61 412 345 678"]) {
+      expect(normalizeWhatsAppNumber(raw)?.startsWith("91")).toBe(false);
+    }
+  });
+
+  it("keeps an Indian number already written with its country code", () => {
+    expect(normalizeWhatsAppNumber("+91 98765 43210")).toBe("919876543210");
+  });
+
+  it("ignores spaces, dashes, brackets and dots", () => {
+    expect(normalizeWhatsAppNumber("(98765) 43-210")).toBe("919876543210");
+  });
+
+  it("returns null for empty or too-short input rather than a broken number", () => {
+    expect(normalizeWhatsAppNumber("")).toBeNull();
+    expect(normalizeWhatsAppNumber("12345")).toBeNull();
+    expect(normalizeWhatsAppNumber("not a phone")).toBeNull();
+  });
+
+  it("honours a different default country code", () => {
+    expect(normalizeWhatsAppNumber("7700900123", "44")).toBe("447700900123");
   });
 });
 

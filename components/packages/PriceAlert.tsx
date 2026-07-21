@@ -64,7 +64,7 @@ export default function PriceAlert({
       <input
         className="form-input"
         type="tel"
-        placeholder="Your phone number"
+        placeholder="+91 98765 43210"
         autoComplete="tel"
         required
         value={phone}

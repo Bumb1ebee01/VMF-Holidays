@@ -1,5 +1,5 @@
 import type { EnquiryPayload } from "@/lib/types";
-import { WHATSAPP_NUMBER } from "@/lib/contact";
+import { WHATSAPP_NUMBER, normalizeWhatsAppNumber as normalizeNumber } from "@/lib/contact";
 
 export function buildWhatsAppLink(payload: EnquiryPayload): string {
   const lines: string[] = [
@@ -43,14 +43,13 @@ export function buildWhatsAppLink(payload: EnquiryPayload): string {
 //   WHATSAPP_API_VERSION      — Graph API version (default "v21.0")
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Normalise a user-entered phone to WhatsApp international format (digits + country code). */
+/**
+ * Normalise a user-entered phone to WhatsApp international format.
+ * The logic lives in lib/contact.ts so client components can share it without
+ * pulling this module's Meta API code into the browser bundle.
+ */
 export function normalizeWhatsAppNumber(raw: string): string | null {
-  let digits = String(raw).replace(/\D/g, "");
-  if (!digits) return null;
-  const cc = process.env.WHATSAPP_DEFAULT_CC ?? "91";
-  if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
-  if (digits.length === 10) digits = cc + digits;
-  return digits.length >= 11 ? digits : null;
+  return normalizeNumber(raw, process.env.WHATSAPP_DEFAULT_CC ?? "91");
 }
 
 /** The confirmation copy sent to the customer. */

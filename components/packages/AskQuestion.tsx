@@ -112,7 +112,7 @@ export default function AskQuestion({ packageTitle }: { packageTitle?: string })
                   <input
                     className="form-input"
                     type="tel"
-                    placeholder="Phone"
+                    placeholder="+91 98765 43210"
                     autoComplete="tel"
                     required
                     value={form.phone}

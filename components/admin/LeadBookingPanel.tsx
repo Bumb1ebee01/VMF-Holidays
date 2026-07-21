@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { createBookingFromLead, type BookingFormState } from "@/app/admin/(panel)/bookings/actions";
 import shared from "./shared.module.css";
+import { PHONE_HINT } from "@/lib/contact";
 
 const initial: BookingFormState = {};
 const col = { display: "flex", flexDirection: "column" as const, gap: 10, marginTop: 12 };
@@ -50,6 +51,7 @@ export default function LeadBookingPanel({
           <label className="form-group" style={{ flex: 1 }}>
             <span className="form-label">Phone *</span>
             <input name="customerPhone" type="tel" className="form-input" required defaultValue={prefill.phone} />
+            <p className="form-hint">{PHONE_HINT}</p>
           </label>
           <label className="form-group" style={{ flex: 1 }}>
             <span className="form-label">Email *</span>

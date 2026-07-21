@@ -623,7 +623,7 @@ export default function TripWizard({ destinations, geography }: Props) {
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Phone Number *</label>
-                  <input type="tel" className={styles.formInput} placeholder="+91 XXXXX XXXXX" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} required />
+                  <input type="tel" className={styles.formInput} placeholder="+91 98765 43210" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} required />
                 </div>
                 <div className={styles.formGroup}>
                   <label className={styles.formLabel}>Email Address <span className={styles.optionalTag}>(optional)</span></label>

@@ -13,6 +13,7 @@ import {
   MEAL_PLANS,
 } from "@/components/admin/leadMeta";
 import shared from "./shared.module.css";
+import { PHONE_HINT } from "@/lib/contact";
 
 export interface LeadFormValues {
   name?: string;
@@ -66,6 +67,7 @@ export default function LeadForm({ action, mode, lead, users, cancelHref }: Lead
       <div className="form-group">
         <label className="form-label" htmlFor="lf-phone">Phone *</label>
         <input id="lf-phone" name="phone" type="tel" className="form-input" required defaultValue={v.phone ?? ""} />
+        <p className="form-hint">{PHONE_HINT}</p>
       </div>
       <div className="form-group">
         <label className="form-label" htmlFor="lf-email">Email</label>

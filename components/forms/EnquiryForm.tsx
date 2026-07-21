@@ -6,6 +6,7 @@ import { trackLead, trackWhatsAppClick } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
 import ConsentCheckbox from "@/components/ui/ConsentCheckbox";
 import styles from "./EnquiryForm.module.css";
+import { PHONE_HINT } from "@/lib/contact";
 
 interface Props {
   packageTitle?: string;
@@ -116,10 +117,11 @@ export default function EnquiryForm({ packageTitle }: Props) {
             className="form-input"
             type="tel"
             required
-            placeholder="+91 XXXXX XXXXX"
+            placeholder="+91 98765 43210"
             value={form.phone}
             onChange={(e) => set("phone", e.target.value)}
           />
+          <p className="form-hint">{PHONE_HINT}</p>
         </div>
       </div>
 

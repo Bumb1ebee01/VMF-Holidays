@@ -19,6 +19,28 @@ export const EMAIL = "info@vmfholidays.com";
  *  building the URL by hand; this is exported for the few callers that can't. */
 export const WHATSAPP_NUMBER = PHONE_PRIMARY.replace(/\D/g, "");
 
+/**
+ * Turn a phone number the customer typed into WhatsApp's format (digits, with a
+ * country code). Customers are not all Indian, so an explicit international
+ * number must survive untouched — never take "the last 10 digits", which
+ * silently rewrites +44 7700 900123 into an Indian number and sends their trip
+ * details to a stranger.
+ *
+ * Only a bare 10-digit number is assumed to be Indian; anything already carrying
+ * a country code is left alone.
+ */
+export function normalizeWhatsAppNumber(raw: string, defaultCountryCode = "91"): string | null {
+  let digits = String(raw ?? "").replace(/\D/g, "");
+  if (!digits) return null;
+  // Indian STD form: a leading 0 before the 10-digit mobile number.
+  if (digits.length === 11 && digits.startsWith("0")) digits = digits.slice(1);
+  if (digits.length === 10) digits = defaultCountryCode + digits;
+  return digits.length >= 11 ? digits : null;
+}
+
+/** Guidance shown under every phone field: we accept any country's number. */
+export const PHONE_HINT = "Any country — please include your country code.";
+
 /** `tel:` href for a dialable number. */
 export function telHref(phone: string = PHONE_PRIMARY): string {
   return `tel:${phone}`;
