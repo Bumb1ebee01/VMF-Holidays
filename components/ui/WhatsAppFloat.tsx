@@ -2,11 +2,12 @@
 
 import { trackWhatsAppClick } from "@/lib/analytics";
 import styles from "./WhatsAppFloat.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 export default function WhatsAppFloat() {
   return (
     <a
-      href="https://wa.me/917499322412"
+      href={whatsappLink()}
       target="_blank"
       rel="noopener noreferrer"
       className={styles.btn}

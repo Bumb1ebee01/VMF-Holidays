@@ -14,6 +14,13 @@ import {
 } from "@react-pdf/renderer";
 import type { Package } from "@/lib/types";
 import { getTerms, PRICE_NOTES, type TourRegion } from "@/lib/itinerary-terms";
+import {
+  whatsappLink,
+  telHref,
+  mailtoHref,
+  PHONE_PRIMARY_DISPLAY,
+  PHONE_SECONDARY_DISPLAY,
+} from "@/lib/contact";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Itinerary PDF — the single, reusable renderer.
@@ -38,13 +45,13 @@ const MUTED = "#6F6A63";
 const HAIR = "#E4DFD6";
 const CREAM = "#FAF7F2";
 
-// Brand contact — the CTA targets. Pulled from CLAUDE.md business details.
-const WA = "https://wa.me/917499322412";
-const TEL = "tel:+917499322412";
-const MAIL = "mailto:info@vmfholidays.com";
+// Brand contact — the CTA targets. Single-sourced from lib/contact.
+const WA = whatsappLink();
+const TEL = telHref();
+const MAIL = mailtoHref();
 const SITE = "https://vmfholidays.com";
-const PHONE_1 = "+91 74993 22412";
-const PHONE_2 = "+91 92703 54828";
+const PHONE_1 = PHONE_PRIMARY_DISPLAY;
+const PHONE_2 = PHONE_SECONDARY_DISPLAY;
 
 // Register Roboto (bundled TTFs, no network at render). If tracing ever misses
 // the files, registration throws → we fall back to Helvetica rather than 500.

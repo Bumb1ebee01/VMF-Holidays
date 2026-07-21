@@ -16,6 +16,7 @@ import {
   type TierRow,
 } from "@/lib/referral";
 import shell from "../../privacy/page.module.css";
+import { telHref, PHONE_PRIMARY_DISPLAY } from "@/lib/contact";
 import styles from "./terms.module.css";
 
 // Public Travellers Club terms. All member-facing figures are read from the
@@ -356,7 +357,7 @@ export default function ClubTermsPage() {
           VMF Holidays Pvt. Ltd., Mendes Vaddo, H. No 128/3/A, Nagoa, Bardez, Goa 403516, India
           <br />
           Email: <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a> · Phone:{" "}
-          <a href="tel:+917499322412">+91 7499322412</a>
+          <a href={telHref()}>{PHONE_PRIMARY_DISPLAY}</a>
         </p>
 
         <p className={styles.effective}>

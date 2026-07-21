@@ -6,6 +6,7 @@ import { getAllDestinations, getHolidayLandings } from "@/lib/queries";
 import { formatINR } from "@/lib/utils";
 import { JsonLd, breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const WORD: Record<string, string> = {
   honeymoon: "Honeymoon",
@@ -214,7 +215,7 @@ export default async function DestinationGuidePage({
           <p className={styles.ctaSub}>Get a free, customised quote within 24 hours — no booking fees.</p>
           <div className={styles.ctaActions}>
             <Link href="/trip-builder" className="btn btn-primary btn--lg">Build my trip</Link>
-            <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer" className="btn btn-outline btn--lg">
+            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn--lg">
               WhatsApp us
             </a>
           </div>

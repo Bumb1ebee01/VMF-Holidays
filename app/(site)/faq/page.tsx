@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd, faqJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const FAQS: { q: string; a: string }[] = [
   {
@@ -93,7 +94,7 @@ export default function FaqPage() {
           <div className={styles.ctaActions}>
             <Link href="/contact" className="btn btn-primary btn--lg">Contact us</Link>
             <a
-              href="https://wa.me/917499322412"
+              href={whatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline btn--lg"

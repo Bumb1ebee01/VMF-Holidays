@@ -15,6 +15,7 @@ import {
   type FinderDestination,
   type FinderPackage,
 } from "@/lib/trip-finder";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./TripFinder.module.css";
 
 type OptionDef = { id: string; label: string; icon: string };
@@ -60,7 +61,6 @@ const STEPS: Step[] = [
   },
 ];
 
-const WA_NUMBER = "917499322412";
 
 const priceLabel = (p: FinderPackage) =>
   p.priceOnRequest ? "On request" : `from ${formatINR(p.fromPrice)}`;
@@ -123,7 +123,7 @@ export default function TripFinder({
       results[0] ? `Top match: ${results[0].pkg.title}` : "",
       "Could you help me plan it?",
     ].filter(Boolean);
-    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`;
+    return whatsappLink(lines.join("\n"));
   }, [answers, results]);
 
   if (done) {

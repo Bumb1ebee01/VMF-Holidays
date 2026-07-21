@@ -7,6 +7,7 @@ import { JsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from "@/lib/seo";
 import { formatINR } from "@/lib/utils";
 import type { TripCategorySlug } from "@/lib/types";
 import styles from "./CategoryLanding.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 export default async function CategoryLanding({ slug }: { slug: TripCategorySlug }) {
   const category = getCategoryBySlug(slug);
@@ -125,7 +126,7 @@ export default async function CategoryLanding({ slug }: { slug: TripCategorySlug
           <p className={styles.ctaSub}>We build custom itineraries. Tell us your dream trip and we&apos;ll plan it.</p>
           <div className={styles.ctaActions}>
             <Link href="/trip-builder" className="btn btn-primary btn--lg">Build My Trip</Link>
-            <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer" className="btn btn-ghost-white btn--lg">
+            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-ghost-white btn--lg">
               WhatsApp Us
             </a>
           </div>

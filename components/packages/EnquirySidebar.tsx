@@ -6,13 +6,13 @@ import { trackWhatsAppClick } from "@/lib/analytics";
 import type { Package } from "@/lib/types";
 import AskQuestion from "./AskQuestion";
 import PriceAlert from "./PriceAlert";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./EnquirySidebar.module.css";
-
-const WA_NUMBER = "917499322412";
 
 export default function EnquirySidebar({ pkg }: { pkg: Package }) {
   const priceBit = pkg.priceOnRequest ? "" : `, from ${formatINR(pkg.fromPrice)} per person`;
-  const waText = encodeURIComponent(
+  // Plain text — whatsappLink() does the URL-encoding.
+  const waText = (
     `Hi VMF Holidays! I'd like to enquire about the *${pkg.title}* package (${pkg.duration}${priceBit}). Please share more details.`
   );
 
@@ -51,7 +51,7 @@ export default function EnquirySidebar({ pkg }: { pkg: Package }) {
         </div>
 
         <a
-          href={`https://wa.me/${WA_NUMBER}?text=${waText}`}
+          href={whatsappLink(waText)}
           target="_blank"
           rel="noopener noreferrer"
           className={`btn btn--lg ${styles.waBtn}`}

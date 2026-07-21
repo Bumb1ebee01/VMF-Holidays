@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -121,7 +122,7 @@ export default function AboutPage() {
           <div className={styles.ctaActions}>
             <Link href="/contact" className="btn btn-primary btn--lg">Get in Touch</Link>
             <a
-              href="https://wa.me/917499322412"
+              href={whatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline btn--lg"

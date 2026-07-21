@@ -2,9 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Offer } from "@/lib/types";
 import styles from "./OffersStrip.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const WA_DEFAULT =
-  "https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20details%20on%20your%20current%20offers.";
+  whatsappLink("Hi VMF Holidays! I'd like details on your current offers.");
 
 export default function OffersStrip({ offers }: { offers: Offer[] }) {
   if (offers.length === 0) return null;

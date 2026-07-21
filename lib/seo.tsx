@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import type { Package, BlogPost, TripCategorySlug } from "@/lib/types";
 import { getCategoryBySlug } from "@/lib/data/categories";
+import {
+  EMAIL,
+  PHONE_PRIMARY,
+  PHONE_SECONDARY,
+  PHONE_MANGALORE,
+  whatsappLink,
+} from "@/lib/contact";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Central SEO source of truth — site URL, business identity, and JSON-LD
@@ -22,9 +29,9 @@ export const SITE_DESCRIPTION =
 
 export const BUSINESS = {
   legalName: "VMF Holidays Pvt. Ltd.",
-  email: "info@vmfholidays.com",
-  phones: ["+917499322412", "+919270354828", "+919481384953"],
-  whatsapp: "https://wa.me/917499322412",
+  email: EMAIL,
+  phones: [PHONE_PRIMARY, PHONE_SECONDARY, PHONE_MANGALORE],
+  whatsapp: whatsappLink(),
   instagram: "https://www.instagram.com/vmfholidays/",
   facebook: "https://www.facebook.com/vmfholidays/",
   /** Direct "write a review" link from the Google Business Profile — opens the

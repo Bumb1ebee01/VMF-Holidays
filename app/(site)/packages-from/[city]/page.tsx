@@ -8,6 +8,7 @@ import { formatINR } from "@/lib/utils";
 import { JsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd, absoluteUrl } from "@/lib/seo";
 import PackageCard from "@/components/ui/PackageCard";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const CATEGORY_LINKS = [
   { slug: "honeymoon", label: "Honeymoon" },
@@ -199,7 +200,7 @@ export default async function PackagesFromCityPage({
           <p className={styles.ctaSub}>Get a free, customised quote within 24 hours — no booking fees.</p>
           <div className={styles.ctaActions}>
             <Link href="/trip-builder" className="btn btn-primary btn--lg">Build my trip</Link>
-            <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer" className="btn btn-outline btn--lg">
+            <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn--lg">
               WhatsApp us
             </a>
           </div>

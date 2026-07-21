@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import EnquiryForm from "@/components/forms/EnquiryForm";
 import AfterEnquiry from "@/components/enquiry/AfterEnquiry";
 import styles from "./page.module.css";
+import { whatsappLink, telHref, PHONE_SECONDARY, PHONE_MANGALORE, PHONE_PRIMARY_DISPLAY, PHONE_SECONDARY_DISPLAY, PHONE_MANGALORE_DISPLAY } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact Us — Goa Travel Agency",
@@ -57,9 +58,9 @@ export default async function ContactPage(props: PageProps<"/contact">) {
               </div>
               <div>
                 <p className={styles.detailLabel}>Phone</p>
-                <a href="tel:+917499322412" className={styles.detailValue}>+91 74993 22412</a>
-                <a href="tel:+919270354828" className={styles.detailValue}>+91 92703 54828</a>
-                <a href="tel:+919481384953" className={styles.detailValue}>+91 94813 84953</a>
+                <a href={telHref()} className={styles.detailValue}>{PHONE_PRIMARY_DISPLAY}</a>
+                <a href={telHref(PHONE_SECONDARY)} className={styles.detailValue}>{PHONE_SECONDARY_DISPLAY}</a>
+                <a href={telHref(PHONE_MANGALORE)} className={styles.detailValue}>{PHONE_MANGALORE_DISPLAY}</a>
               </div>
             </div>
 
@@ -92,7 +93,7 @@ export default async function ContactPage(props: PageProps<"/contact">) {
             </div>
 
             <a
-              href="https://wa.me/917499322412"
+              href={whatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
               className={`btn btn--lg ${styles.waBtn}`}

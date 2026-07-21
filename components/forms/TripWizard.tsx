@@ -8,6 +8,7 @@ import type { Continent, GeoCountry, GeoPlace } from "@/lib/data/geography";
 import { MultiMonthCalendar } from "@/components/ui/MultiMonthCalendar";
 import { trackLead } from "@/lib/analytics";
 import Turnstile from "@/components/ui/Turnstile";
+import { whatsappLink, PHONE_PRIMARY_DISPLAY, EMAIL } from "@/lib/contact";
 import styles from "./TripWizard.module.css";
 
 // The Trip Builder data now arrives from the DB-backed loader (with a static
@@ -256,7 +257,7 @@ export default function TripWizard({ destinations, geography }: Props) {
     return lines.join("\n");
   }, [form.name, form.phone, destinationStr, tripDays, tripNights, startDate, endDate, travelersLabel, hotelCategory, mealPlan, contactMode, contactTime]);
 
-  const waHref = `https://wa.me/917499322412?text=${encodeURIComponent(waText)}`;
+  const waHref = whatsappLink(waText);
 
   // The cities + experiences determine an approximate trip length (tripDays).
   // So once the traveller picks a departure date we auto-set the return date to
@@ -346,8 +347,8 @@ export default function TripWizard({ destinations, geography }: Props) {
           ))}
         </ol>
         <div className={styles.railFoot}>
-          <span>+91 7499322412</span>
-          <span>info@vmfholidays.com</span>
+          <span>{PHONE_PRIMARY_DISPLAY}</span>
+          <span>{EMAIL}</span>
         </div>
       </aside>
 
@@ -656,7 +657,7 @@ export default function TripWizard({ destinations, geography }: Props) {
                 </div>
                 <Turnstile onVerify={setCaptcha} />
                 {status === "error" && (
-                  <p className={styles.errorMsg}>Something went wrong. <a href="https://wa.me/917499322412" target="_blank" rel="noopener noreferrer">Try WhatsApp instead →</a></p>
+                  <p className={styles.errorMsg}>Something went wrong. <a href={whatsappLink()} target="_blank" rel="noopener noreferrer">Try WhatsApp instead →</a></p>
                 )}
               </div>
 

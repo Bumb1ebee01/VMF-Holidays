@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { formatINR } from "@/lib/utils";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./BudgetExplorer.module.css";
 
 export interface BudgetPackage {
@@ -27,7 +28,6 @@ type RegionFilter = "all" | "domestic" | "international";
 const MIN = 10000;
 const MAX = 200000;
 const STEP = 5000;
-const WA_NUMBER = "917499322412";
 const MAX_PACKAGES_SHOWN = 3;
 const DEFAULT_BUDGET = 50000;
 
@@ -136,9 +136,9 @@ export default function BudgetExplorer({
     (showDomestic ? domestic.length : 0) + (showInternational ? international.length : 0);
 
   const budgetLabel = budget >= MAX ? "₹2,00,000+" : formatINR(budget);
-  const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
+  const waHref = whatsappLink(
     `Hi VMF Holidays! My budget is around ${budgetLabel} per person — what trips can you suggest?`
-  )}`;
+  );
 
   return (
     <div className={styles.wrap}>

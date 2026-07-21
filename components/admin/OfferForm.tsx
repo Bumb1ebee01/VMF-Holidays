@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { saveOffer, deleteOffer, type OfferPayload } from "@/app/admin/(panel)/offers/actions";
 import { ImageUpload } from "./fields";
 import shared from "./shared.module.css";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./PackageForm.module.css";
 
 interface OfferFormProps {
@@ -113,7 +114,7 @@ export default function OfferForm({ initial }: OfferFormProps) {
               id="o-ctahref"
               className="form-input"
               value={ctaHref}
-              placeholder="/trip-builder or https://wa.me/917499322412"
+              placeholder={`/trip-builder or ${whatsappLink()}`}
               onChange={(e) => setCtaHref(e.target.value)}
             />
             <p className={shared.fieldHint}>Where the button goes. Defaults to WhatsApp if blank.</p>

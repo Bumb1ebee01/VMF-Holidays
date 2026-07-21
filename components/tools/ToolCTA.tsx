@@ -1,7 +1,6 @@
 import Link from "next/link";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./ToolCTA.module.css";
-
-const WHATSAPP_NUMBER = "917499322412";
 
 interface ToolCTAProps {
   title: string;
@@ -26,7 +25,7 @@ export default function ToolCTA({
   secondaryHref = "/trip-builder",
   secondaryLabel = "Plan a trip",
 }: ToolCTAProps) {
-  const waHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`;
+  const waHref = whatsappLink(whatsappText);
   return (
     <section className={styles.cta}>
       <div className={styles.inner}>

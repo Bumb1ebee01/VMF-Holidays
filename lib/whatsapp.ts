@@ -1,6 +1,5 @@
 import type { EnquiryPayload } from "@/lib/types";
-
-const WHATSAPP_NUMBER = "917499322412";
+import { WHATSAPP_NUMBER } from "@/lib/contact";
 
 export function buildWhatsAppLink(payload: EnquiryPayload): string {
   const lines: string[] = [

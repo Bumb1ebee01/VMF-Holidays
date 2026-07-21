@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { telHref, PHONE_PRIMARY_DISPLAY } from "@/lib/contact";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -200,7 +201,7 @@ export default function PrivacyPage() {
           <br />
           Email: <a href="mailto:info@vmfholidays.com">info@vmfholidays.com</a>
           <br />
-          Phone / WhatsApp: <a href="tel:+917499322412">+91 7499322412</a>
+          Phone / WhatsApp: <a href={telHref()}>{PHONE_PRIMARY_DISPLAY}</a>
         </p>
       </div>
     </div>

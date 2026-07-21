@@ -4,6 +4,7 @@ import Image from "next/image";
 import { getPublishedOffers } from "@/lib/queries";
 import { JsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Offers & Deals",
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
 export const revalidate = 300;
 
 const WA_DEFAULT =
-  "https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20details%20on%20your%20current%20offers.";
+  whatsappLink("Hi VMF Holidays! I'd like details on your current offers.");
 
 function offerLink(href: string | null) {
   return href && href.trim() ? href : WA_DEFAULT;

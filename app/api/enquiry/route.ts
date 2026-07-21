@@ -7,6 +7,7 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { REF_COOKIE, normalizeCode } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
 import { BUSINESS } from "@/lib/seo";
+import { telHref, whatsappLink, PHONE_PRIMARY_DISPLAY } from "@/lib/contact";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -263,11 +264,11 @@ export async function POST(request: Request) {
           </p>
           <p style="font-size:14px;line-height:1.7;margin:0 0 18px">Need us sooner? Reach out any time:</p>
           <p style="font-size:14px;line-height:1.9;margin:0 0 24px">
-            Phone: <a href="tel:+917499322412" style="color:#002464;font-weight:600;text-decoration:none">+91 74993 22412</a><br/>
-            WhatsApp: <a href="https://wa.me/917499322412" style="color:#002464;font-weight:600;text-decoration:none">chat with us</a><br/>
+            Phone: <a href="${telHref()}" style="color:#002464;font-weight:600;text-decoration:none">${PHONE_PRIMARY_DISPLAY}</a><br/>
+            WhatsApp: <a href="${whatsappLink()}" style="color:#002464;font-weight:600;text-decoration:none">chat with us</a><br/>
             Email: <a href="mailto:info@vmfholidays.com" style="color:#002464;font-weight:600;text-decoration:none">info@vmfholidays.com</a>
           </p>
-          <a href="https://wa.me/917499322412" style="display:inline-block;background:#FE5C10;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:10px">Chat on WhatsApp</a>
+          <a href="${whatsappLink()}" style="display:inline-block;background:#FE5C10;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;padding:12px 26px;border-radius:10px">Chat on WhatsApp</a>
         </div>
         <p style="font-size:11px;color:#7B8298;text-align:center;margin:18px 0 0">
           ${BUSINESS.legalName} — ${BUSINESS.address.full}

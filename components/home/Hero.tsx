@@ -8,6 +8,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { WordReveal, LineReveal } from "@/components/ui/Motion";
 import type { Destination } from "@/lib/types";
 import styles from "./Hero.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 interface Suggestion {
   title: string;
@@ -293,7 +294,7 @@ export default function Hero({
                 Explore Destinations
               </Link>
               <a
-                href="https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20to%20plan%20a%20trip."
+                href={whatsappLink("Hi VMF Holidays! I'd like to plan a trip.")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={styles.btnOutline}

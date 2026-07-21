@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Turnstile from "@/components/ui/Turnstile";
 import { trackWhatsAppClick } from "@/lib/analytics";
+import { whatsappLink } from "@/lib/contact";
 import styles from "./AskQuestion.module.css";
-
-const WA_NUMBER = "917499322412";
 
 // Soft, low-commitment "Ask a question" CTA — catches curious visitors who aren't
 // ready for the full enquiry. Opens a 3-field mini-form (captured as an ASK_QUESTION
@@ -17,9 +16,7 @@ export default function AskQuestion({ packageTitle }: { packageTitle?: string })
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
 
   const about = packageTitle ? ` about the ${packageTitle} package` : "";
-  const waHref = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(
-    `Hi VMF Holidays! I have a question${about}: `
-  )}`;
+  const waHref = whatsappLink(`Hi VMF Holidays! I have a question${about}: `);
 
   const set = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
 

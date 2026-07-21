@@ -12,6 +12,7 @@ import { formatINR } from "@/lib/utils";
 import { JsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd } from "@/lib/seo";
 import PackageCard from "@/components/ui/PackageCard";
 import styles from "./page.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const WORD: Record<string, string> = {
   honeymoon: "Honeymoon",
@@ -199,7 +200,7 @@ export default async function HolidayLandingPage({
           <div className={styles.ctaActions}>
             <Link href="/trip-builder" className="btn btn-primary btn--lg">Build my trip</Link>
             <a
-              href="https://wa.me/917499322412"
+              href={whatsappLink()}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline btn--lg"

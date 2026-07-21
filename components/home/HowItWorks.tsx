@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { FadeIn, Stagger, fadeUp } from "@/components/ui/Motion";
 import styles from "./HowItWorks.module.css";
+import { whatsappLink } from "@/lib/contact";
 
 const STEPS = [
   {
@@ -68,7 +69,7 @@ export default function HowItWorks() {
 
         <FadeIn delay={0.5} className={styles.ctaRow}>
           <a
-            href="https://wa.me/917499322412?text=Hi%20VMF%20Holidays!%20I%27d%20like%20to%20start%20planning%20my%20trip."
+            href={whatsappLink("Hi VMF Holidays! I'd like to start planning my trip.")}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.waBtn}
