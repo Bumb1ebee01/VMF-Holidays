@@ -1,0 +1,218 @@
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 0.25rem;
+}
+
+.sub {
+  font-size: 0.825rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.form,
+.settings {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--off-white);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.hint {
+  margin: 4px 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-light);
+  cursor: pointer;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.meta {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.rowActions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #b42318;
+  cursor: pointer;
+}
+
+.removeBtn:hover { text-decoration: underline; }
+.removeBtn:disabled { opacity: 0.5; cursor: default; }
+:global([data-theme="dark"]) .removeBtn { color: #f97066; }
+
+.divider {
+  height: 1px;
+  background: var(--hairline);
+  margin: 1.25rem 0;
+}
+
+/* ── Summary ─────────────────────────────────────────────────────────────── */
+.summary {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.summary > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.summary dt {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin: 0;
+}
+
+.summary dd {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Taxes are collected and remitted, so they read as secondary, not as income. */
+.passThrough dt,
+.passThrough dd {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.total dt,
+.total dd {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Margin ──────────────────────────────────────────────────────────────── */
+.marginRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm, 8px);
+  border: 1px solid var(--border);
+  background: var(--off-white);
+}
+
+.marginValue,
+.marginValueAlt {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.marginValueAlt {
+  font-size: 1.1rem;
+  color: var(--muted);
+}
+
+.marginCaption {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.marginPill {
+  margin-left: auto;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border: 1px solid;
+}
+
+/* Advisory only — the quote stays editable whatever these say. */
+.marginRow[data-health="on-target"] { border-color: rgba(16, 185, 129, 0.35); }
+.marginRow[data-health="on-target"] .marginPill {
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.marginRow[data-health="below-target"] { border-color: rgba(180, 130, 10, 0.4); }
+.marginRow[data-health="below-target"] .marginPill {
+  background: rgba(180, 130, 10, 0.1);
+  color: #8a6300;
+  border-color: rgba(180, 130, 10, 0.4);
+}
+
+.marginRow[data-health="below-floor"] { border-color: rgba(239, 68, 68, 0.45); }
+.marginRow[data-health="below-floor"] .marginPill {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b42318;
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+:global([data-theme="dark"]) .marginRow[data-health="on-target"] .marginPill { color: #34d399; }
+:global([data-theme="dark"]) .marginRow[data-health="below-target"] .marginPill { color: #fbbf24; }
+:global([data-theme="dark"]) .marginRow[data-health="below-floor"] .marginPill { color: #f97066; }
+
+.note {
+  margin: 0.85rem 0 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+}

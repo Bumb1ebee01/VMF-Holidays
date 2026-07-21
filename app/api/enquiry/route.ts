@@ -8,6 +8,7 @@ import { REF_COOKIE, normalizeCode } from "@/lib/referral";
 import { upsertReferralStage } from "@/lib/referral-credit";
 import { BUSINESS } from "@/lib/seo";
 import { telHref, whatsappLink, PHONE_PRIMARY_DISPLAY } from "@/lib/contact";
+import { mintLeadRef } from "@/lib/refs";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const TO = process.env.ENQUIRY_TO ?? "info@vmfholidays.com";
@@ -144,6 +145,7 @@ export async function POST(request: Request) {
   try {
     const lead = await db.lead.create({
       data: {
+        ref: await mintLeadRef(),
         name,
         phone,
         email,

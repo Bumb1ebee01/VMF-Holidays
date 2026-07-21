@@ -7,6 +7,7 @@ import { requirePermission } from "@/lib/auth/user";
 import { logActivity } from "@/lib/activity";
 import { LEAD_STATUSES, type LeadStatusValue } from "@/components/admin/StatusBadge";
 import { LEAD_SOURCES, type LeadSourceValue } from "@/components/admin/leadMeta";
+import { mintLeadRef } from "@/lib/refs";
 
 export async function updateLeadStatus(leadId: string, status: string, reason?: string) {
   const actor = await requirePermission("leads:edit");
@@ -150,7 +151,7 @@ export async function createLead(_prev: LeadFormState, formData: FormData): Prom
   const followUpAt = parseFollowUp(formData);
 
   const lead = await db.lead.create({
-    data: { ...data, source: data.source || "OTHER", status, assignedToId, ...(followUpAt ? { followUpAt } : {}) },
+    data: { ...data, ref: await mintLeadRef(), source: data.source || "OTHER", status, assignedToId, ...(followUpAt ? { followUpAt } : {}) },
   });
   await logActivity(actor, {
     action: "lead.create",

@@ -94,6 +94,7 @@ export async function createBookingFromLead(
       travelStart,
       travelEnd,
       pax: paxSummary(adults, children, infants),
+      paxCount: Math.max(1, adults + children + infants),
       totalValue,
       advisorId: lead.assignedToId ?? actor.id,
     },
@@ -216,7 +217,13 @@ async function syncPaxSummary(bookingId: string) {
     select: { type: true, fullName: true },
   });
   const summary = paxSummaryFromTravellers(travellers);
-  if (summary) await db.booking.update({ where: { id: bookingId }, data: { pax: summary } });
+  // paxCount drives per-pax cost lines, so it has to follow the manifest too.
+  if (summary) {
+    await db.booking.update({
+      where: { id: bookingId },
+      data: { pax: summary, paxCount: Math.max(1, travellers.length) },
+    });
+  }
 }
 
 /**
@@ -328,3 +335,4 @@ export async function deleteTraveller(travellerId: string, bookingId: string) {
   });
   revalidatePath(`/admin/bookings/${bookingId}`);
 }
+

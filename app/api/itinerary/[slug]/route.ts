@@ -4,6 +4,7 @@ import { getCurrentMember } from "@/lib/auth/member";
 import { isRateLimited } from "@/lib/ratelimit";
 import { renderItineraryPdf, itineraryFilename } from "@/lib/itinerary-pdf";
 import type { Package } from "@/lib/types";
+import { mintLeadRef } from "@/lib/refs";
 
 export const dynamic = "force-dynamic";
 
@@ -140,6 +141,7 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
   try {
     await db.lead.create({
       data: {
+        ref: await mintLeadRef(),
         name,
         email,
         phone: "",

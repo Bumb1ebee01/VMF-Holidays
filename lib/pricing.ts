@@ -32,6 +32,32 @@ export const TCS_RATE_PCT = 2;
 /** What GST is charged on. VMF charges it on the markup only. */
 export type GstBase = "MARKUP_ONLY" | "TOTAL";
 
+// ── Margin guardrails ─────────────────────────────────────────────────────────
+// Advisory, never enforced: margins are sometimes cut deliberately to win a
+// booking, so the quote builder stays fully editable and only flags the number.
+// Both are measured as markup on COST — the "Effective Margin %" of the
+// worksheet — not as a share of the price.
+
+/** Below this, the booking is barely worth doing. Flag it loudly. */
+export const MARGIN_FLOOR_PCT = 10;
+
+/** What every booking should be aiming for. More is better. */
+export const MARGIN_TARGET_PCT = 20;
+
+export type MarginHealth = "below-floor" | "below-target" | "on-target";
+
+export function marginHealth(markupPctOnCost: number): MarginHealth {
+  if (markupPctOnCost < MARGIN_FLOOR_PCT) return "below-floor";
+  if (markupPctOnCost < MARGIN_TARGET_PCT) return "below-target";
+  return "on-target";
+}
+
+export const MARGIN_HEALTH_LABELS: Record<MarginHealth, string> = {
+  "below-floor": `Below the ${MARGIN_FLOOR_PCT}% floor`,
+  "below-target": `Under the ${MARGIN_TARGET_PCT}% target`,
+  "on-target": `On target (${MARGIN_TARGET_PCT}%+)`,
+};
+
 // ── Cost lines ────────────────────────────────────────────────────────────────
 
 export const COST_CATEGORIES = [
@@ -80,7 +106,8 @@ export interface CostLine {
    * numbers months later, whatever the rate has done since.
    */
   fxRate: number;
-  label?: string;
+  /** Nullable rather than optional: this is what Prisma hands back. */
+  label?: string | null;
 }
 
 /**
@@ -203,6 +230,48 @@ export function quoteFromTotal(
 
   const markupPct = cost > 0 ? (markup / cost) * 100 : 0;
   return buildQuote(cost, { ...opts, markupPct });
+}
+
+/** The pricing fields a booking carries, as stored. */
+export interface BookingPricing {
+  paxCount: number;
+  markupPct: number | null;
+  /** A manually agreed final price in paise. Wins over markupPct. */
+  priceOverride: number | null;
+  gstApplicable: boolean;
+  gstRatePct: number;
+  gstBase: string;
+  tcsApplicable: boolean;
+  tcsRatePct: number;
+  costLines: CostLine[];
+}
+
+/**
+ * The quote for a booking as stored.
+ *
+ * A manually agreed price wins: the team sometimes cuts the margin to close a
+ * deal, so when `priceOverride` is set the markup is derived backwards from it
+ * rather than the price being recomputed from a markup the booking no longer
+ * honours. Returns null until there's enough to quote from.
+ */
+export function quoteForBooking(b: BookingPricing): Quote | null {
+  const cost = landCost(b.costLines, b.paxCount);
+  const opts = {
+    pax: b.paxCount,
+    gstApplicable: b.gstApplicable,
+    gstRatePct: b.gstRatePct,
+    gstBase: (b.gstBase === "TOTAL" ? "TOTAL" : "MARKUP_ONLY") as GstBase,
+    tcsApplicable: b.tcsApplicable,
+    tcsRatePct: b.tcsRatePct,
+  };
+
+  if (b.priceOverride !== null && b.priceOverride > 0) {
+    return quoteFromTotal(cost, b.priceOverride, opts);
+  }
+  if (b.markupPct !== null) {
+    return buildQuote(cost, { ...opts, markupPct: b.markupPct });
+  }
+  return null;
 }
 
 /** Rupees (major units) from paise, for display. */

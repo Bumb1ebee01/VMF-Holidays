@@ -62,6 +62,7 @@ model User {
   permissions  String[]      @default([])
   leads        Lead[]        @relation("AssignedLeads")
   bookings     Booking[]     @relation("BookingAdvisor")
+  quotes       Quote[]       @relation("QuoteAuthor")
   notes        LeadNote[]
   activity     ActivityLog[]
   createdAt    DateTime      @default(now())
@@ -85,6 +86,11 @@ model ActivityLog {
 
 model Lead {
   id           String     @id @default(cuid())
+  /// Enquiry reference (VMF-XXXXXX), minted when the enquiry arrives. Shared by
+  /// every quote for this trip and inherited by the booking, so one code follows
+  /// the customer end to end.
+  ref          String?    @unique
+  quotes       Quote[]
   name         String
   phone        String
   email        String
@@ -178,12 +184,125 @@ model Booking {
   notes         String?
   payments      Payment[]
   travellers    Traveller[]
+
+  /// Head count. `pax` above stays the human summary.
+  paxCount      Int           @default(1)
+  /// Enquiry reference, inherited from the lead so one code follows the customer
+  /// from first enquiry through every quote revision to the final booking.
+  ref           String?       @unique
+  /// Quotes raised for this trip. Pricing lives on the quote, not here, because
+  /// a quote gets revised repeatedly before anything is booked.
+  quotes        Quote[]
+
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   @@index([status])
   @@index([leadId])
   @@index([travelStart])
+}
+
+enum CostCategory {
+  DMC_LAND
+  HOTEL
+  TRANSFERS
+  FLIGHTS
+  VISA
+  ACTIVITIES
+  INSURANCE
+  BANK_FEE
+  OTHER
+}
+
+enum CostBasis {
+  PER_PAX
+  GROUP
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  DECLINED
+  SUPERSEDED
+}
+
+/// A priced proposal for an enquiry.
+///
+/// Quotes come BEFORE bookings and are revised repeatedly, so pricing lives here
+/// rather than on Booking. `ref` is the enquiry code shared by every quote for
+/// the same trip; `version` counts revisions within an option, and `optionLabel`
+/// separates parallel choices sent together ("Option A — 4-star").
+///
+/// A quote can hang off a lead, off a booking, or neither — a scratch quote for
+/// a quick estimate needs no customer at all.
+model Quote {
+  id            String      @id @default(cuid())
+  ref           String
+  version       Int         @default(1)
+  optionLabel   String?
+  status        QuoteStatus @default(DRAFT)
+
+  lead          Lead?       @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId        String?
+  booking       Booking?    @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  bookingId     String?
+
+  /// Snapshot so a scratch or orphaned quote still reads sensibly on its own.
+  customerName  String?
+  destination   String?
+  packageTitle  String?
+  travelStart   DateTime?
+  travelEnd     DateTime?
+
+  paxCount      Int         @default(1)
+  /// Markup on land cost, e.g. 24.0.
+  markupPct     Float?
+  /// A manually agreed final price (paise). Wins over markupPct — margin is then
+  /// derived backwards, so an agreed figure is never recomputed.
+  priceOverride Int?
+  gstApplicable Boolean     @default(true)
+  gstRatePct    Float       @default(18)
+  /// "MARKUP_ONLY" (VMF's model) or "TOTAL".
+  gstBase       String      @default("MARKUP_ONLY")
+  /// Overseas package — TCS applies.
+  tcsApplicable Boolean     @default(false)
+  tcsRatePct    Float       @default(2)
+
+  costLines     CostLine[]
+  notes         String?
+  createdBy     User?       @relation("QuoteAuthor", fields: [createdById], references: [id], onDelete: SetNull)
+  createdById   String?
+  sentAt        DateTime?
+  acceptedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([ref])
+  @@index([leadId])
+  @@index([bookingId])
+  @@index([status])
+}
+
+/// One supplier cost on a quote — the itemised half of the pricing worksheet.
+/// Amounts are in the MINOR units of `currency` (paise, cents) and `fxRate` is
+/// stored per line rather than looked up later, so a quote reproduces the same
+/// figures months on however rates have moved since.
+model CostLine {
+  id            String       @id @default(cuid())
+  quote         Quote        @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  quoteId       String
+  category      CostCategory @default(OTHER)
+  basis         CostBasis    @default(PER_PAX)
+  currency      String       @default("INR")
+  unitCostMinor Int          @default(0)
+  /// INR per 1 major unit of `currency` (1 for INR).
+  fxRate        Float        @default(1)
+  label         String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([quoteId])
 }
 
 enum TravellerType {
