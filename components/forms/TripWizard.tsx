@@ -359,6 +359,27 @@ export default function TripWizard({ destinations, geography }: Props) {
           <p className={styles.brandSub}>Start planning your perfect getaway!</p>
         </div>
 
+        {/* Six steps is enough that people abandon a form they can't see the end
+            of, so show how far along they are. */}
+        <div className={styles.progressRow}>
+          <div
+            className={styles.progressBar}
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemin={1}
+            aria-valuemax={STEPS.length}
+            aria-label={`Step ${step + 1} of ${STEPS.length}`}
+          >
+            <span
+              className={styles.progressFill}
+              style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+            />
+          </div>
+          <span className={styles.progressLabel}>
+            Step {step + 1} of {STEPS.length}
+          </span>
+        </div>
+
         <div className={styles.mainScroll}>
           {/* STEP 0 — Countries */}
           {step === 0 && (

@@ -67,84 +67,37 @@
   line-height: 1.6;
 }
 
-/* ── Progress row ────────────────────────────────────── */
+/* ── Progress bar ─────────────────────────────────────
+   Replaces an older dotted stepper whose CSS lingered here long after the
+   component stopped rendering it. */
 .progressRow {
   display: flex;
   align-items: center;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 40px;
-  position: relative;
-  z-index: 1;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 12px;
+  padding: 0 32px 6px;
 }
 
-.progressItem {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 18px 0;
+.progressBar {
   flex: 1;
-  position: relative;
+  height: 6px;
+  background: var(--surface, #efebe2);
+  border-radius: 999px;
+  overflow: hidden;
 }
 
-.progressDot {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1.5px solid rgba(255, 255, 255, 0.16);
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all 0.35s var(--ease-out);
-}
-
-.progressItemActive .progressDot {
-  background: var(--orange);
-  border-color: var(--orange);
-  color: var(--navy);
-  box-shadow: 0 0 0 4px rgba(254, 92, 16, 0.2);
-}
-
-.progressItemDone .progressDot {
-  background: rgba(254, 92, 16, 0.25);
-  border-color: var(--orange);
-  color: var(--orange);
-  box-shadow: none;
+.progressFill {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange), var(--orange-lt, #FFA333));
+  border-radius: 999px;
+  transition: width 0.35s ease;
 }
 
 .progressLabel {
-  font-size: 11px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
   white-space: nowrap;
-  transition: color 0.3s ease;
-}
-
-.progressItemActive .progressLabel {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.progressItemDone .progressLabel {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.progressLine {
-  flex: 1;
-  height: 1px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 0 16px 0 10px;
-  transition: background 0.5s ease;
-}
-
-.progressLineDone {
-  background: var(--orange);
 }
 
 /* ── Step wrapper ────────────────────────────────────── */
@@ -1241,13 +1194,12 @@
   .stepDates { grid-template-columns: 1fr; gap: 32px; }
   .contactGrid { grid-template-columns: 1fr; }
   .tripSummary { position: static; }
-  .progressLabel { display: none; }
 }
 
 @media (max-width: 768px) {
   .stepWrap { padding: 36px 20px 140px; }
   .headerInner { padding: 0 20px 36px; }
-  .progressRow { padding: 0 20px; }
+  .progressRow { padding: 0 20px 6px; }
   .navBar { padding: 14px 20px; }
   .destGrid { grid-template-columns: repeat(2, 1fr); }
   .catGrid { grid-template-columns: repeat(2, 1fr); }
