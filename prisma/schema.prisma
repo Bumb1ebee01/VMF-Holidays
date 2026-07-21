@@ -51,6 +51,14 @@ model User {
   role         Role          @default(MEMBER)
   active       Boolean       @default(true)
   sessionVersion Int         @default(0) // bump to invalidate a user's existing JWT sessions (password reset / forced sign-out)
+  // Admin 2FA. These columns are LIVE in the database (pushed 2026-07-20) but the
+  // feature itself is still on the `feature/admin-2fa-totp` branch. Declared here
+  // so this schema matches the real database: without them, any `db:push` from
+  // main silently DROPs the columns — harmless while nobody is enrolled, but it
+  // would destroy real TOTP secrets once the feature ships. Do not remove.
+  totpEnabled  Boolean       @default(false)
+  totpSecret   String?       // AES-256-GCM encrypted TOTP secret; null until enrolled
+  totpBackupCodes String[]   @default([]) // bcrypt-hashed single-use recovery codes
   permissions  String[]      @default([])
   leads        Lead[]        @relation("AssignedLeads")
   bookings     Booking[]     @relation("BookingAdvisor")
@@ -169,12 +177,45 @@ model Booking {
   advisorId     String?
   notes         String?
   payments      Payment[]
+  travellers    Traveller[]
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
   @@index([status])
   @@index([leadId])
   @@index([travelStart])
+}
+
+enum TravellerType {
+  ADULT
+  CHILD
+  INFANT
+}
+
+/// One named person on a booking — the group manifest handed to hotels and
+/// airlines. Deliberately holds NO ID document numbers: passport/Aadhaar are
+/// sensitive personal data (and private storage of Aadhaar is restricted), so
+/// documents are collected per-trip outside the CRM. If that ever changes, the
+/// agreed default is to encrypt the number at rest.
+model Traveller {
+  id          String        @id @default(cuid())
+  booking     Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  bookingId   String
+  fullName    String
+  type        TravellerType @default(ADULT)
+  dateOfBirth DateTime?
+  gender      String?
+  nationality String?
+  phone       String?
+  email       String?
+  /// The main contact for the group — exactly one per booking.
+  isLead      Boolean       @default(false)
+  /// Dietary, medical, room or seat preferences worth passing to suppliers.
+  notes       String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([bookingId])
 }
 
 model Payment {

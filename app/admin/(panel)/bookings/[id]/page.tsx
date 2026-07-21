@@ -7,6 +7,7 @@ import { can } from "@/lib/permissions";
 import { formatINR } from "@/lib/utils";
 import BookingStatusControl from "@/components/admin/BookingStatusControl";
 import PaymentForm from "@/components/admin/PaymentForm";
+import TravellerManifest from "@/components/admin/TravellerManifest";
 import { deletePayment } from "../actions";
 import {
   bookingRef,
@@ -38,6 +39,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       payments: { orderBy: { paidAt: "desc" } },
       advisor: { select: { name: true } },
       lead: { select: { id: true, name: true } },
+      travellers: true,
     },
   });
   if (!booking) notFound();
@@ -162,6 +164,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </div>
         </aside>
       </div>
+
+      <TravellerManifest
+        bookingId={booking.id}
+        bookingRef={bookingRef(booking.id)}
+        travellers={booking.travellers}
+        travelStart={booking.travelStart}
+        canManage={canManage}
+      />
     </div>
   );
 }

@@ -13,6 +13,11 @@ import {
   bookingRef,
   type BookingStatusValue,
 } from "@/lib/bookings";
+import {
+  TRAVELLER_TYPES,
+  paxSummaryFromTravellers,
+  type TravellerTypeValue,
+} from "@/lib/travellers";
 
 export type BookingFormState = { error?: string };
 export type PaymentState = { error?: string };
@@ -192,6 +197,134 @@ export async function deletePayment(paymentId: string, bookingId: string) {
     entity: "Booking",
     entityId: bookingId,
     detail: `Removed a payment from ${bookingRef(bookingId)}`,
+  });
+  revalidatePath(`/admin/bookings/${bookingId}`);
+}
+
+// ── Group manifest ────────────────────────────────────────────────────────────
+// The per-traveller list for a booking. Deliberately stores no ID document
+// numbers (see the Traveller model in schema.prisma). Every write re-derives the
+// booking's `pax` summary from the manifest, so the head count on the booking,
+// the quotation PDF and the manifest can never disagree.
+
+export type TravellerState = { error?: string };
+
+/** Recompute Booking.pax from the manifest. No-op while the manifest is empty. */
+async function syncPaxSummary(bookingId: string) {
+  const travellers = await db.traveller.findMany({
+    where: { bookingId },
+    select: { type: true, fullName: true },
+  });
+  const summary = paxSummaryFromTravellers(travellers);
+  if (summary) await db.booking.update({ where: { id: bookingId }, data: { pax: summary } });
+}
+
+/**
+ * A birth date has no timezone. Parsing it at *local* midnight stores a moment
+ * whose UTC date can be the previous day, and every surface here renders dates
+ * in UTC (toISOString) — so the value would come back a day early and drift
+ * earlier again on each save. Anchor it to UTC midnight instead.
+ */
+function parseBirthDate(fd: FormData): Date | null {
+  const raw = clip(fd, "dateOfBirth", 20);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+  const d = new Date(`${raw}T00:00:00.000Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function parseTraveller(fd: FormData) {
+  const rawType = clip(fd, "type", 10).toUpperCase();
+  return {
+    fullName: clip(fd, "fullName", 120),
+    type: (TRAVELLER_TYPES as readonly string[]).includes(rawType)
+      ? (rawType as TravellerTypeValue)
+      : ("ADULT" as TravellerTypeValue),
+    dateOfBirth: parseBirthDate(fd),
+    gender: clip(fd, "gender", 30) || null,
+    nationality: clip(fd, "nationality", 60) || null,
+    phone: clip(fd, "phone", 40) || null,
+    email: clip(fd, "email", 200) || null,
+    isLead: fd.get("isLead") === "on" || fd.get("isLead") === "true",
+    notes: clip(fd, "notes", 500) || null,
+  };
+}
+
+export async function addTraveller(
+  bookingId: string,
+  _prev: TravellerState,
+  formData: FormData
+): Promise<TravellerState> {
+  const actor = await requirePermission("bookings:manage");
+  const data = parseTraveller(formData);
+  if (!data.fullName) return { error: "Traveller name is required." };
+  if (data.email && !EMAIL_RE.test(data.email)) return { error: "That email doesn't look right." };
+  if (data.dateOfBirth && data.dateOfBirth.getTime() > Date.now()) {
+    return { error: "Date of birth can't be in the future." };
+  }
+
+  // Exactly one lead passenger per booking.
+  if (data.isLead) {
+    await db.traveller.updateMany({ where: { bookingId, isLead: true }, data: { isLead: false } });
+  }
+
+  await db.traveller.create({ data: { ...data, bookingId } });
+  await syncPaxSummary(bookingId);
+  await logActivity(actor, {
+    action: "traveller.add",
+    entity: "Booking",
+    entityId: bookingId,
+    detail: `Added ${data.fullName} to the manifest for ${bookingRef(bookingId)}`,
+  });
+  revalidatePath(`/admin/bookings/${bookingId}`);
+  return {};
+}
+
+export async function updateTraveller(
+  travellerId: string,
+  bookingId: string,
+  _prev: TravellerState,
+  formData: FormData
+): Promise<TravellerState> {
+  const actor = await requirePermission("bookings:manage");
+  const data = parseTraveller(formData);
+  if (!data.fullName) return { error: "Traveller name is required." };
+  if (data.email && !EMAIL_RE.test(data.email)) return { error: "That email doesn't look right." };
+  if (data.dateOfBirth && data.dateOfBirth.getTime() > Date.now()) {
+    return { error: "Date of birth can't be in the future." };
+  }
+
+  if (data.isLead) {
+    await db.traveller.updateMany({
+      where: { bookingId, isLead: true, NOT: { id: travellerId } },
+      data: { isLead: false },
+    });
+  }
+
+  await db.traveller.update({ where: { id: travellerId }, data });
+  await syncPaxSummary(bookingId);
+  await logActivity(actor, {
+    action: "traveller.update",
+    entity: "Booking",
+    entityId: bookingId,
+    detail: `Updated ${data.fullName} on the manifest for ${bookingRef(bookingId)}`,
+  });
+  revalidatePath(`/admin/bookings/${bookingId}`);
+  return {};
+}
+
+export async function deleteTraveller(travellerId: string, bookingId: string) {
+  const actor = await requirePermission("bookings:manage");
+  const traveller = await db.traveller.findUnique({
+    where: { id: travellerId },
+    select: { fullName: true },
+  });
+  await db.traveller.delete({ where: { id: travellerId } });
+  await syncPaxSummary(bookingId);
+  await logActivity(actor, {
+    action: "traveller.delete",
+    entity: "Booking",
+    entityId: bookingId,
+    detail: `Removed ${traveller?.fullName ?? "a traveller"} from the manifest for ${bookingRef(bookingId)}`,
   });
   revalidatePath(`/admin/bookings/${bookingId}`);
 }
