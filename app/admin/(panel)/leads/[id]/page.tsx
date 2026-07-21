@@ -40,7 +40,7 @@ export default async function LeadDetailPage({
   const { id } = await params;
   const me = await requireUser();
 
-  const [lead, users, activity, allPackages] = await Promise.all([
+  const [lead, recentQuotes, users, activity, allPackages] = await Promise.all([
     db.lead.findUnique({
       where: { id },
       include: {
@@ -53,6 +53,15 @@ export default async function LeadDetailPage({
         quotes: { include: { costLines: true }, orderBy: [{ optionLabel: "asc" }, { version: "desc" }] },
       },
     }),
+    // Recent costed quotes, offered as a starting point for this enquiry.
+    me.role === "ADMIN"
+      ? db.quote.findMany({
+          where: { costLines: { some: {} } },
+          orderBy: { updatedAt: "desc" },
+          take: 15,
+          select: { id: true, ref: true, destination: true, customerName: true },
+        })
+      : Promise.resolve([]),
     db.user.findMany({
       where: { active: true },
       select: { id: true, name: true },
@@ -285,7 +294,15 @@ export default async function LeadDetailPage({
           </div>
           {/* Quoting comes before booking, so it sits above the booking panel. */}
           {me.role === "ADMIN" && (
-            <LeadQuotesPanel leadId={lead.id} leadRef={lead.ref} quotes={lead.quotes} />
+            <LeadQuotesPanel
+              leadId={lead.id}
+              leadRef={lead.ref}
+              quotes={lead.quotes}
+              copySources={recentQuotes.map((rq) => ({
+                id: rq.id,
+                label: [rq.ref, rq.destination ?? rq.customerName].filter(Boolean).join(" · "),
+              }))}
+            />
           )}
           {lead.bookings.length > 0 ? (
             <div className={`${shared.panel} ${shared.panelPad}`}>

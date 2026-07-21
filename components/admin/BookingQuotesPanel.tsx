@@ -1,12 +1,11 @@
 import Link from "next/link";
-import NewQuoteButton, { type CopySource } from "./NewQuoteButton";
 import { QUOTE_STATUS_LABELS, type QuoteStatusValue } from "@/lib/quotes";
 import { quoteForBooking, toRupees, marginHealth, type CostLine } from "@/lib/pricing";
 import { formatINR } from "@/lib/utils";
 import shared from "./shared.module.css";
 import styles from "@/app/admin/(panel)/quotes/quotes.module.css";
 
-export interface LeadQuoteRow {
+export interface BookingQuoteRow {
   id: string;
   ref: string;
   version: number;
@@ -24,40 +23,29 @@ export interface LeadQuoteRow {
 }
 
 /**
- * Quotes raised for an enquiry. Quoting happens here, before anything is booked —
- * the booking panel below is the final step, not the starting point.
+ * The quotes behind a booking — the priced history of how it got to this figure.
+ * An accepted quote drives the booking's total, so the two can't disagree.
  */
-export default function LeadQuotesPanel({
-  leadId,
-  leadRef,
-  quotes,
-  copySources = [],
-}: {
-  leadId: string;
-  leadRef: string | null;
-  quotes: LeadQuoteRow[];
-  copySources?: CopySource[];
-}) {
-  return (
-    <div className={`${shared.panel} ${shared.panelPad}`}>
-      <div className={styles.filters} style={{ marginBottom: "var(--sp-4)" }}>
-        <div style={{ flex: 1 }}>
-          <h2 className={shared.sectionTitle} style={{ margin: 0 }}>Quotes</h2>
-          {leadRef && <span className={styles.meta}>Reference {leadRef}</span>}
-        </div>
-        <NewQuoteButton leadId={leadId} copySources={copySources} />
-      </div>
+export default function BookingQuotesPanel({ quotes }: { quotes: BookingQuoteRow[] }) {
+  if (quotes.length === 0) return null;
 
-      {quotes.length === 0 ? (
-        <p className={shared.empty} style={{ margin: 0 }}>
-          No quotes yet. Price this trip before converting it to a booking.
+  const accepted = quotes.find((q) => q.status === "ACCEPTED");
+
+  return (
+    <section className={shared.panel}>
+      <div className={shared.panelPad}>
+        <h2 className={shared.sectionTitle} style={{ marginTop: 0 }}>Quotes</h2>
+        <p className={styles.meta} style={{ marginBottom: "var(--sp-3)" }}>
+          {accepted
+            ? "The accepted quote sets this booking's total value."
+            : "No quote accepted yet — the booking value was entered directly."}
         </p>
-      ) : (
+
         <div className={styles.tableWrap}>
           <table className={shared.table}>
             <thead>
               <tr>
-                <th>Version</th>
+                <th>Quote</th>
                 <th style={{ textAlign: "right" }}>Price</th>
                 <th style={{ textAlign: "right" }}>Margin</th>
                 <th>Status</th>
@@ -71,8 +59,9 @@ export default function LeadQuotesPanel({
                   <tr key={q.id}>
                     <td>
                       <Link href={`/admin/quotes/${q.id}`} className={shared.rowLink}>
-                        v{q.version}{q.optionLabel ? ` · ${q.optionLabel}` : ""}
+                        {q.ref} v{q.version}
                       </Link>
+                      {q.optionLabel && <span className={styles.meta}>{q.optionLabel}</span>}
                     </td>
                     <td style={{ textAlign: "right" }}>
                       {priced ? formatINR(Math.round(toRupees(priced.total))) : "—"}
@@ -95,7 +84,7 @@ export default function LeadQuotesPanel({
             </tbody>
           </table>
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   );
 }

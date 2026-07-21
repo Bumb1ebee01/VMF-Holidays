@@ -86,6 +86,8 @@ export async function createBookingFromLead(
   const booking = await db.booking.create({
     data: {
       leadId: lead.id,
+      // Inherit the enquiry reference so one code spans enquiry → quotes → booking.
+      ref: lead.ref,
       customerName,
       customerPhone,
       customerEmail,
@@ -98,6 +100,13 @@ export async function createBookingFromLead(
       totalValue,
       advisorId: lead.assignedToId ?? actor.id,
     },
+  });
+
+  // Quotes raised during the enquiry now belong to the booking too, so the
+  // priced work stays attached to the trip it became.
+  await db.quote.updateMany({
+    where: { leadId: lead.id, bookingId: null },
+    data: { bookingId: booking.id },
   });
 
   // Preserve the old "mark booked" behaviour: Won + advance any club referral.

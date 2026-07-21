@@ -165,6 +165,93 @@ export async function reviseQuote(quoteId: string) {
   redirect(`/admin/quotes/${revision.id}`);
 }
 
+/**
+ * Copy a quote onto a different enquiry — "price this like the Bali one".
+ *
+ * Most quotes resemble a previous trip, and rebuilding the cost lines by hand is
+ * the real time sink. Unlike reviseQuote this starts a NEW reference (or adopts
+ * the target lead's), leaves the source untouched, and always begins at v1: it
+ * is a different trip, not a revision of the same one.
+ */
+export async function duplicateQuote(
+  sourceId: string,
+  targetLeadId?: string
+): Promise<string | null> {
+  const me = await requireAdmin();
+  const source = await db.quote.findUnique({
+    where: { id: sourceId },
+    include: { costLines: true },
+  });
+  if (!source) return null;
+
+  let ref: string | null = null;
+  let snapshot: Record<string, unknown> = {
+    customerName: source.customerName,
+    destination: source.destination,
+    packageTitle: source.packageTitle,
+  };
+
+  if (targetLeadId) {
+    const lead = await db.lead.findUnique({
+      where: { id: targetLeadId },
+      select: { id: true, ref: true, name: true, destination: true, packageTitle: true },
+    });
+    if (!lead) return null;
+    ref = lead.ref ?? (await mintLeadRef());
+    if (!lead.ref && ref) await db.lead.update({ where: { id: lead.id }, data: { ref } });
+    // The new customer's details win; only the pricing is inherited.
+    snapshot = {
+      customerName: lead.name,
+      destination: lead.destination ?? source.destination,
+      packageTitle: lead.packageTitle ?? source.packageTitle,
+    };
+  } else {
+    ref = await mintLeadRef();
+  }
+
+  const copy = await db.quote.create({
+    data: {
+      ref: ref ?? generateRef(),
+      version: 1,
+      optionLabel: source.optionLabel,
+      leadId: targetLeadId ?? null,
+      paxCount: source.paxCount,
+      markupPct: source.markupPct,
+      // A price agreed with someone else must not carry over as if agreed here.
+      priceOverride: null,
+      gstApplicable: source.gstApplicable,
+      gstRatePct: source.gstRatePct,
+      gstBase: source.gstBase,
+      tcsApplicable: source.tcsApplicable,
+      tcsRatePct: source.tcsRatePct,
+      createdById: me.id,
+      ...snapshot,
+      costLines: {
+        create: source.costLines.map((l) => ({
+          category: l.category,
+          basis: l.basis,
+          currency: l.currency,
+          unitCostMinor: l.unitCostMinor,
+          fxRate: l.fxRate,
+          label: l.label,
+        })),
+      },
+    },
+  });
+
+  await logActivity(me, {
+    action: "quote.duplicate",
+    entity: "Quote",
+    entityId: copy.id,
+    detail: `Copied ${source.ref} into ${copy.ref}`,
+  });
+  if (targetLeadId) revalidatePath(`/admin/leads/${targetLeadId}`);
+  // Returns the id rather than redirecting: this is called imperatively from a
+  // transition, where a server-side redirect is swallowed and the user is left
+  // sitting on the old page wondering whether anything happened.
+  return copy.id;
+}
+
 export async function setQuoteStatus(quoteId: string, status: string) {
   const me = await requireAdmin();
   if (!(QUOTE_STATUSES as readonly string[]).includes(status)) return;

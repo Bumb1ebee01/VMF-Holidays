@@ -8,6 +8,7 @@ import { formatINR } from "@/lib/utils";
 import BookingStatusControl from "@/components/admin/BookingStatusControl";
 import PaymentForm from "@/components/admin/PaymentForm";
 import TravellerManifest from "@/components/admin/TravellerManifest";
+import BookingQuotesPanel from "@/components/admin/BookingQuotesPanel";
 import { deletePayment } from "../actions";
 import {
   bookingRef,
@@ -40,6 +41,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       advisor: { select: { name: true } },
       lead: { select: { id: true, name: true } },
       travellers: true,
+      quotes: { include: { costLines: true }, orderBy: [{ optionLabel: "asc" }, { version: "desc" }] },
     },
   });
   if (!booking) notFound();
@@ -66,7 +68,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
       <div className={shared.pageHeader}>
         <div>
           <Link href="/admin/bookings" className={lead.backLink}>← All bookings</Link>
-          <h1 className={shared.pageTitle}>{bookingRef(booking.id)}</h1>
+          <h1 className={shared.pageTitle}>{booking.ref ?? bookingRef(booking.id)}</h1>
           <p className={shared.pageSub}>{booking.customerName}</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "var(--sp-3)" }}>
@@ -165,9 +167,11 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         </aside>
       </div>
 
+      {me.role === "ADMIN" && <BookingQuotesPanel quotes={booking.quotes} />}
+
       <TravellerManifest
         bookingId={booking.id}
-        bookingRef={bookingRef(booking.id)}
+        bookingRef={booking.ref ?? bookingRef(booking.id)}
         travellers={booking.travellers}
         travelStart={booking.travelStart}
         canManage={canManage}
