@@ -1,0 +1,23 @@
+.form {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 8px);
+  background: var(--off-white);
+  padding: 0.85rem 1rem;
+  min-width: min(28rem, 100%);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.row .form-input { flex: 1 1 10rem; }
+
+.hint {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--muted);
+}

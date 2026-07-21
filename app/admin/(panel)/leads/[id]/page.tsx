@@ -9,6 +9,7 @@ import StatusBadge, { STATUS_LABELS, type LeadStatusValue } from "@/components/a
 import LeadControls from "@/components/admin/LeadControls";
 import LeadBookingPanel from "@/components/admin/LeadBookingPanel";
 import LeadItineraryPanel from "@/components/admin/LeadItineraryPanel";
+import LeadQuotesPanel from "@/components/admin/LeadQuotesPanel";
 import { addLeadNote } from "../actions";
 import { SOURCE_LABELS } from "@/components/admin/leadMeta";
 import { formatDateTime } from "@/lib/utils";
@@ -49,6 +50,7 @@ export default async function LeadDetailPage({
           include: { author: { select: { name: true } } },
         },
         bookings: { select: { id: true, status: true }, orderBy: { createdAt: "desc" } },
+        quotes: { include: { costLines: true }, orderBy: [{ optionLabel: "asc" }, { version: "desc" }] },
       },
     }),
     db.user.findMany({
@@ -281,6 +283,10 @@ export default async function LeadDetailPage({
               canDelete={can(me, "leads:delete")}
             />
           </div>
+          {/* Quoting comes before booking, so it sits above the booking panel. */}
+          {me.role === "ADMIN" && (
+            <LeadQuotesPanel leadId={lead.id} leadRef={lead.ref} quotes={lead.quotes} />
+          )}
           {lead.bookings.length > 0 ? (
             <div className={`${shared.panel} ${shared.panelPad}`}>
               <h3 className={shared.cardTitle}>Booking</h3>
