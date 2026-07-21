@@ -43,10 +43,62 @@ export interface QuoteBuilderProps {
 const initial: QuoteState = {};
 
 export default function QuoteBuilder(props: QuoteBuilderProps) {
-  const { quoteId, costLines, paxCount } = props;
+  const { quoteId, costLines } = props;
   const [adding, setAdding] = useState(false);
   const [currency, setCurrency] = useState("INR");
+  // Remembered between lines: a quote usually costs several components in the
+  // same currency, and retyping the rate each time is the sort of friction that
+  // makes people go back to the spreadsheet.
+  const [lastFx, setLastFx] = useState("");
   const [pending, startTransition] = useTransition();
+
+  /**
+   * Live pricing. The settings are mirrored in local state so the totals move as
+   * the markup is typed — a salesperson nudges the margin until the price looks
+   * right, and making them save between each attempt is the slow part of quoting.
+   */
+  const [draft, setDraft] = useState({
+    paxCount: String(props.paxCount),
+    markupPct: props.markupPct === null ? "" : String(props.markupPct),
+    priceOverride: props.priceOverride === null ? "" : String(toRupees(props.priceOverride)),
+    gstApplicable: props.gstApplicable,
+    gstRatePct: String(props.gstRatePct),
+    gstBase: props.gstBase,
+    tcsApplicable: props.tcsApplicable,
+    tcsRatePct: String(props.tcsRatePct),
+  });
+
+  const numOr = (s: string, fallback: number) => {
+    const n = Number(s.replace(/[^\d.]/g, ""));
+    return Number.isFinite(n) && s.trim() !== "" ? n : fallback;
+  };
+
+  const paxCount = Math.max(1, Math.round(numOr(draft.paxCount, 1)));
+  const live = {
+    paxCount,
+    markupPct: draft.markupPct.trim() === "" ? null : numOr(draft.markupPct, 0),
+    priceOverride:
+      draft.priceOverride.trim() === "" ? null : Math.round(numOr(draft.priceOverride, 0) * 100),
+    gstApplicable: draft.gstApplicable,
+    gstRatePct: numOr(draft.gstRatePct, 18),
+    gstBase: draft.gstBase,
+    tcsApplicable: draft.tcsApplicable,
+    tcsRatePct: numOr(draft.tcsRatePct, 2),
+    costLines,
+  };
+
+  const savedDiffers =
+    live.markupPct !== props.markupPct ||
+    live.priceOverride !== props.priceOverride ||
+    live.paxCount !== props.paxCount ||
+    live.gstApplicable !== props.gstApplicable ||
+    live.tcsApplicable !== props.tcsApplicable ||
+    live.gstRatePct !== props.gstRatePct ||
+    live.tcsRatePct !== props.tcsRatePct ||
+    live.gstBase !== props.gstBase;
+
+  const set = (k: keyof typeof draft, v: string | boolean) =>
+    setDraft((d) => ({ ...d, [k]: v }));
 
   const [addState, addAction, addPending] = useActionState(
     addCostLine.bind(null, quoteId),
@@ -57,7 +109,7 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
     initial
   );
 
-  const quote = quoteForBooking(props);
+  const quote = quoteForBooking(live);
   const health = quote ? marginHealth(quote.markupPctOnCost) : null;
 
   const remove = (id: string) => {
@@ -88,10 +140,19 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
         {adding && (
           <form
             action={async (fd) => {
+              setLastFx(String(fd.get("fxRate") ?? ""));
               await addAction(fd);
-              setAdding(false);
-              setCurrency("INR");
+              // Stays open with the amount cleared and refocused, so several
+              // lines can be entered in a row. Currency survives (it's held in
+              // state, and a quote usually costs in one currency); the component
+              // resets, which is right — lines are rarely the same component.
+              const unit = document.getElementById("qb-unit") as HTMLInputElement | null;
+              const note = document.getElementById("qb-label") as HTMLInputElement | null;
+              if (unit) unit.value = "";
+              if (note) note.value = "";
+              unit?.focus();
             }}
+            id="qb-add-form"
             className={styles.form}
           >
             <div className={styles.formGrid}>
@@ -137,6 +198,7 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                     className="form-input"
                     inputMode="decimal"
                     placeholder="97.00"
+                    defaultValue={lastFx}
                     required
                   />
                   <p className={styles.hint}>Stored on the line, so the quote stays reproducible.</p>
@@ -158,8 +220,9 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 onClick={() => setAdding(false)}
                 disabled={addPending}
               >
-                Cancel
+                Done
               </button>
+              <span className={styles.hint}>Keeps adding — press Done when finished.</span>
             </div>
           </form>
         )}
@@ -225,7 +288,8 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 name="paxCount"
                 className="form-input"
                 inputMode="numeric"
-                defaultValue={props.paxCount}
+                value={draft.paxCount}
+                onChange={(e) => set("paxCount", e.target.value)}
               />
             </div>
             <div>
@@ -236,7 +300,8 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 className="form-input"
                 inputMode="decimal"
                 placeholder="24"
-                defaultValue={props.markupPct ?? ""}
+                value={draft.markupPct}
+                onChange={(e) => set("markupPct", e.target.value)}
               />
               <p className={styles.hint}>Aim for {MARGIN_TARGET_PCT}%+; {MARGIN_FLOOR_PCT}% is the floor.</p>
             </div>
@@ -248,7 +313,8 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 className="form-input"
                 inputMode="decimal"
                 placeholder="Leave blank to use markup"
-                defaultValue={props.priceOverride ? toRupees(props.priceOverride) : ""}
+                value={draft.priceOverride}
+                onChange={(e) => set("priceOverride", e.target.value)}
               />
               <p className={styles.hint}>Set this to agree a price directly; margin is worked back from it.</p>
             </div>
@@ -259,12 +325,13 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 name="gstRatePct"
                 className="form-input"
                 inputMode="decimal"
-                defaultValue={props.gstRatePct}
+                value={draft.gstRatePct}
+                onChange={(e) => set("gstRatePct", e.target.value)}
               />
             </div>
             <div>
               <label className="form-label" htmlFor="qb-gstbase">GST charged on</label>
-              <select id="qb-gstbase" name="gstBase" className="form-input" defaultValue={props.gstBase}>
+              <select id="qb-gstbase" name="gstBase" className="form-input" value={draft.gstBase} onChange={(e) => set("gstBase", e.target.value)}>
                 <option value="MARKUP_ONLY">Markup only</option>
                 <option value="TOTAL">Cost + markup</option>
               </select>
@@ -276,23 +343,33 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 name="tcsRatePct"
                 className="form-input"
                 inputMode="decimal"
-                defaultValue={props.tcsRatePct}
+                value={draft.tcsRatePct}
+                onChange={(e) => set("tcsRatePct", e.target.value)}
               />
             </div>
             <label className={styles.toggle}>
-              <input type="checkbox" name="gstApplicable" defaultChecked={props.gstApplicable} />
+              <input type="checkbox" name="gstApplicable" checked={draft.gstApplicable} onChange={(e) => set("gstApplicable", e.target.checked)} />
               <span>GST applicable</span>
             </label>
             <label className={styles.toggle}>
-              <input type="checkbox" name="tcsApplicable" defaultChecked={props.tcsApplicable} />
+              <input type="checkbox" name="tcsApplicable" checked={draft.tcsApplicable} onChange={(e) => set("tcsApplicable", e.target.checked)} />
               <span>TCS applicable (international)</span>
             </label>
           </div>
           {saveState.error && <p className={shared.error}>{saveState.error}</p>}
           <div className={shared.formActions}>
-            <button type="submit" className="btn btn-primary btn--sm" disabled={savePending}>
-              {savePending ? "Saving…" : "Save quote"}
+            <button
+              type="submit"
+              className={savedDiffers ? "btn btn-primary btn--sm" : "btn btn-outline btn--sm"}
+              disabled={savePending}
+            >
+              {savePending ? "Saving…" : savedDiffers ? "Save changes" : "Saved"}
             </button>
+            {savedDiffers && (
+              <span className={styles.unsaved}>
+                Totals below are live — not saved yet
+              </span>
+            )}
           </div>
         </form>
 

@@ -216,3 +216,13 @@
   line-height: 1.5;
   color: var(--muted);
 }
+
+/* Live totals move as the markup is typed, so it must be obvious when what's on
+   screen hasn't been saved yet. */
+.unsaved {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--orange-ink);
+}
+
+:global([data-theme="dark"]) .unsaved { color: var(--orange-lt); }
