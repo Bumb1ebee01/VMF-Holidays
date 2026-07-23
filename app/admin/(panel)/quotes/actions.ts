@@ -5,7 +5,12 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/user";
 import { logActivity } from "@/lib/activity";
-import { COST_CATEGORIES, quoteForBooking, type CostCategory } from "@/lib/pricing";
+import {
+  COST_CATEGORIES,
+  DEFAULT_COST_ROW_CATEGORIES,
+  quoteForBooking,
+  type CostCategory,
+} from "@/lib/pricing";
 import { generateRef, nextVersion, quoteLabel, QUOTE_STATUSES, type QuoteStatusValue } from "@/lib/quotes";
 import { mintLeadRef } from "@/lib/refs";
 
@@ -87,6 +92,17 @@ export async function createQuote(_prev: QuoteState, formData: FormData): Promis
       leadId,
       createdById: me.id,
       ...snapshot,
+      // Start with the usual five components (all at zero) so the pricer just
+      // fills in numbers rather than rebuilding the same rows every time.
+      costLines: {
+        create: DEFAULT_COST_ROW_CATEGORIES.map((category) => ({
+          category,
+          basis: "PER_PAX" as const,
+          currency: "INR",
+          unitCostMinor: 0,
+          fxRate: 1,
+        })),
+      },
     },
   });
 
@@ -97,6 +113,85 @@ export async function createQuote(_prev: QuoteState, formData: FormData): Promis
     detail: `Started quote ${quoteLabel(quote)}`,
   });
   if (leadId) revalidatePath(`/admin/leads/${leadId}`);
+  redirect(`/admin/quotes/${quote.id}`);
+}
+
+export interface LeadPick {
+  id: string;
+  name: string;
+  ref: string | null;
+  destination: string | null;
+  packageTitle: string | null;
+  phone: string;
+  status: string;
+}
+
+/** Search enquiries to start a quote from — the "quote an existing lead" picker. */
+export async function searchLeadsForQuote(query: string): Promise<LeadPick[]> {
+  await requireAdmin();
+  const q = query.trim().slice(0, 80);
+  const leads = await db.lead.findMany({
+    where: q
+      ? {
+          OR: [
+            { name: { contains: q, mode: "insensitive" } },
+            { ref: { contains: q, mode: "insensitive" } },
+            { phone: { contains: q } },
+            { email: { contains: q, mode: "insensitive" } },
+            { destination: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : {},
+    orderBy: { updatedAt: "desc" },
+    take: 8,
+    select: {
+      id: true, name: true, ref: true, destination: true, packageTitle: true,
+      phone: true, status: true,
+    },
+  });
+  return leads;
+}
+
+/** Start a quote for a chosen enquiry (from the Quotes-page lead picker). */
+export async function startQuoteFromLead(leadId: string) {
+  const me = await requireAdmin();
+  const lead = await db.lead.findUnique({
+    where: { id: leadId },
+    select: { id: true, ref: true, name: true, destination: true, packageTitle: true },
+  });
+  if (!lead) redirect("/admin/quotes");
+
+  const ref = lead.ref ?? (await mintLeadRef()) ?? generateRef();
+  if (!lead.ref) await db.lead.update({ where: { id: lead.id }, data: { ref } });
+
+  const quote = await db.quote.create({
+    data: {
+      ref,
+      version: 1,
+      leadId: lead.id,
+      createdById: me.id,
+      customerName: lead.name,
+      destination: lead.destination,
+      packageTitle: lead.packageTitle,
+      costLines: {
+        create: DEFAULT_COST_ROW_CATEGORIES.map((category) => ({
+          category,
+          basis: "PER_PAX" as const,
+          currency: "INR",
+          unitCostMinor: 0,
+          fxRate: 1,
+        })),
+      },
+    },
+  });
+
+  await logActivity(me, {
+    action: "quote.create",
+    entity: "Quote",
+    entityId: quote.id,
+    detail: `Started quote ${quoteLabel(quote)} from enquiry`,
+  });
+  revalidatePath(`/admin/leads/${lead.id}`);
   redirect(`/admin/quotes/${quote.id}`);
 }
 
@@ -313,6 +408,51 @@ export async function addCostLine(
     entity: "Quote",
     entityId: quoteId,
     detail: "Added a cost line",
+  });
+  revalidatePath(`/admin/quotes/${quoteId}`);
+  return {};
+}
+
+export async function updateCostLine(
+  costLineId: string,
+  quoteId: string,
+  _prev: QuoteState,
+  formData: FormData
+): Promise<QuoteState> {
+  const me = await requireAdmin();
+  const category = clip(formData, "category", 20).toUpperCase();
+  const basis = clip(formData, "basis", 10).toUpperCase();
+  const currency = (clip(formData, "currency", 3) || "INR").toUpperCase();
+  const unitCost = num(formData, "unitCost");
+  const fxRate = num(formData, "fxRate") ?? 1;
+
+  // Editing allows zero — a default/template row can be left un-costed for now.
+  if (unitCost === null || !Number.isFinite(unitCost) || unitCost < 0) {
+    return { error: "Enter a unit cost of zero or more." };
+  }
+  if (currency !== "INR" && (!Number.isFinite(fxRate) || fxRate <= 0)) {
+    return { error: "A foreign-currency line needs an exchange rate." };
+  }
+
+  await db.costLine.update({
+    where: { id: costLineId },
+    data: {
+      category: (COST_CATEGORIES as readonly string[]).includes(category)
+        ? (category as CostCategory)
+        : "OTHER",
+      basis: basis === "GROUP" ? "GROUP" : "PER_PAX",
+      currency,
+      unitCostMinor: Math.round(unitCost * 100),
+      fxRate: currency === "INR" ? 1 : fxRate,
+      label: clip(formData, "label", 120) || null,
+    },
+  });
+  await syncAcceptedQuoteToBooking(quoteId);
+  await logActivity(me, {
+    action: "quote.cost.update",
+    entity: "Quote",
+    entityId: quoteId,
+    detail: "Edited a cost line",
   });
   revalidatePath(`/admin/quotes/${quoteId}`);
   return {};

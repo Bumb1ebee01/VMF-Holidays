@@ -85,6 +85,20 @@ export const COST_CATEGORY_LABELS: Record<CostCategory, string> = {
   OTHER: "Other / miscellaneous",
 };
 
+/**
+ * The cost lines every new quote starts with — the components almost every trip
+ * has, each at zero so the pricer only fills in the numbers. They stay fully
+ * editable and removable, and extra lines can be added; this is just a template
+ * so nobody rebuilds the same five rows by hand each time.
+ */
+export const DEFAULT_COST_ROW_CATEGORIES = [
+  "DMC_LAND",
+  "HOTEL",
+  "TRANSFERS",
+  "FLIGHTS",
+  "VISA",
+] as const;
+
 /** Whether a cost is charged for each traveller or once for the whole group. */
 export type CostBasis = "PER_PAX" | "GROUP";
 

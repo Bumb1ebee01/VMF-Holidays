@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/user";
 import { formatINR } from "@/lib/utils";
 import NewQuoteButton from "@/components/admin/NewQuoteButton";
+import QuoteFromLeadButton from "@/components/admin/QuoteFromLeadButton";
 import {
   QUOTE_STATUS_LABELS,
   QUOTE_STATUSES,
@@ -96,7 +97,10 @@ export default async function QuotesPage({
             Price a trip before it&apos;s booked. Search by reference, customer or destination.
           </p>
         </div>
-        <NewQuoteButton />
+        <div className={styles.headerActions}>
+          <QuoteFromLeadButton />
+          <NewQuoteButton />
+        </div>
       </div>
 
       <div className={shared.kpiGrid} style={{ marginBottom: "var(--sp-6)" }}>

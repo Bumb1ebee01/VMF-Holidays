@@ -91,6 +91,20 @@
 .removeBtn:disabled { opacity: 0.5; cursor: default; }
 :global([data-theme="dark"]) .removeBtn { color: #f97066; }
 
+.editBtn {
+  background: none;
+  border: none;
+  padding: 0.2rem 0.35rem;
+  margin-right: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-mid);
+  cursor: pointer;
+}
+.editBtn:hover { text-decoration: underline; }
+.editBtn:disabled { opacity: 0.5; cursor: default; }
+:global([data-theme="dark"]) .editBtn { color: var(--orange-lt); }
+
 .divider {
   height: 1px;
   background: var(--hairline);

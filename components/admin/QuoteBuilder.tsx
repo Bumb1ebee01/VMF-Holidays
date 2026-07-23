@@ -3,6 +3,7 @@
 import { useState, useActionState, useTransition } from "react";
 import {
   addCostLine,
+  updateCostLine,
   deleteCostLine,
   saveQuoteSettings,
   type QuoteState,
@@ -45,6 +46,7 @@ const initial: QuoteState = {};
 export default function QuoteBuilder(props: QuoteBuilderProps) {
   const { quoteId, costLines } = props;
   const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [currency, setCurrency] = useState("INR");
   // Remembered between lines: a quote usually costs several components in the
   // same currency, and retyping the rate each time is the sort of friction that
@@ -244,34 +246,54 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
                 </tr>
               </thead>
               <tbody>
-                {costLines.map((l) => (
-                  <tr key={l.id}>
-                    <td>
-                      {COST_CATEGORY_LABELS[l.category as CostCategory] ?? l.category}
-                      {l.label && <span className={styles.meta}>{l.label}</span>}
-                    </td>
-                    <td>{COST_BASIS_LABELS[l.basis]}</td>
-                    <td>
-                      {l.currency === "INR"
-                        ? inr(l.unitCostMinor)
-                        : `${l.currency} ${(l.unitCostMinor / 100).toFixed(2)}`}
-                      {l.currency !== "INR" && (
-                        <span className={styles.meta}>@ ₹{l.fxRate.toFixed(2)}</span>
-                      )}
-                    </td>
-                    <td className={styles.num}>{inr(lineTotal(l, paxCount))}</td>
-                    <td className={styles.rowActions}>
-                      <button
-                        type="button"
-                        className={styles.removeBtn}
-                        onClick={() => remove(l.id)}
-                        disabled={pending}
-                      >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {costLines.map((l) =>
+                  editingId === l.id ? (
+                    <EditCostRow
+                      key={l.id}
+                      quoteId={quoteId}
+                      line={l}
+                      onDone={() => setEditingId(null)}
+                    />
+                  ) : (
+                    <tr key={l.id}>
+                      <td>
+                        {COST_CATEGORY_LABELS[l.category as CostCategory] ?? l.category}
+                        {l.label && <span className={styles.meta}>{l.label}</span>}
+                      </td>
+                      <td>{COST_BASIS_LABELS[l.basis]}</td>
+                      <td>
+                        {l.currency === "INR"
+                          ? inr(l.unitCostMinor)
+                          : `${l.currency} ${(l.unitCostMinor / 100).toFixed(2)}`}
+                        {l.currency !== "INR" && (
+                          <span className={styles.meta}>@ ₹{l.fxRate.toFixed(2)}</span>
+                        )}
+                      </td>
+                      <td className={styles.num}>{inr(lineTotal(l, paxCount))}</td>
+                      <td className={styles.rowActions}>
+                        <button
+                          type="button"
+                          className={styles.editBtn}
+                          onClick={() => {
+                            setEditingId(l.id);
+                            setAdding(false);
+                          }}
+                          disabled={pending}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className={styles.removeBtn}
+                          onClick={() => remove(l.id)}
+                          disabled={pending}
+                        >
+                          Remove
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                )}
               </tbody>
             </table>
           </div>
@@ -418,5 +440,109 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
         )}
       </div>
     </section>
+  );
+}
+
+/** Inline editor for one cost line — the row turns into a form in place. */
+function EditCostRow({
+  quoteId,
+  line,
+  onDone,
+}: {
+  quoteId: string;
+  line: CostLine & { id: string };
+  onDone: () => void;
+}) {
+  const [currency, setCurrency] = useState(line.currency);
+  const [error, setError] = useState<string | null>(null);
+  const [pending, start] = useTransition();
+
+  return (
+    <tr>
+      <td colSpan={5}>
+        <form
+          action={(fd) => {
+            start(async () => {
+              // Called directly (not via useActionState) so we get the result
+              // back and can close the editor only on success. The action
+              // revalidates the page, refreshing the row.
+              const res = await updateCostLine(line.id, quoteId, {}, fd);
+              if (res?.error) setError(res.error);
+              else onDone();
+            });
+          }}
+          className={styles.form}
+        >
+          <div className={styles.formGrid}>
+            <div>
+              <label className="form-label" htmlFor={`ec-cat-${line.id}`}>Component</label>
+              <select id={`ec-cat-${line.id}`} name="category" className="form-input" defaultValue={line.category}>
+                {COST_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{COST_CATEGORY_LABELS[c]}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label" htmlFor={`ec-basis-${line.id}`}>Basis</label>
+              <select id={`ec-basis-${line.id}`} name="basis" className="form-input" defaultValue={line.basis}>
+                <option value="PER_PAX">{COST_BASIS_LABELS.PER_PAX}</option>
+                <option value="GROUP">{COST_BASIS_LABELS.GROUP}</option>
+              </select>
+            </div>
+            <div>
+              <label className="form-label" htmlFor={`ec-cur-${line.id}`}>Currency</label>
+              <select
+                id={`ec-cur-${line.id}`}
+                name="currency"
+                className="form-input"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+              >
+                {["INR", "USD", "EUR", "GBP", "AED", "THB", "SGD"].map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="form-label" htmlFor={`ec-unit-${line.id}`}>Unit cost</label>
+              <input
+                id={`ec-unit-${line.id}`}
+                name="unitCost"
+                className="form-input"
+                inputMode="decimal"
+                defaultValue={toRupees(line.unitCostMinor)}
+                required
+              />
+            </div>
+            {currency !== "INR" && (
+              <div>
+                <label className="form-label" htmlFor={`ec-fx-${line.id}`}>Rate (₹ per {currency})</label>
+                <input
+                  id={`ec-fx-${line.id}`}
+                  name="fxRate"
+                  className="form-input"
+                  inputMode="decimal"
+                  defaultValue={line.fxRate}
+                  required
+                />
+              </div>
+            )}
+            <div className={styles.wide}>
+              <label className="form-label" htmlFor={`ec-label-${line.id}`}>Note (optional)</label>
+              <input id={`ec-label-${line.id}`} name="label" className="form-input" maxLength={120} defaultValue={line.label ?? ""} />
+            </div>
+          </div>
+          {error && <p className={shared.error}>{error}</p>}
+          <div className={shared.formActions}>
+            <button type="submit" className="btn btn-primary btn--sm" disabled={pending}>
+              {pending ? "Saving…" : "Save line"}
+            </button>
+            <button type="button" className="btn btn-outline btn--sm" onClick={onDone} disabled={pending}>
+              Cancel
+            </button>
+          </div>
+        </form>
+      </td>
+    </tr>
   );
 }

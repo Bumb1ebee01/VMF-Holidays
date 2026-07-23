@@ -8,6 +8,13 @@
 
 .search { flex: 1 1 20rem; }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
 .clear {
   font-size: 0.8rem;
   font-weight: 600;
