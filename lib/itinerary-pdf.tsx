@@ -468,7 +468,12 @@ function Section({
   const items = React.Children.toArray(children);
   const [head, ...rest] = items;
   return (
-    <View style={first ? [styles.section, styles.sectionFirst] : styles.section}>
+    // minPresenceAhead: don't start this section unless there's room for the
+    // heading AND its first row — otherwise it moves to the next page as a unit,
+    // so a heading is never left stranded at the foot of a page (a tall hotel
+    // card is the worst case, hence ~130pt). The inner wrap={false} then keeps
+    // the heading physically glued to that first row.
+    <View style={first ? [styles.section, styles.sectionFirst] : styles.section} minPresenceAhead={130}>
       <View wrap={false}>
         <Text style={styles.sectionTitle}>{title}</Text>
         {head}
