@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/auth/user";
 import { formatINR } from "@/lib/utils";
 import NewQuoteButton from "@/components/admin/NewQuoteButton";
 import QuoteFromLeadButton from "@/components/admin/QuoteFromLeadButton";
+import QuoteSearchInput from "@/components/admin/QuoteSearchInput";
 import {
   QUOTE_STATUS_LABELS,
   QUOTE_STATUSES,
@@ -114,14 +115,7 @@ export default async function QuotesPage({
       </div>
 
       <form className={styles.filters} method="get">
-        <input
-          type="search"
-          name="q"
-          defaultValue={search}
-          placeholder="Search VMF-XXXXXX, customer or destination…"
-          className={`form-input ${styles.search}`}
-          aria-label="Search quotes"
-        />
+        <QuoteSearchInput defaultValue={search} />
         <select name="status" defaultValue={status} className="form-input" aria-label="Filter by status">
           <option value="">All statuses</option>
           {QUOTE_STATUSES.map((s) => (
