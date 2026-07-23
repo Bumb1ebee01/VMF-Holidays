@@ -92,10 +92,16 @@ function money(n: number): string {
 const DISCLAIMER =
   "Indicative itinerary and sample pricing only. Not a confirmed quotation. Final pricing varies with travel dates, availability, hotel category and any customisation.";
 
+const QUOTE_DISCLAIMER =
+  "Quotation subject to availability and final confirmation by VMF Holidays. Not a tax invoice. Final pricing may vary with travel dates, hotel category and customisation.";
+
 const styles = StyleSheet.create({
   page: {
     paddingTop: 44,
-    paddingBottom: 66,
+    // Must clear the fixed footer, whose block (trace + 2-line disclaimer +
+    // contact) stands ~54px tall above its bottom:26 anchor. Anything less and
+    // flowing content — or the cover's closing tag — collides with it.
+    paddingBottom: 92,
     paddingHorizontal: 44,
     fontFamily: FONT,
     fontSize: 10.5,
@@ -131,21 +137,21 @@ const styles = StyleSheet.create({
   },
   logo: { height: 46, width: 118, objectFit: "contain" },
   bandTagline: { color: ORANGE_LT, fontSize: 8, letterSpacing: 1.4, textAlign: "right" },
-  heroImg: { marginHorizontal: -44, height: 246, objectFit: "cover" },
+  heroImg: { marginHorizontal: -44, height: 200, objectFit: "cover" },
   // orange rule directly under the hero — a crisp brand seam, kills the old gap.
   heroRule: { marginHorizontal: -44, height: 4, backgroundColor: ORANGE },
 
-  coverBody: { marginTop: 24 },
+  coverBody: { marginTop: 18 },
   eyebrow: { color: ORANGE, fontSize: 9, fontWeight: 700, letterSpacing: 1.6, textTransform: "uppercase" },
   coverTitle: { color: NAVY, fontSize: 27, fontWeight: 700, marginTop: 7, lineHeight: 1.15 },
   coverMeta: { color: MUTED, fontSize: 11, marginTop: 8 },
-  price: { color: ORANGE, fontSize: 21, fontWeight: 700, marginTop: 16, marginBottom: 8, lineHeight: 1.2 },
+  price: { color: ORANGE, fontSize: 21, fontWeight: 700, marginTop: 12, marginBottom: 6, lineHeight: 1.2 },
   priceNotes: {},
   priceNote: { color: MUTED, fontSize: 8.5, marginBottom: 2.5 },
 
   // Personalised "prepared for" card.
   forBox: {
-    marginTop: 20,
+    marginTop: 14,
     padding: 15,
     backgroundColor: CREAM,
     borderRadius: 6,
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
   },
 
   // ── CTA buttons ──
-  ctaRow: { flexDirection: "row", marginTop: 20, gap: 10 },
+  ctaRow: { flexDirection: "row", marginTop: 16, gap: 10 },
   ctaPrimary: {
     backgroundColor: ORANGE,
     color: "#FFFFFF",
@@ -217,6 +223,8 @@ const styles = StyleSheet.create({
 
   // ── Content sections ──
   section: { marginTop: 22 },
+  // First section on a fresh page — no top gap under the page padding.
+  sectionFirst: { marginTop: 0 },
   sectionTitle: {
     color: NAVY,
     fontSize: 14,
@@ -442,110 +450,166 @@ function ClosingCta() {
   );
 }
 
+/**
+ * A titled section whose heading never strands: the heading and its first row
+ * are kept together (`wrap={false}`), so a page break can only fall *after* real
+ * content has appeared under the title — no orphaned headers, no near-blank
+ * pages. Remaining rows flow and fill the page normally.
+ */
+function Section({
+  title,
+  first,
+  children,
+}: {
+  title: string;
+  first?: boolean;
+  children: React.ReactNode;
+}) {
+  const items = React.Children.toArray(children);
+  const [head, ...rest] = items;
+  return (
+    <View style={first ? [styles.section, styles.sectionFirst] : styles.section}>
+      <View wrap={false}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        {head}
+      </View>
+      {rest}
+    </View>
+  );
+}
+
 function Itinerary({ pkg, opts }: { pkg: Package; opts: ItineraryPdfOptions }) {
   const { variant, traceId } = opts;
   const terms = getTerms(opts.region ?? "domestic");
 
+  // Which body section renders first — it alone skips the top margin so it sits
+  // flush under the page padding.
+  const firstBody = pkg.highlights.length
+    ? "hi"
+    : pkg.itinerary.length
+      ? "day"
+      : opts.customNote?.trim()
+        ? "note"
+        : pkg.inclusions.length
+          ? "inc"
+          : pkg.exclusions.length
+            ? "exc"
+            : "hotels";
+
+  // Each logical part is its own <Page>. Relying on `break` inside one wrapping
+  // page (the old approach) let the cover overflow and left near-blank pages
+  // behind the break; explicit pages bound every part and kill the phantoms.
+  const hasBody =
+    pkg.highlights.length > 0 ||
+    pkg.itinerary.length > 0 ||
+    !!opts.customNote?.trim() ||
+    pkg.inclusions.length > 0 ||
+    pkg.exclusions.length > 0 ||
+    (opts.hotels?.length ?? 0) > 0;
+
   return (
     <Document title={`${pkg.title} — VMF Holidays`} author="VMF Holidays" subject="Sample itinerary">
+      {/* ── Page 1 — cover ── */}
+      <Page size="A4" style={styles.page}>
+        <Watermark variant={variant} />
+        <Cover pkg={pkg} opts={opts} />
+        <Footer traceId={traceId} />
+      </Page>
+
+      {/* ── Page 2 — itinerary body (flows across pages as needed) ── */}
+      {hasBody && (
+        <Page size="A4" style={styles.page} wrap>
+          <Watermark variant={variant} />
+
+          {pkg.highlights.length > 0 && (
+            <Section title="Trip Highlights" first={firstBody === "hi"}>
+              {pkg.highlights.map((h, i) => (
+                <View style={styles.bullet} key={i} wrap={false}>
+                  <View style={styles.markInc} />
+                  <Text style={styles.bulletText}>{h}</Text>
+                </View>
+              ))}
+            </Section>
+          )}
+
+          {pkg.itinerary.length > 0 && (
+            <Section title="Day-by-Day Itinerary" first={firstBody === "day"}>
+              {pkg.itinerary.map((d, i) => (
+                <View style={styles.day} key={i} wrap={false}>
+                  <Text style={styles.dayNum}>DAY {d.day}</Text>
+                  <View style={styles.dayBody}>
+                    <Text style={styles.dayTitle}>{d.title}</Text>
+                    {d.description ? <Text style={styles.dayText}>{d.description}</Text> : null}
+                  </View>
+                </View>
+              ))}
+            </Section>
+          )}
+
+          {/* Personalised notes for this customer (CRM per-customer share) */}
+          {opts.customNote?.trim() ? (
+            <Section title="Personalised for You" first={firstBody === "note"}>
+              {opts.customNote.trim().split("\n").map((line, i) => (
+                <Text key={i} style={styles.dayText}>{line || " "}</Text>
+              ))}
+            </Section>
+          ) : null}
+
+          {pkg.inclusions.length > 0 && (
+            <Section title="Inclusions" first={firstBody === "inc"}>
+              {pkg.inclusions.map((item, i) => (
+                <View style={styles.bullet} key={i} wrap={false}>
+                  <View style={styles.markInc} />
+                  <Text style={styles.bulletText}>{item}</Text>
+                </View>
+              ))}
+            </Section>
+          )}
+
+          {pkg.exclusions.length > 0 && (
+            <Section title="Exclusions" first={firstBody === "exc"}>
+              {pkg.exclusions.map((item, i) => (
+                <View style={styles.bullet} key={i} wrap={false}>
+                  <View style={styles.markExc} />
+                  <Text style={styles.bulletText}>{item}</Text>
+                </View>
+              ))}
+            </Section>
+          )}
+
+          {/* Hotels — with photos */}
+          {opts.hotels && opts.hotels.length > 0 && (
+            <Section title="Hotels" first={firstBody === "hotels"}>
+              {[
+                ...opts.hotels.map((h, i) => (
+                  <View style={styles.hotelRow} key={i} wrap={false}>
+                    {h.imageDataUri ? (
+                      // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image, not an HTML img
+                      <Image src={h.imageDataUri} style={styles.hotelImg} />
+                    ) : (
+                      <View style={styles.hotelImgEmpty} />
+                    )}
+                    <View style={styles.hotelBody}>
+                      {h.city ? <Text style={styles.hotelCity}>{h.city.toUpperCase()}</Text> : null}
+                      <Text style={styles.hotelName}>{h.name}</Text>
+                    </View>
+                  </View>
+                )),
+                <Text style={styles.hotelFootnote} key="fn">
+                  Hotels are indicative; an equivalent-category hotel may be substituted subject to availability.
+                </Text>,
+              ]}
+            </Section>
+          )}
+
+          <Footer traceId={traceId} />
+        </Page>
+      )}
+
+      {/* ── Terms & Conditions + closing CTA ── */}
       <Page size="A4" style={styles.page} wrap>
         <Watermark variant={variant} />
-
-        {/* Page 1 — dedicated cover */}
-        <Cover pkg={pkg} opts={opts} />
-
-        {/* Highlights — starts the content on a fresh page */}
-        {pkg.highlights.length > 0 && (
-          <View style={styles.section} break>
-            <Text style={styles.sectionTitle}>Trip Highlights</Text>
-            {pkg.highlights.map((h, i) => (
-              <View style={styles.bullet} key={i} wrap={false}>
-                <View style={styles.markInc} />
-                <Text style={styles.bulletText}>{h}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Day-by-day */}
-        {pkg.itinerary.length > 0 && (
-          <View style={styles.section} break={pkg.highlights.length === 0}>
-            <Text style={styles.sectionTitle}>Day-by-Day Itinerary</Text>
-            {pkg.itinerary.map((d, i) => (
-              <View style={styles.day} key={i} wrap={false}>
-                <Text style={styles.dayNum}>DAY {d.day}</Text>
-                <View style={styles.dayBody}>
-                  <Text style={styles.dayTitle}>{d.title}</Text>
-                  {d.description ? <Text style={styles.dayText}>{d.description}</Text> : null}
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Personalised notes for this customer (CRM per-customer share) */}
-        {opts.customNote?.trim() ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Personalised for You</Text>
-            {opts.customNote.trim().split("\n").map((line, i) => (
-              <Text key={i} style={styles.dayText}>{line || " "}</Text>
-            ))}
-          </View>
-        ) : null}
-
-        {/* Inclusions — its own section */}
-        {pkg.inclusions.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Inclusions</Text>
-            {pkg.inclusions.map((item, i) => (
-              <View style={styles.bullet} key={i} wrap={false}>
-                <View style={styles.markInc} />
-                <Text style={styles.bulletText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Exclusions — its own section */}
-        {pkg.exclusions.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Exclusions</Text>
-            {pkg.exclusions.map((item, i) => (
-              <View style={styles.bullet} key={i} wrap={false}>
-                <View style={styles.markExc} />
-                <Text style={styles.bulletText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-
-        {/* Hotels — with photos */}
-        {opts.hotels && opts.hotels.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Hotels</Text>
-            {opts.hotels.map((h, i) => (
-              <View style={styles.hotelRow} key={i} wrap={false}>
-                {h.imageDataUri ? (
-                  // eslint-disable-next-line jsx-a11y/alt-text -- @react-pdf Image, not an HTML img
-                  <Image src={h.imageDataUri} style={styles.hotelImg} />
-                ) : (
-                  <View style={styles.hotelImgEmpty} />
-                )}
-                <View style={styles.hotelBody}>
-                  {h.city ? <Text style={styles.hotelCity}>{h.city.toUpperCase()}</Text> : null}
-                  <Text style={styles.hotelName}>{h.name}</Text>
-                </View>
-              </View>
-            ))}
-            <Text style={styles.hotelFootnote}>
-              Hotels are indicative; an equivalent-category hotel may be substituted subject to availability.
-            </Text>
-          </View>
-        )}
-
-        {/* Terms & Conditions — fresh page */}
-        <View style={styles.section} break>
-          <Text style={styles.sectionTitle}>{terms.title}</Text>
+        <Section title={terms.title} first>
           {terms.sections.map((sec, i) => (
             <View key={i} wrap={false}>
               <View style={styles.termsHeadRow}>
@@ -560,11 +624,8 @@ function Itinerary({ pkg, opts }: { pkg: Package; opts: ItineraryPdfOptions }) {
               ))}
             </View>
           ))}
-
-          {/* Closing CTA */}
           <ClosingCta />
-        </View>
-
+        </Section>
         <Footer traceId={traceId} />
       </Page>
     </Document>
@@ -651,7 +712,8 @@ function Quotation({ data }: { data: QuotationData }) {
 
   return (
     <Document title={`Quotation ${data.ref} — VMF Holidays`} author="VMF Holidays" subject="Quotation">
-      <Page size="A4" style={styles.page} wrap>
+      {/* ── Page 1 — cover + price summary ── */}
+      <Page size="A4" style={styles.page}>
         <Watermark variant="quote" />
 
         {/* Cover */}
@@ -714,9 +776,13 @@ function Quotation({ data }: { data: QuotationData }) {
           </View>
         </View>
 
-        {/* T&C + closing CTA */}
-        <View style={styles.section} break>
-          <Text style={styles.sectionTitle}>{terms.title}</Text>
+        <Footer disclaimer={QUOTE_DISCLAIMER} />
+      </Page>
+
+      {/* ── Terms & Conditions + closing CTA ── */}
+      <Page size="A4" style={styles.page} wrap>
+        <Watermark variant="quote" />
+        <Section title={terms.title} first>
           {terms.sections.map((sec, i) => (
             <View key={i} wrap={false}>
               <View style={styles.termsHeadRow}>
@@ -732,9 +798,8 @@ function Quotation({ data }: { data: QuotationData }) {
             </View>
           ))}
           <ClosingCta />
-        </View>
-
-        <Footer disclaimer="Quotation subject to availability and final confirmation by VMF Holidays. Not a tax invoice. Final pricing may vary with travel dates, hotel category and customisation." />
+        </Section>
+        <Footer disclaimer={QUOTE_DISCLAIMER} />
       </Page>
     </Document>
   );

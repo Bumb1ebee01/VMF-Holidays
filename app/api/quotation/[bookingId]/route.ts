@@ -2,35 +2,10 @@ import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
 import { renderQuotationPdf } from "@/lib/itinerary-pdf";
+import { heroDataUri } from "@/lib/pdf-images";
 import { bookingRef, collectedTotal } from "@/lib/bookings";
 
 export const dynamic = "force-dynamic";
-
-// Force a Cloudinary URL to a PDF-safe JPEG (@react-pdf can't draw gif/webp).
-function toPdfSafeImageUrl(url: string): string {
-  const marker = "/image/upload/";
-  const i = url.indexOf(marker);
-  if (i === -1) return url;
-  return `${url.slice(0, i + marker.length)}f_jpg,q_auto,w_1200/${url.slice(i + marker.length)}`;
-}
-
-async function heroDataUri(url: string | null | undefined): Promise<string | null> {
-  if (!url || !/^https?:\/\//i.test(url)) return null;
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 4000);
-    const res = await fetch(toPdfSafeImageUrl(url), { signal: ctrl.signal, cache: "no-store" });
-    clearTimeout(t);
-    if (!res.ok) return null;
-    const type = res.headers.get("content-type") || "";
-    if (!/^image\/(jpeg|jpg|png)$/i.test(type)) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.length > 3_000_000) return null;
-    return `data:${type};base64,${buf.toString("base64")}`;
-  } catch {
-    return null;
-  }
-}
 
 const fmt = (d: Date | null) =>
   d ? d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : null;

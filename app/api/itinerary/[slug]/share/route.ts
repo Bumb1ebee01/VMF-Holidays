@@ -4,7 +4,7 @@ import { getCurrentUser } from "@/lib/auth/user";
 import { can } from "@/lib/permissions";
 import { renderItineraryPdf, itineraryFilename } from "@/lib/itinerary-pdf";
 import { logActivity } from "@/lib/activity";
-import { heroDataUri } from "@/lib/pdf-images";
+import { heroDataUri, resolveItineraryHero } from "@/lib/pdf-images";
 import type { ItineraryDay } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -60,7 +60,12 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
     select: { region: true, heroImage: true },
   });
   const region = dest?.region === "international" ? "international" : "domestic";
-  const hero = (await heroDataUri(dest?.heroImage)) ?? (await heroDataUri(pkg.heroImage));
+  const hero = await resolveItineraryHero({
+    destHero: dest?.heroImage,
+    pkgHero: pkg.heroImage,
+    gallery: pkg.gallery,
+    destSlug: pkg.destinationSlug,
+  });
   const hotels = await Promise.all(
     (pkg.hotels ?? []).slice(0, 8).map(async (h) => ({
       name: h.name,

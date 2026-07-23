@@ -3,6 +3,7 @@ import { getPackageBySlug } from "@/lib/queries";
 import { getCurrentMember } from "@/lib/auth/member";
 import { isRateLimited } from "@/lib/ratelimit";
 import { renderItineraryPdf, itineraryFilename } from "@/lib/itinerary-pdf";
+import { heroDataUri, resolveItineraryHero } from "@/lib/pdf-images";
 import type { Package } from "@/lib/types";
 import { mintLeadRef } from "@/lib/refs";
 
@@ -28,39 +29,6 @@ function clientIp(request: Request): string {
   return request.headers.get("x-real-ip")?.trim() || "unknown";
 }
 
-// @react-pdf can only embed PNG/JPEG. Our Cloudinary assets are sometimes served
-// as gif/webp (by original format), which render blank. Force a JPEG delivery —
-// and size/compress it while we're at it — by injecting a transform after
-// `/image/upload/`. Non-Cloudinary URLs are returned unchanged.
-function toPdfSafeImageUrl(url: string): string {
-  const marker = "/image/upload/";
-  const i = url.indexOf(marker);
-  if (i === -1) return url;
-  const head = url.slice(0, i + marker.length);
-  const tail = url.slice(i + marker.length);
-  return `${head}f_jpg,q_auto,w_1200/${tail}`;
-}
-
-/** Best-effort: fetch a remote hero image and inline it as a data URI. Never throws. */
-async function heroDataUri(url: string | null | undefined): Promise<string | null> {
-  if (!url || !/^https?:\/\//i.test(url)) return null; // only remote (e.g. Cloudinary) images
-  try {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), 4000);
-    const res = await fetch(toPdfSafeImageUrl(url), { signal: ctrl.signal, cache: "no-store" });
-    clearTimeout(t);
-    if (!res.ok) return null;
-    const type = res.headers.get("content-type") || "image/jpeg";
-    // Never embed a format @react-pdf can't draw (gif/webp/etc.) — it renders blank.
-    if (!/^image\/(jpeg|jpg|png)$/i.test(type)) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
-    if (buf.length > 3_000_000) return null; // don't inline huge images
-    return `data:${type};base64,${buf.toString("base64")}`;
-  } catch {
-    return null;
-  }
-}
-
 function pdfResponse(bytes: Buffer, pkg: Package): Response {
   return new Response(new Uint8Array(bytes), {
     status: 200,
@@ -84,12 +52,15 @@ export async function POST(request: Request, ctx: { params: Promise<{ slug: stri
   });
   const region = dest?.region === "international" ? "international" : "domestic";
 
-  // Prefer the DESTINATION hero so every package for a destination shares one
-  // cover photo (Kerala → Kerala hero, Dubai → Dubai hero…), new packages
-  // included. Fall back to the package image when the destination image is
-  // missing or broken (some Destination.heroImage URLs 404) so the cover is
-  // never blank.
-  const hero = (await heroDataUri(dest?.heroImage)) ?? (await heroDataUri(pkg.heroImage));
+  // Guarantee a cover photo: destination hero → package image → gallery → the
+  // bundled destination photo on disk. Handles local `/images/...` paths too
+  // (some destinations store those rather than a remote URL).
+  const hero = await resolveItineraryHero({
+    destHero: dest?.heroImage,
+    pkgHero: pkg.heroImage,
+    gallery: pkg.gallery,
+    destSlug: pkg.destinationSlug,
+  });
 
   // Pre-fetch hotel images to data URIs too — @react-pdf can't fetch during render.
   const hotels = await Promise.all(
