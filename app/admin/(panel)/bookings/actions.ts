@@ -18,6 +18,7 @@ import {
   paxSummaryFromTravellers,
   type TravellerTypeValue,
 } from "@/lib/travellers";
+import { quoteForBooking } from "@/lib/pricing";
 
 export type BookingFormState = { error?: string };
 export type PaymentState = { error?: string };
@@ -109,6 +110,17 @@ export async function createBookingFromLead(
     data: { bookingId: booking.id },
   });
 
+  // The confirmed (winning) quote, if the advisor picked one — mark it ACCEPTED
+  // so the booking knows exactly which trip/price/margin was sold. Guarded to a
+  // quote that actually belongs to this enquiry.
+  const acceptedQuoteId = clip(formData, "acceptedQuoteId", 40);
+  if (acceptedQuoteId) {
+    await db.quote.updateMany({
+      where: { id: acceptedQuoteId, leadId: lead.id },
+      data: { status: "ACCEPTED", acceptedAt: new Date(), bookingId: booking.id },
+    });
+  }
+
   // Preserve the old "mark booked" behaviour: Won + advance any club referral.
   await db.lead.update({ where: { id: lead.id }, data: { status: "WON" } });
   let refMsg = "";
@@ -140,6 +152,103 @@ export async function createBookingFromLead(
     entity: "Booking",
     entityId: booking.id,
     detail: `Created booking ${bookingRef(booking.id)} for ${lead.name}`,
+  });
+  revalidatePath("/admin/bookings");
+  revalidatePath(`/admin/leads/${lead.id}`);
+  redirect(`/admin/bookings/${booking.id}`);
+}
+
+/**
+ * Convert a quote straight into a booking (the quote-side entry point). If the
+ * quote is already tied to a booking it just marks it accepted and re-syncs the
+ * value; otherwise it creates the booking from the quote's enquiry + priced
+ * figures, links every quote for that enquiry, marks this one accepted and sets
+ * the lead Won. A scratch quote with no lead can't be converted (the UI hides
+ * the button).
+ */
+export async function acceptQuoteAndBook(quoteId: string) {
+  const actor = await requirePermission("bookings:manage");
+  const quote = await db.quote.findUnique({
+    where: { id: quoteId },
+    include: { costLines: true, lead: true },
+  });
+  if (!quote) redirect("/admin/quotes");
+
+  const priced = quoteForBooking(quote);
+  const totalValue = priced ? Math.round(priced.total / 100) : 0;
+
+  // Already linked to a booking → accept + keep the booking's total in step.
+  if (quote.bookingId) {
+    await db.quote.update({
+      where: { id: quote.id },
+      data: { status: "ACCEPTED", acceptedAt: new Date() },
+    });
+    if (totalValue > 0) {
+      await db.booking.update({ where: { id: quote.bookingId }, data: { totalValue } });
+    }
+    await logActivity(actor, {
+      action: "quote.status",
+      entity: "Quote",
+      entityId: quote.id,
+      detail: `Accepted ${quote.ref} v${quote.version} for ${bookingRef(quote.bookingId)}`,
+    });
+    revalidatePath(`/admin/bookings/${quote.bookingId}`);
+    redirect(`/admin/bookings/${quote.bookingId}`);
+  }
+
+  if (!quote.lead) redirect(`/admin/quotes/${quote.id}`); // scratch quote — nothing to book
+  const lead = quote.lead;
+
+  const booking = await db.booking.create({
+    data: {
+      leadId: lead.id,
+      ref: lead.ref,
+      customerName: quote.customerName ?? lead.name,
+      customerPhone: lead.phone,
+      customerEmail: lead.email,
+      destination: quote.destination ?? lead.destination,
+      packageTitle: quote.packageTitle ?? lead.packageTitle,
+      travelStart: quote.travelStart,
+      travelEnd: quote.travelEnd,
+      pax: `${Math.max(1, quote.paxCount)} pax`,
+      paxCount: Math.max(1, quote.paxCount),
+      totalValue,
+      advisorId: lead.assignedToId ?? actor.id,
+    },
+  });
+
+  await db.quote.updateMany({
+    where: { leadId: lead.id, bookingId: null },
+    data: { bookingId: booking.id },
+  });
+  await db.quote.update({
+    where: { id: quote.id },
+    data: { status: "ACCEPTED", acceptedAt: new Date(), bookingId: booking.id },
+  });
+  await db.lead.update({ where: { id: lead.id }, data: { status: "WON" } });
+
+  // Advance a Travellers Club referral to Booked, same as createBookingFromLead.
+  if (lead.email) {
+    const member = await db.member.findUnique({
+      where: { email: lead.email.toLowerCase() },
+      select: { id: true, name: true, referredById: true },
+    });
+    if (member?.referredById) {
+      await upsertReferralStage({
+        referrerId: member.referredById,
+        refereeMemberId: member.id,
+        refereeName: member.name,
+        status: "BOOKED",
+      });
+      revalidatePath(`/admin/members/${member.id}`);
+    }
+  }
+
+  await logActivity(actor, {
+    action: "booking.create",
+    entity: "Booking",
+    entityId: booking.id,
+    detail: `Created booking ${bookingRef(booking.id)} from quote ${quote.ref} v${quote.version}`,
   });
   revalidatePath("/admin/bookings");
   revalidatePath(`/admin/leads/${lead.id}`);

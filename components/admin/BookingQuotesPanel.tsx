@@ -30,6 +30,7 @@ export default function BookingQuotesPanel({ quotes }: { quotes: BookingQuoteRow
   if (quotes.length === 0) return null;
 
   const accepted = quotes.find((q) => q.status === "ACCEPTED");
+  const acceptedPriced = accepted ? quoteForBooking(accepted) : null;
 
   return (
     <section className={shared.panel}>
@@ -40,6 +41,14 @@ export default function BookingQuotesPanel({ quotes }: { quotes: BookingQuoteRow
             ? "The accepted quote sets this booking's total value."
             : "No quote accepted yet — the booking value was entered directly."}
         </p>
+
+        {accepted && acceptedPriced && (
+          <p className={styles.meta} style={{ marginBottom: "var(--sp-3)" }}>
+            Confirmed: <strong>{accepted.ref} v{accepted.version}</strong> ·{" "}
+            {formatINR(Math.round(toRupees(acceptedPriced.perPax)))}/pax × {accepted.paxCount} ·{" "}
+            {acceptedPriced.markupPctOnCost.toFixed(1)}% margin
+          </p>
+        )}
 
         <div className={styles.tableWrap}>
           <table className={shared.table}>

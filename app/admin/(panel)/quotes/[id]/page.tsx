@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { requireUser } from "@/lib/auth/user";
 import QuoteBuilder from "@/components/admin/QuoteBuilder";
 import QuoteHeaderActions from "@/components/admin/QuoteHeaderActions";
+import { acceptQuoteAndBook } from "@/app/admin/(panel)/bookings/actions";
 import { quoteLabel, QUOTE_STATUS_LABELS, type QuoteStatusValue } from "@/lib/quotes";
 import shared from "@/components/admin/shared.module.css";
 import lead from "@/app/admin/(panel)/leads/[id]/page.module.css";
@@ -122,6 +123,24 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
               </div>
             )}
           </div>
+
+          {/* Convert this quote into the booking — the quote-side entry point.
+              Scratch quotes (no enquiry, no booking) can't be booked. */}
+          {(quote.lead || quote.booking) && (
+            <div className={`${shared.panel} ${shared.panelPad}`}>
+              <h2 className={lead.panelTitle}>Booking</h2>
+              <p className={shared.cardSub} style={{ marginTop: 0 }}>
+                {quote.booking
+                  ? "Mark this the confirmed quote — it sets the linked booking's value."
+                  : "Accept this quote and turn the enquiry into a booking with a payment ledger."}
+              </p>
+              <form action={acceptQuoteAndBook.bind(null, quote.id)}>
+                <button type="submit" className="btn btn-primary btn--sm">
+                  {quote.booking ? "Mark accepted" : "Accept & create booking"}
+                </button>
+              </form>
+            </div>
+          )}
         </aside>
       </div>
     </div>

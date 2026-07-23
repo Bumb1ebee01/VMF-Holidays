@@ -12,7 +12,8 @@ import LeadItineraryPanel from "@/components/admin/LeadItineraryPanel";
 import LeadQuotesPanel from "@/components/admin/LeadQuotesPanel";
 import { addLeadNote } from "../actions";
 import { SOURCE_LABELS } from "@/components/admin/leadMeta";
-import { formatDateTime } from "@/lib/utils";
+import { quoteForBooking, toRupees } from "@/lib/pricing";
+import { formatDateTime, formatINR } from "@/lib/utils";
 import shared from "@/components/admin/shared.module.css";
 import styles from "./page.module.css";
 
@@ -328,6 +329,19 @@ export default async function LeadDetailPage({
                   destination: lead.destination ?? "",
                   packageTitle: lead.packageTitle ?? "",
                 }}
+                quotes={lead.quotes
+                  .filter((q) => q.status !== "DECLINED")
+                  .map((q) => {
+                    const priced = quoteForBooking(q);
+                    const total = priced ? Math.round(toRupees(priced.total)) : 0;
+                    const margin = priced ? ` (${priced.markupPctOnCost.toFixed(1)}% margin)` : "";
+                    return {
+                      id: q.id,
+                      label: `${q.ref} v${q.version}${q.optionLabel ? ` · ${q.optionLabel}` : ""} · ${formatINR(total)}${margin}`,
+                      total,
+                      paxCount: q.paxCount,
+                    };
+                  })}
               />
             </div>
           ) : null}

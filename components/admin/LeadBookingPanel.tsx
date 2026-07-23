@@ -17,21 +17,47 @@ interface Prefill {
   packageTitle: string;
 }
 
+/** A priced quote offered as the "confirmed" one at booking time. */
+export interface BookingQuotePick {
+  id: string;
+  label: string;
+  /** Quote price in whole rupees. */
+  total: number;
+  paxCount: number;
+}
+
 export default function LeadBookingPanel({
   leadId,
   memberName,
   prefill,
+  quotes = [],
 }: {
   leadId: string;
   memberName: string | null;
   prefill: Prefill;
+  quotes?: BookingQuotePick[];
 }) {
   const action = createBookingFromLead.bind(null, leadId);
   const [state, formAction, pending] = useActionState(action, initial);
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
+  const [quoteId, setQuoteId] = useState("");
+  const [totalValue, setTotalValue] = useState("");
   const totalPax = (Number(adults) || 0) + (Number(children) || 0) + (Number(infants) || 0);
+
+  function onPickQuote(id: string) {
+    setQuoteId(id);
+    const q = quotes.find((x) => x.id === id);
+    if (q) {
+      // Prefill from the chosen quote — both stay editable so a rounded-off
+      // figure or a different pax split can still be tweaked before saving.
+      setTotalValue(String(q.total));
+      setAdults(Math.max(1, q.paxCount));
+      setChildren(0);
+      setInfants(0);
+    }
+  }
 
   return (
     <div>
@@ -42,6 +68,28 @@ export default function LeadBookingPanel({
           : "Turns this won enquiry into a trip with a payment ledger, and sets the lead to Won."}
       </p>
       <form action={formAction} style={col}>
+        <input type="hidden" name="acceptedQuoteId" value={quoteId} />
+
+        {/* Confirmed quote — records which trip/price/margin was actually sold. */}
+        {quotes.length > 0 && (
+          <label className="form-group">
+            <span className="form-label">Confirmed quote</span>
+            <select
+              className="form-input"
+              value={quoteId}
+              onChange={(e) => onPickQuote(e.target.value)}
+            >
+              <option value="">No linked quote — enter the value manually</option>
+              {quotes.map((q) => (
+                <option key={q.id} value={q.id}>{q.label}</option>
+              ))}
+            </select>
+            <p className="form-hint">
+              Links the winning quote to this booking and prefills the value &amp; pax (both stay editable).
+            </p>
+          </label>
+        )}
+
         {/* Customer */}
         <label className="form-group">
           <span className="form-label">Customer name *</span>
@@ -136,6 +184,8 @@ export default function LeadBookingPanel({
             className="form-input"
             required
             placeholder="e.g. 160000"
+            value={totalValue}
+            onChange={(e) => setTotalValue(e.target.value)}
           />
         </label>
 
