@@ -32,6 +32,7 @@ function toPackage(row: DbPackage): Package {
     exclusions: row.exclusions,
     itinerary: (Array.isArray(row.itinerary) ? row.itinerary : []) as unknown as ItineraryDay[],
     featured: row.featured,
+    published: row.published,
     badge: row.badge ?? undefined,
   };
 }
@@ -65,8 +66,20 @@ export const getAllDestinations = cache(async (): Promise<Destination[]> => {
   return rows.map(toDestination);
 });
 
+// ALL packages, including CMS-only (unpublished) ones. For STAFF/ADMIN surfaces
+// only — the lead itinerary picker and quoting need backend-only packages too.
+// Public pages must use getPublishedPackages so hidden packages never leak.
 export const getAllPackages = cache(async (): Promise<Package[]> => {
   const rows = await db.package.findMany({ orderBy: { createdAt: "asc" } });
+  return rows.map(toPackage);
+});
+
+// Only packages marked "show on website" — the base for every PUBLIC listing.
+export const getPublishedPackages = cache(async (): Promise<Package[]> => {
+  const rows = await db.package.findMany({
+    where: { published: true },
+    orderBy: { createdAt: "asc" },
+  });
   return rows.map(toPackage);
 });
 
@@ -88,7 +101,7 @@ async function buildLocationTiles(
   region: "domestic" | "international",
   keyOf: (d: Destination) => string | undefined
 ): Promise<LocationTile[]> {
-  const [dests, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const [dests, packages] = await Promise.all([getAllDestinations(), getPublishedPackages()]);
   const countBySlug = new Map<string, number>();
   const pkgImageBySlug = new Map<string, string>();
   for (const p of packages) {
@@ -141,7 +154,7 @@ async function packagesForGroup(
   keyOf: (d: Destination) => string | undefined,
   groupSlug: string
 ): Promise<{ name: string; packages: Package[] } | null> {
-  const [dests, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const [dests, packages] = await Promise.all([getAllDestinations(), getPublishedPackages()]);
   const inGroup = dests.filter((d) => d.region === region && !!keyOf(d) && slugify(keyOf(d)!) === groupSlug);
   if (inGroup.length === 0) return null;
   const slugs = new Set(inGroup.map((d) => d.slug));
@@ -160,7 +173,7 @@ export const getPackagesByCountry = cache((countrySlug: string) =>
 
 export async function getFeaturedPackages(): Promise<Package[]> {
   const rows = await db.package.findMany({
-    where: { featured: true },
+    where: { featured: true, published: true },
     orderBy: { updatedAt: "desc" },
     take: 3,
   });
@@ -176,6 +189,7 @@ export async function getRelatedPackages(pkg: Package): Promise<Package[]> {
   const rows = await db.package.findMany({
     where: {
       slug: { not: pkg.slug },
+      published: true,
       OR: [{ destinationSlug: pkg.destinationSlug }, { category: pkg.category as TripCategorySlug }],
     },
     take: 3,
@@ -185,7 +199,7 @@ export async function getRelatedPackages(pkg: Package): Promise<Package[]> {
 
 export async function getPackagesByCategory(category: string): Promise<Package[]> {
   const rows = await db.package.findMany({
-    where: { category: category as TripCategorySlug },
+    where: { category: category as TripCategorySlug, published: true },
     orderBy: { createdAt: "asc" },
   });
   return rows.map(toPackage);
@@ -206,6 +220,7 @@ export type HolidayLanding = {
 
 export const getHolidayLandings = cache(async (): Promise<HolidayLanding[]> => {
   const rows = await db.package.findMany({
+    where: { published: true },
     select: { destinationSlug: true, destination: true, category: true, fromPrice: true },
   });
   const map = new Map<string, HolidayLanding>();
@@ -238,6 +253,7 @@ export async function getPackagesForLanding(landing: HolidayLanding): Promise<Pa
     where: {
       destinationSlug: landing.destinationSlug,
       category: landing.category as TripCategorySlug,
+      published: true,
     },
     orderBy: { fromPrice: "asc" },
   });

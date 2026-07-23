@@ -28,7 +28,7 @@ export default async function AdminPackagesPage({
     orderBy: { updatedAt: "desc" },
     select: {
       id: true, title: true, slug: true, destination: true, category: true,
-      duration: true, fromPrice: true, featured: true, badge: true, heroImage: true,
+      duration: true, fromPrice: true, featured: true, published: true, badge: true, heroImage: true,
     },
   });
 
@@ -96,9 +96,17 @@ export default async function AdminPackagesPage({
                   <td>{formatINR(pkg.fromPrice)}</td>
                   <td>
                     <div className={shared.flagRow}>
+                      {!pkg.published && (
+                        <span
+                          className={shared.flag}
+                          style={{ background: "var(--surface)", color: "var(--muted)", border: "1px solid var(--border)" }}
+                        >
+                          Hidden
+                        </span>
+                      )}
                       {pkg.featured && <span className={`${shared.flag} ${shared.flagFeatured}`}>Featured</span>}
                       {pkg.badge && <span className={`${shared.flag} ${shared.flagBadge}`}>{pkg.badge}</span>}
-                      {!pkg.featured && !pkg.badge && <span className={shared.tagText}>—</span>}
+                      {pkg.published && !pkg.featured && !pkg.badge && <span className={shared.tagText}>—</span>}
                     </div>
                   </td>
                 </tr>

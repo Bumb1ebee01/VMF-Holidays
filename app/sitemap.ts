@@ -7,7 +7,7 @@ import { DEPARTURE_CITIES } from "@/lib/data/cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [packages, posts, landings, dests] = await Promise.all([
-    db.package.findMany({ select: { slug: true, updatedAt: true } }),
+    db.package.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
     db.post.findMany({ where: { published: true }, select: { slug: true, updatedAt: true } }),
     getHolidayLandings(),
     getAllDestinations(),

@@ -55,6 +55,12 @@ export interface Package {
   exclusions: string[];
   itinerary: ItineraryDay[];
   featured: boolean;
+  /**
+   * Whether the package is shown on the public website (false = CMS-only).
+   * Optional so the bundled static fallback data need not set it; DB rows always
+   * do. Treat only an explicit `false` as hidden — absent means visible.
+   */
+  published?: boolean;
   badge?: string;
 }
 

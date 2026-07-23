@@ -69,6 +69,7 @@ export default async function EditPackagePage({
           exclusions: pkg.exclusions,
           itinerary,
           featured: pkg.featured,
+          published: pkg.published,
           badge: pkg.badge ?? "",
         }}
       />

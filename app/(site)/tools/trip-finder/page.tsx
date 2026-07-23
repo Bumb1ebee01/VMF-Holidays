@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllDestinations, getAllPackages } from "@/lib/queries";
+import { getAllDestinations, getPublishedPackages } from "@/lib/queries";
 import { JsonLd, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import TripFinder from "@/components/trip-finder/TripFinder";
 import type { FinderDestination, FinderPackage } from "@/lib/trip-finder";
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TripFinderPage() {
-  const [destinations, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const [destinations, packages] = await Promise.all([getAllDestinations(), getPublishedPackages()]);
 
   const finderDestinations: FinderDestination[] = destinations.map((d) => ({
     slug: d.slug,

@@ -66,6 +66,8 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
   const [exclusions, setExclusions] = useState<string[]>(initial?.exclusions ?? []);
   const [itinerary, setItinerary] = useState<ItineraryDayInput[]>(initial?.itinerary ?? []);
   const [featured, setFeatured] = useState(initial?.featured ?? false);
+  // New packages default to shown on the website; existing ones keep their value.
+  const [published, setPublished] = useState(initial?.published ?? true);
   const [badge, setBadge] = useState(initial?.badge ?? "");
 
   function handleSubmit(e: React.FormEvent) {
@@ -93,6 +95,7 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
       exclusions,
       itinerary,
       featured,
+      published,
       badge,
     };
     startTransition(async () => {
@@ -225,6 +228,19 @@ export default function PackageForm({ destinations, initial }: PackageFormProps)
               onChange={(e) => setFeatured(e.target.checked)}
             />
             <span>Featured on homepage</span>
+          </label>
+          <label className={styles.featuredRow} style={{ marginTop: 10 }}>
+            <input
+              type="checkbox"
+              checked={published}
+              onChange={(e) => setPublished(e.target.checked)}
+            />
+            <span>
+              Show on website
+              <small style={{ display: "block", color: "var(--muted)", fontWeight: 400 }}>
+                Off = kept in the CMS for quotes &amp; itineraries only, hidden from the public site.
+              </small>
+            </span>
           </label>
         </div>
       </div>

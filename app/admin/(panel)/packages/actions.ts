@@ -31,6 +31,7 @@ export interface PackagePayload {
   exclusions: string[];
   itinerary: { title: string; description: string }[];
   featured: boolean;
+  published: boolean;
   badge: string;
 }
 
@@ -77,6 +78,7 @@ export async function savePackage(payload: PackagePayload): Promise<SaveResult> 
       .filter((d) => d.title.trim() || d.description.trim())
       .map((d, i) => ({ day: i + 1, title: d.title.trim(), description: d.description.trim() })),
     featured: payload.featured,
+    published: payload.published,
     badge: payload.badge.trim() || null,
   };
 

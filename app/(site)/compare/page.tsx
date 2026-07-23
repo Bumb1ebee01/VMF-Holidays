@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllPackages } from "@/lib/queries";
+import { getPublishedPackages } from "@/lib/queries";
 import PackageCompare, { type CompareItem } from "@/components/packages/PackageCompare";
 import styles from "./page.module.css";
 
@@ -16,7 +16,7 @@ export default async function ComparePage({
   searchParams: Promise<{ p?: string }>;
 }) {
   const { p = "" } = await searchParams;
-  const packages = await getAllPackages();
+  const packages = await getPublishedPackages();
 
   const items: CompareItem[] = packages.map((pk) => ({
     slug: pk.slug,

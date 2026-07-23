@@ -43,7 +43,9 @@ function pdfResponse(bytes: Buffer, pkg: Package): Response {
 export async function POST(request: Request, ctx: { params: Promise<{ slug: string }> }) {
   const { slug } = await ctx.params;
   const pkg = await getPackageBySlug(slug);
-  if (!pkg) return Response.json({ error: "Package not found" }, { status: 404 });
+  // Public download: a CMS-only package isn't on the site, so its public PDF
+  // endpoint 404s too. (The staff share route stays open for backend quoting.)
+  if (!pkg || pkg.published === false) return Response.json({ error: "Package not found" }, { status: 404 });
 
   // One lookup gives us both the T&C region and the shared destination hero.
   const dest = await db.destination.findUnique({

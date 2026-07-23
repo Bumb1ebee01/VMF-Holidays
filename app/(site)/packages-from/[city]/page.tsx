@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { getFeaturedPackages, getAllPackages } from "@/lib/queries";
+import { getFeaturedPackages, getPublishedPackages } from "@/lib/queries";
 import { DEPARTURE_CITIES, getDepartureCity } from "@/lib/data/cities";
 import { formatINR } from "@/lib/utils";
 import { JsonLd, breadcrumbJsonLd, itemListJsonLd, faqJsonLd, absoluteUrl } from "@/lib/seo";
@@ -26,7 +26,7 @@ export function generateStaticParams() {
 async function cityPackages() {
   const featured = await getFeaturedPackages();
   if (featured.length >= 3) return featured;
-  return (await getAllPackages()).slice(0, 6);
+  return (await getPublishedPackages()).slice(0, 6);
 }
 
 const minPriceOf = (pkgs: { fromPrice: number; priceOnRequest?: boolean }[]) => {

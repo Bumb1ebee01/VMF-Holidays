@@ -14,12 +14,12 @@ import HowItWorks from "@/components/home/HowItWorks";
 import ClubStrip from "@/components/home/ClubStrip";
 import ClubPopup from "@/components/home/ClubPopup";
 import CTABanner from "@/components/home/CTABanner";
-import { getAllDestinations, getAllPackages, getPublishedOffers } from "@/lib/queries";
+import { getAllDestinations, getPublishedPackages, getPublishedOffers } from "@/lib/queries";
 
 export default async function HomePage() {
   const [destinations, packages, offers] = await Promise.all([
     getAllDestinations(),
-    getAllPackages(),
+    getPublishedPackages(),
     getPublishedOffers(),
   ]);
 

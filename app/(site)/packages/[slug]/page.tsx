@@ -17,7 +17,8 @@ import DownloadItineraryButton from "@/components/packages/DownloadItineraryButt
 import styles from "./page.module.css";
 
 export async function generateStaticParams() {
-  const rows = await db.package.findMany({ select: { slug: true } });
+  // Only pre-build published packages — CMS-only ones must not exist publicly.
+  const rows = await db.package.findMany({ where: { published: true }, select: { slug: true } });
   return rows.map((p) => ({ slug: p.slug }));
 }
 
@@ -26,7 +27,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await props.params;
   const pkg = await getPackageBySlug(slug);
-  if (!pkg) return {};
+  if (!pkg || pkg.published === false) return {};
   const url = `/packages/${pkg.slug}`;
   const priceText = pkg.priceOnRequest ? "custom pricing on request" : `from ${formatINR(pkg.fromPrice)} per person`;
   const description = `${pkg.duration} in ${pkg.destination} — ${priceText}. ${pkg.highlights[0]}.`;
@@ -60,7 +61,9 @@ export async function generateMetadata(
 export default async function PackageDetailPage(props: PageProps<"/packages/[slug]">) {
   const { slug } = await props.params;
   const pkg = await getPackageBySlug(slug);
-  if (!pkg) notFound();
+  // getPackageBySlug is unfiltered (staff tools share it); the public page must
+  // 404 on a CMS-only package so hidden packages aren't reachable by URL.
+  if (!pkg || pkg.published === false) notFound();
 
   const related = await getRelatedPackages(pkg);
 

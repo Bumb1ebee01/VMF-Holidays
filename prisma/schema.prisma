@@ -414,6 +414,10 @@ model Package {
   exclusions      String[]
   itinerary       Json         @default("[]")
   featured        Boolean      @default(false)
+  /// Whether this package appears on the public website. false = kept in the CMS
+  /// for quoting / itineraries only (staff tools still see it). Defaults true so
+  /// existing packages stay visible.
+  published       Boolean      @default(true)
   badge           String?
   // Travellers Club gate (WI-6): STANDARD_RETAIL earns + redeems; LAUNCHED_GROUP excluded on both sides.
   productClass    ProductClass @default(STANDARD_RETAIL)

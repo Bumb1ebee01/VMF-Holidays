@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getAllDestinations, getAllPackages } from "@/lib/queries";
+import { getAllDestinations, getPublishedPackages } from "@/lib/queries";
 import { JsonLd, breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
 import BudgetExplorer, { type BudgetDestination, type BudgetPackage } from "@/components/tools/BudgetExplorer";
 import styles from "./page.module.css";
@@ -36,7 +36,7 @@ export default async function BudgetExplorerPage({
 }) {
   const { budget } = await searchParams;
   const initialBudget = budget !== undefined ? Number(budget) : undefined;
-  const [destinations, packages] = await Promise.all([getAllDestinations(), getAllPackages()]);
+  const [destinations, packages] = await Promise.all([getAllDestinations(), getPublishedPackages()]);
 
   // Group real, priced packages under their destination so a budget match can
   // link straight to a bookable trip, not just the read-only guide. On-request
