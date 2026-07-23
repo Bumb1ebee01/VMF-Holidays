@@ -104,7 +104,7 @@ export type CostBasis = "PER_PAX" | "GROUP";
 
 export const COST_BASIS_LABELS: Record<CostBasis, string> = {
   PER_PAX: "Per pax",
-  GROUP: "Fixed (group)",
+  GROUP: "Total cost (group)",
 };
 
 export interface CostLine {

@@ -168,9 +168,9 @@ export default function QuoteBuilder(props: QuoteBuilderProps) {
               </div>
               <div>
                 <label className="form-label" htmlFor="qb-basis">Basis</label>
-                <select id="qb-basis" name="basis" className="form-input" defaultValue="PER_PAX">
-                  <option value="PER_PAX">{COST_BASIS_LABELS.PER_PAX}</option>
+                <select id="qb-basis" name="basis" className="form-input" defaultValue="GROUP">
                   <option value="GROUP">{COST_BASIS_LABELS.GROUP}</option>
+                  <option value="PER_PAX">{COST_BASIS_LABELS.PER_PAX}</option>
                 </select>
               </div>
               <div>
@@ -485,8 +485,8 @@ function EditCostRow({
             <div>
               <label className="form-label" htmlFor={`ec-basis-${line.id}`}>Basis</label>
               <select id={`ec-basis-${line.id}`} name="basis" className="form-input" defaultValue={line.basis}>
-                <option value="PER_PAX">{COST_BASIS_LABELS.PER_PAX}</option>
                 <option value="GROUP">{COST_BASIS_LABELS.GROUP}</option>
+                <option value="PER_PAX">{COST_BASIS_LABELS.PER_PAX}</option>
               </select>
             </div>
             <div>

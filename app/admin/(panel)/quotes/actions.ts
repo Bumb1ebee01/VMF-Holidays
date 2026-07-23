@@ -97,7 +97,7 @@ export async function createQuote(_prev: QuoteState, formData: FormData): Promis
       costLines: {
         create: DEFAULT_COST_ROW_CATEGORIES.map((category) => ({
           category,
-          basis: "PER_PAX" as const,
+          basis: "GROUP" as const,
           currency: "INR",
           unitCostMinor: 0,
           fxRate: 1,
@@ -176,7 +176,7 @@ export async function startQuoteFromLead(leadId: string) {
       costLines: {
         create: DEFAULT_COST_ROW_CATEGORIES.map((category) => ({
           category,
-          basis: "PER_PAX" as const,
+          basis: "GROUP" as const,
           currency: "INR",
           unitCostMinor: 0,
           fxRate: 1,
