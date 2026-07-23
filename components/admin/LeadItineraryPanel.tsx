@@ -27,7 +27,6 @@ export default function LeadItineraryPanel({
   customerName,
   customerPhone,
   customerEmail,
-  defaultDates,
   defaultQuery,
   packages,
 }: {
@@ -35,7 +34,6 @@ export default function LeadItineraryPanel({
   customerName: string;
   customerPhone: string;
   customerEmail: string | null;
-  defaultDates: string;
   defaultQuery: string;
   packages: PkgOption[];
 }) {
@@ -49,7 +47,8 @@ export default function LeadItineraryPanel({
   const selected = packages.find((p) => p.slug === selectedSlug) ?? null;
 
   const [custName, setCustName] = useState(customerName);
-  const [dates, setDates] = useState(defaultDates);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -66,9 +65,46 @@ export default function LeadItineraryPanel({
     );
   }, [query, packages]);
 
+  // ── Calendar → trip duration ──
+  // Date-only values are handled in UTC throughout so the length never drifts by
+  // a day across timezones.
+  const addDays = (iso: string, n: number) => {
+    const d = new Date(iso);
+    d.setUTCDate(d.getUTCDate() + n);
+    return d.toISOString().slice(0, 10);
+  };
+  const nights =
+    startDate && endDate
+      ? Math.round((Date.parse(endDate) - Date.parse(startDate)) / 86_400_000)
+      : null;
+  const tripDays = nights !== null && nights >= 0 ? nights + 1 : null;
+  const durationLabel =
+    tripDays !== null ? `${tripDays} Day${tripDays === 1 ? "" : "s"} / ${nights} Night${nights === 1 ? "" : "s"}` : null;
+
+  // Formatted date range for the PDF/message, e.g. "12–17 Aug 2026".
+  const datesLabel = (() => {
+    if (!startDate) return "";
+    const fmt = (iso: string, opts: Intl.DateTimeFormatOptions) =>
+      new Date(iso).toLocaleDateString("en-GB", { ...opts, timeZone: "UTC" });
+    if (!endDate) return fmt(startDate, { day: "numeric", month: "short", year: "numeric" });
+    const s = new Date(startDate);
+    const e = new Date(endDate);
+    const eFull = fmt(endDate, { day: "numeric", month: "short", year: "numeric" });
+    const sameMonth = s.getUTCMonth() === e.getUTCMonth() && s.getUTCFullYear() === e.getUTCFullYear();
+    return sameMonth ? `${s.getUTCDate()}–${eFull}` : `${fmt(startDate, { day: "numeric", month: "short" })} – ${eFull}`;
+  })();
+
+  // The trip length comes from the package; picking a start date fills the end
+  // from the package's nights (still adjustable on the calendar).
+  function onStartChange(v: string) {
+    setStartDate(v);
+    if (v && selected) setEndDate(addDays(v, selected.nights));
+  }
+
   function choose(p: PkgOption) {
     setSelectedSlug(p.slug);
     setDays(p.days.length ? p.days.map((d) => ({ ...d })) : [{ title: "", description: "" }]);
+    if (startDate) setEndDate(addDays(startDate, p.nights));
     setError(null);
   }
 
@@ -94,7 +130,7 @@ export default function LeadItineraryPanel({
       const res = await fetch(`/api/itinerary/${selected.slug}/share`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ leadId, customerName: custName, dates, adults, children, infants, days, notes, channel }),
+        body: JSON.stringify({ leadId, customerName: custName, dates: datesLabel, adults, children, infants, days, notes, channel }),
       });
       if (!res.ok) {
         const msg = (await res.json().catch(() => ({}))) as { error?: string };
@@ -203,16 +239,41 @@ export default function LeadItineraryPanel({
             <input type="text" className="form-input" value={custName} onChange={(e) => setCustName(e.target.value)} />
           </label>
 
-          <label className="form-group">
+          <div className="form-group">
             <span className="form-label">Travel dates</span>
-            <input
-              type="text"
-              className="form-input"
-              placeholder="e.g. 12–17 Aug 2026"
-              value={dates}
-              onChange={(e) => setDates(e.target.value)}
-            />
-          </label>
+            <div className={styles.paxRow}>
+              <label className="form-group" style={{ flex: 1, marginTop: 0 }}>
+                <span className="form-label" style={{ fontSize: "0.8rem" }}>Start</span>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={startDate}
+                  max={endDate || undefined}
+                  onChange={(e) => onStartChange(e.target.value)}
+                />
+              </label>
+              <label className="form-group" style={{ flex: 1, marginTop: 0 }}>
+                <span className="form-label" style={{ fontSize: "0.8rem" }}>End</span>
+                <input
+                  type="date"
+                  className="form-input"
+                  value={endDate}
+                  min={startDate || undefined}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </label>
+            </div>
+            {durationLabel ? (
+              <p className={styles.hint}>
+                Trip duration: <strong>{durationLabel}</strong>
+                {datesLabel ? ` · ${datesLabel}` : ""}
+              </p>
+            ) : (
+              <p className={styles.hint}>
+                Pick a start date — the end fills from the package length and the duration is worked out for you.
+              </p>
+            )}
+          </div>
 
           <div className={styles.paxRow}>
             {numField(adults, setAdults, "Adults", 1)}

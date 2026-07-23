@@ -253,7 +253,6 @@ export default async function LeadDetailPage({
                 customerName={lead.name}
                 customerPhone={lead.phone ?? ""}
                 customerEmail={lead.email}
-                defaultDates={lead.dates ?? ""}
                 defaultQuery={defaultQuery}
                 packages={packageOptions}
               />
