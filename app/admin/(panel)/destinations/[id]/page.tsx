@@ -44,6 +44,7 @@ export default async function EditDestinationPage({
           guideSections: Array.isArray(dest.guideSections)
             ? (dest.guideSections as { heading: string; body: string }[])
             : [],
+          published: dest.published,
         }}
       />
     </div>

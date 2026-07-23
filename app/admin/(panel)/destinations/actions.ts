@@ -26,6 +26,7 @@ export interface DestinationPayload {
   guideTip?: string;
   guideGallery?: string[];
   guideSections?: { heading: string; body: string }[];
+  published?: boolean;
 }
 
 export type SaveResult = { error: string } | undefined;
@@ -67,6 +68,7 @@ export async function saveDestination(payload: DestinationPayload): Promise<Save
     guideSections: (payload.guideSections ?? [])
       .map((s) => ({ heading: s.heading.trim(), body: s.body.trim() }))
       .filter((s) => s.heading || s.body),
+    published: payload.published ?? true,
   };
 
   if (payload.id) {

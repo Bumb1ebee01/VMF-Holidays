@@ -21,6 +21,12 @@ export interface Destination {
   guideTip?: string;
   guideGallery?: string[];
   guideSections?: GuideSection[];
+  /**
+   * Whether the destination is shown on the public website (false = CMS-only).
+   * Optional so the bundled static fallback data need not set it; DB rows always
+   * do. Only an explicit `false` hides it.
+   */
+  published?: boolean;
 }
 
 export interface ItineraryDay {

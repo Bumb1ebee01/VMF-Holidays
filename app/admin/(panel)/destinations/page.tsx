@@ -80,6 +80,22 @@ export default async function AdminDestinationsPage({
                       <div className={shared.cellText}>
                         <Link href={`/admin/destinations/${d.id}`} className={shared.rowLink}>
                           {d.name}
+                          {!d.published && (
+                            <span
+                              style={{
+                                marginLeft: 8,
+                                fontSize: "0.7rem",
+                                fontWeight: 600,
+                                padding: "1px 6px",
+                                borderRadius: 4,
+                                background: "var(--surface)",
+                                color: "var(--muted)",
+                                border: "1px solid var(--border)",
+                              }}
+                            >
+                              Hidden
+                            </span>
+                          )}
                         </Link>
                         <span className={shared.cellSub}>/{d.slug}</span>
                       </div>

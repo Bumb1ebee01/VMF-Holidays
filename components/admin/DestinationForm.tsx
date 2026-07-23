@@ -36,6 +36,8 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
   const [guideTip, setGuideTip] = useState(initial?.guideTip ?? "");
   const [guideGallery, setGuideGallery] = useState<string[]>(initial?.guideGallery ?? []);
   const [guideSections, setGuideSections] = useState<SectionInput[]>(initial?.guideSections ?? []);
+  // New destinations default to shown on the website; existing keep their value.
+  const [published, setPublished] = useState(initial?.published ?? true);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -58,6 +60,7 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
         guideTip,
         guideGallery,
         guideSections,
+        published,
       });
       if (result?.error) setError(result.error);
     });
@@ -213,6 +216,24 @@ export default function DestinationForm({ initial }: DestinationFormProps) {
           placeholder="Image URL — /images/… or https://…"
         />
         <SectionsEditor label="Extra sections" values={guideSections} onChange={setGuideSections} />
+      </div>
+
+      <div className={`${shared.panel} ${shared.panelPad}`}>
+        <label style={{ display: "flex", gap: 10, alignItems: "flex-start", cursor: "pointer" }}>
+          <input
+            type="checkbox"
+            checked={published}
+            onChange={(e) => setPublished(e.target.checked)}
+            style={{ marginTop: 3 }}
+          />
+          <span>
+            Show on website
+            <small style={{ display: "block", color: "var(--muted)", fontWeight: 400 }}>
+              Off = kept in the CMS only: hidden from the destinations page, guide, tools, trip builder and
+              sitemap. Its packages follow their own visibility.
+            </small>
+          </span>
+        </label>
       </div>
 
       {error && <p className={shared.error}>{error}</p>}

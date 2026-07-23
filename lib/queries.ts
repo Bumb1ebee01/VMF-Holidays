@@ -56,13 +56,21 @@ function toDestination(row: DbDestination): Destination {
     guideSections: Array.isArray(row.guideSections)
       ? (row.guideSections as unknown as GuideSection[])
       : [],
+    published: row.published,
   };
 }
 
 // React `cache` dedupes these within a single request, so the page body,
 // generateMetadata, and the sitemap can each call them without re-hitting the DB.
+// Public destinations only ("show on website" = true). getAllDestinations is used
+// solely by public surfaces (tiles, guides, tools, trip builder, sitemap) and the
+// internal tile/group builders — admin/CMS and the PDF region/hero lookups query
+// db.destination directly, so filtering here can't hide a destination from staff.
 export const getAllDestinations = cache(async (): Promise<Destination[]> => {
-  const rows = await db.destination.findMany({ orderBy: { name: "asc" } });
+  const rows = await db.destination.findMany({
+    where: { published: true },
+    orderBy: { name: "asc" },
+  });
   return rows.map(toDestination);
 });
 

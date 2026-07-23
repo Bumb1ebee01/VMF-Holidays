@@ -381,6 +381,11 @@ model Destination {
   fromPrice Int
   blurb     String
   tags      String[]
+  /// Whether this destination appears on the public website (tiles, guide, tools,
+  /// trip builder, sitemap). false = CMS-only; staff/admin + PDF region/hero
+  /// lookups (direct by slug) still see it. Defaults true so existing
+  /// destinations stay visible.
+  published Boolean  @default(true)
   // Travel guide (/guides/[slug]) — editable in admin; each field falls back to
   // the destination's blurb/tags when empty, so every destination still has a page.
   guideIntro      String?
