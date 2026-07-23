@@ -702,6 +702,12 @@ export interface QuotationData {
   pax?: string | null;
   region: TourRegion;
   totalValue: number;
+  /** Per-person price in whole rupees, from the accepted quote (optional). */
+  perPax?: number | null;
+  /** Head count the per-pax figure is based on. */
+  paxCount?: number | null;
+  /** What the price includes — shown as a "What's included" section (optional). */
+  inclusions?: string[];
   collected?: number;
   /** Pre-formatted validity date, e.g. "30 Jul 2026". */
   validUntil?: string | null;
@@ -757,6 +763,14 @@ function Quotation({ data }: { data: QuotationData }) {
                 <Text style={qStyles.totalLabel}>Total trip value</Text>
                 <Text style={qStyles.totalVal}>{money(data.totalValue)}</Text>
               </View>
+              {data.perPax ? (
+                <View style={qStyles.priceRow}>
+                  <Text style={qStyles.priceLabel}>
+                    Per person{data.paxCount ? ` (${data.paxCount} ${data.paxCount === 1 ? "traveller" : "travellers"})` : ""}
+                  </Text>
+                  <Text style={qStyles.priceVal}>{money(data.perPax)}</Text>
+                </View>
+              ) : null}
               {collected > 0 ? (
                 <View style={qStyles.priceRow}>
                   <Text style={qStyles.priceLabel}>Received</Text>
@@ -784,10 +798,20 @@ function Quotation({ data }: { data: QuotationData }) {
         <Footer disclaimer={QUOTE_DISCLAIMER} />
       </Page>
 
-      {/* ── Terms & Conditions + closing CTA ── */}
+      {/* ── What's included + Terms & Conditions + closing CTA ── */}
       <Page size="A4" style={styles.page} wrap>
         <Watermark variant="quote" />
-        <Section title={terms.title} first>
+        {data.inclusions && data.inclusions.length > 0 && (
+          <Section title="What's included" first>
+            {data.inclusions.map((item, i) => (
+              <View style={styles.bullet} key={i} wrap={false}>
+                <View style={styles.markInc} />
+                <Text style={styles.bulletText}>{item}</Text>
+              </View>
+            ))}
+          </Section>
+        )}
+        <Section title={terms.title} first={!(data.inclusions && data.inclusions.length > 0)}>
           {terms.sections.map((sec, i) => (
             <View key={i} wrap={false}>
               <View style={styles.termsHeadRow}>

@@ -4,6 +4,7 @@ import { can } from "@/lib/permissions";
 import { renderQuotationPdf } from "@/lib/itinerary-pdf";
 import { heroDataUri } from "@/lib/pdf-images";
 import { bookingRef, collectedTotal } from "@/lib/bookings";
+import { quoteForBooking, toRupees } from "@/lib/pricing";
 
 export const dynamic = "force-dynamic";
 
@@ -19,9 +20,27 @@ export async function GET(_req: Request, ctx: { params: Promise<{ bookingId: str
   const { bookingId } = await ctx.params;
   const booking = await db.booking.findUnique({
     where: { id: bookingId },
-    include: { payments: { select: { amount: true, type: true } } },
+    include: {
+      payments: { select: { amount: true, type: true } },
+      quotes: { include: { costLines: true } },
+    },
   });
   if (!booking) return Response.json({ error: "Booking not found" }, { status: 404 });
+
+  // Per-person price comes from the confirmed (accepted) quote behind the booking.
+  const acceptedQuote = booking.quotes.find((q) => q.status === "ACCEPTED");
+  const priced = acceptedQuote ? quoteForBooking(acceptedQuote) : null;
+  const perPax = priced ? Math.round(toRupees(priced.perPax)) : null;
+  const paxCount = acceptedQuote?.paxCount ?? null;
+
+  // Best-effort inclusions: match the booking's package by title (bookings hold a
+  // free-text package name, not a slug). Omitted if there's no clean match.
+  const pkg = booking.packageTitle
+    ? await db.package.findFirst({
+        where: { title: { equals: booking.packageTitle, mode: "insensitive" } },
+        select: { inclusions: true },
+      })
+    : null;
 
   // Map the (free-text) destination to a Destination row for its region + hero.
   const dest = booking.destination
@@ -54,6 +73,9 @@ export async function GET(_req: Request, ctx: { params: Promise<{ bookingId: str
     pax: booking.pax,
     region,
     totalValue: booking.totalValue,
+    perPax,
+    paxCount,
+    inclusions: pkg?.inclusions ?? [],
     collected: collectedTotal(booking.payments),
     validUntil: fmt(validUntil),
     heroDataUri: await heroDataUri(dest?.heroImage),
