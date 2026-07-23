@@ -15,13 +15,14 @@ import {
 // consistent and there's a single place to update business facts.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const SITE_URL = "https://vmfholidays.com";
-// Public URL of the LIVE app, used for CLICKABLE share links (e.g. referral links).
-// vmfholidays.com is still the eventual SEO canonical, but until its DNS is cut over
-// to Vercel it serves the old PHP site — so links people actually click must point at
-// the live Vercel app. After the cutover, set APP_URL=https://vmfholidays.com in the
-// environment (or update this default).
-export const APP_URL = (process.env.APP_URL || "https://new-vmf-holidays.vercel.app").replace(/\/+$/, "");
+// Canonical host is www (domain went live 2026-07-23). Sitemap, canonical tags,
+// JSON-LD @id and OG URLs all derive from this, so it must match the host the
+// site actually redirects to — set Vercel to 301 the bare domain to www.
+export const SITE_URL = "https://www.vmfholidays.com";
+// Public URL of the LIVE app, used for CLICKABLE share links (e.g. referral
+// links). Kept overridable by env, but the default now points at the live
+// canonical domain rather than the old vercel.app URL.
+export const APP_URL = (process.env.APP_URL || "https://www.vmfholidays.com").replace(/\/+$/, "");
 export const SITE_NAME = "VMF Holidays";
 export const SITE_TAGLINE = "Discover Your World Your Way";
 export const SITE_DESCRIPTION =

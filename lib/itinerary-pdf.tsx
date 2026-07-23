@@ -49,7 +49,7 @@ const CREAM = "#FAF7F2";
 const WA = whatsappLink();
 const TEL = telHref();
 const MAIL = mailtoHref();
-const SITE = "https://vmfholidays.com";
+const SITE = "https://www.vmfholidays.com";
 const PHONE_1 = PHONE_PRIMARY_DISPLAY;
 const PHONE_2 = PHONE_SECONDARY_DISPLAY;
 
