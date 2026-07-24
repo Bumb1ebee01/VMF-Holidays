@@ -6,7 +6,9 @@ import StatusBadge, {
   STATUS_LABELS,
   type LeadStatusValue,
 } from "@/components/admin/StatusBadge";
-import { formatDateTime } from "@/lib/utils";
+import { formatDateTime, formatINR } from "@/lib/utils";
+import { balanceDue } from "@/lib/bookings";
+import { daysUntilDeparture, departureUrgency, departureLabel } from "@/lib/departures";
 import {
   IconInbox,
   IconLeads,
@@ -19,6 +21,7 @@ import {
   IconStar,
   IconChevronRight,
   IconActivity,
+  IconClock,
 } from "@/components/admin/icons";
 import { SOURCE_LABELS } from "@/components/admin/leadMeta";
 import shared from "@/components/admin/shared.module.css";
@@ -139,6 +142,42 @@ export default async function AdminDashboard() {
       });
     } catch {
       followUpsDue = [];
+    }
+  }
+
+  // Departures due — active trips with a balance still owed, most urgent first.
+  // Guarded like above so it degrades to empty if bookings aren't accessible.
+  const canViewBookings = can(user, "bookings:view");
+  let departuresDue: {
+    id: string;
+    customerName: string;
+    trip: string;
+    days: number | null;
+    balance: number;
+  }[] = [];
+  if (canViewBookings) {
+    try {
+      const active = await db.booking.findMany({
+        where: { status: { in: ["CONFIRMED", "TRAVELLING"] } },
+        select: {
+          id: true, customerName: true, packageTitle: true, destination: true,
+          travelStart: true, totalValue: true,
+          payments: { select: { amount: true, type: true } },
+        },
+      });
+      departuresDue = active
+        .map((b) => ({
+          id: b.id,
+          customerName: b.customerName,
+          trip: b.packageTitle ?? b.destination ?? "Trip",
+          days: daysUntilDeparture(b.travelStart),
+          balance: balanceDue(b.totalValue, b.payments),
+        }))
+        .filter((b) => b.balance > 0)
+        .sort((a, b) => (a.days ?? 9999) - (b.days ?? 9999))
+        .slice(0, 6);
+    } catch {
+      departuresDue = [];
     }
   }
 
@@ -375,6 +414,43 @@ export default async function AdminDashboard() {
               )}
             </div>
           )}
+          {canViewBookings && departuresDue.length > 0 && (
+            <div className={shared.card}>
+              <div className={shared.cardHead}>
+                <div>
+                  <h2 className={shared.cardTitle}>Departures Due</h2>
+                  <p className={shared.cardSub}>Balance still to collect</p>
+                </div>
+                <Link href="/admin/departures" className={shared.sectionLink}>
+                  All <IconChevronRight size={13} />
+                </Link>
+              </div>
+              <div className={shared.miniList}>
+                {departuresDue.map((d) => {
+                  const urgent = departureUrgency(d.days);
+                  const hot = urgent === "departed" || urgent === "today" || urgent === "imminent";
+                  return (
+                    <Link key={d.id} href={`/admin/bookings/${d.id}`} className={shared.miniRow}>
+                      <span className={shared.miniAvatar} aria-hidden="true"><IconClock size={15} /></span>
+                      <div className={shared.miniMain}>
+                        <div className={shared.miniName}>{d.customerName}</div>
+                        <div className={shared.miniSub}>
+                          {d.trip} · {formatINR(d.balance)} due
+                        </div>
+                      </div>
+                      <span
+                        className={shared.miniMeta}
+                        style={hot ? { color: "var(--orange-ink, #C0341D)", fontWeight: 600 } : undefined}
+                      >
+                        {departureLabel(d.days)}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {quickActions.length > 0 && (
             <div className={shared.card}>
               <div className={shared.cardHead}>
