@@ -3,7 +3,7 @@
 **For:** Shaun (original developer, returning after a break)
 **Purpose:** get your machine, database and mental model in sync with `main`.
 **Repo:** `github.com/Bumb1ebee01/VMF-Holidays` · **Branch:** `main` · **Deploy:** Vercel (auto-deploys on every push to `main`).
-**Reflects `main` @ `8d640b5`** · last updated 22 July 2026.
+**Reflects `main` @ `1c1db40`** · last updated 24 July 2026.
 
 > Read **§0** (what's new), **§1** (sync) and **§3** (⚠️ database) first. The database
 > is what silently breaks things if it's stale. Everything else is context.
@@ -11,6 +11,39 @@
 ---
 
 ## 0. What changed since you last pulled
+
+### 🔴 24 July 2026 batch — do these three first
+
+1. **`npm install`** — `sharp` is now a **direct dependency** (the PDF routes use it
+   to normalise cover images to baseline JPEG). Skip it and the itinerary/quotation
+   PDF routes throw at runtime.
+2. **`npx prisma generate`** — two new columns.
+3. **`npm run db:push` against YOUR local/dev DB** — adds `Package.published` and
+   `Destination.published` (both default `true`). Production is already migrated;
+   this is only so your machine's schema matches.
+
+**What shipped (`781f724`…`1c1db40`):**
+
+| What | Where |
+|---|---|
+| **PDF core rewrite** — fixed a blank 2nd page (cover overflow), stranded section headings, and footer/text overlap; the hero **now always renders** — the bundled/Unsplash JPEGs were *progressive*, which @react-pdf silently drops, so images are re-encoded to baseline via `sharp`. Local `/images/...` paths are read off disk too. | `lib/itinerary-pdf.tsx`, `lib/pdf-images.ts` |
+| **Quote builder** — five **default cost rows** on every new quote, cost lines are now **editable** (not just add/remove), "Quote an enquiry" lead search folded into the Quotes **search bar**, and cost basis **defaults to the group total** (per-pax still available). | `components/admin/QuoteBuilder.tsx`, `QuoteSearchInput.tsx`, `quotes/actions.ts` |
+| **"Show on website" toggle** — on **packages and destinations** (`published`). Off = kept in the CMS for quoting/itineraries only, hidden from the public site. | `Package.published`, `Destination.published`, `lib/queries.ts`, the two CMS forms |
+| **Booking ↔ confirmed quote** — pick the winning quote when creating a booking (prefills total + pax, marks it accepted), or **"Accept & create booking"** straight from a quote. Booking shows the confirmed quote's per-pax × pax + margin. | `bookings/actions.ts`, `LeadBookingPanel.tsx`, `BookingQuotesPanel.tsx` |
+| **Lead itinerary calendar** — start/end date pickers that auto-compute trip duration from the selected package (UTC-safe). | `components/admin/LeadItineraryPanel.tsx` |
+| **Quotation PDF** — now shows the per-person price + a "What's included" section. | `lib/itinerary-pdf.tsx`, `app/api/quotation/[bookingId]` |
+
+**🔑 Gotcha — the public/staff query split (don't get this wrong):** hiding a
+package/destination must never break staff tools. `getAllPackages` stays
+**unfiltered** (the lead itinerary picker and quoting use backend-only packages);
+`getPublishedPackages` is the base for every **public** listing. `getAllDestinations`
+is public-only, so it's filtered directly. `getPackageBySlug` stays unfiltered
+(staff share route) — the public page/route 404 on `published === false`. If a
+public listing ever shows a hidden item, someone pointed it at the unfiltered query.
+
+---
+
+### 20–22 July 2026
 
 A lot landed on 20–22 July. In rough order of "will bite you if you don't know":
 
@@ -130,6 +163,11 @@ Payment,` **`Traveller`, `Quote`, `CostLine`**
   branch. That's deliberate: without them, `db:push` from `main` generates
   `DROP COLUMN` for all three and would destroy real 2FA secrets once anyone
   enrols. **Do not remove them from the schema.**
+- **`Package.published` / `Destination.published`** *(24 July)* — the "show on
+  website" flags, default `true`. false = CMS-only (quoting/itineraries), hidden
+  from the public site. **Public queries filter on them; staff tools and the PDF
+  region/hero lookups deliberately do not** — see the query-split gotcha in §0.
+  Already live in prod; run `db:push` on your local DB to add them.
 
 ### 🔴 The migration rule (learned the hard way)
 
@@ -273,7 +311,11 @@ first (mock Prisma / local Postgres / inject a `db` argument).
 - **Consent is not enforced** — `ConsentCheckbox` renders `required`, but no server
   code reads it, so `/api/enquiry` accepts submissions without consent and nothing
   is recorded. A DPDP gap.
-- **No quote PDF** — quotes can be built but not sent to a customer as a document.
+- **No one-click send-quote-PDF** — the quotation PDF (`/api/quotation/[bookingId]`)
+  now renders the per-person price + a "What's included" section, but it's generated
+  from a **booking**, not straight from a quote. There's still no "send this quote as
+  a PDF" button on the quote screen itself. *(The itinerary + quotation PDF layout
+  bugs — blank page, stranded headings, missing hero — were fixed on 24 July; see §0.)*
 - **NAP** — the site is internally consistent; the Google Business Profile still
   needs aligning to it.
 - **Domain** — `vmfholidays.com` still 404s; not serving the app yet.
@@ -304,6 +346,19 @@ first (mock Prisma / local Postgres / inject a `db` argument).
 ---
 
 ## Appendix — recent changelog
+
+**24 July 2026 — PDF fixes + CRM depth** (`781f724`…`1c1db40`)
+PDF renderer rewrite — blank second page (cover overflow), stranded section
+headings, footer/text overlap, and blank/progressive-JPEG heroes all fixed;
+`sharp` added as a direct dep to normalise images to baseline JPEG, and local
+`/images/...` paths read off disk · quote builder: five default cost rows,
+**editable** cost lines, lead search folded into the Quotes search bar, cost basis
+defaults to the group total · **"Show on website"** toggle on packages **and**
+destinations (`published` columns + a public/staff query split) · booking ↔
+confirmed-quote linking (pick the winner at booking creation, or "Accept & create
+booking" from a quote; per-pax + margin surfaced on the booking) · lead itinerary
+calendar with auto trip duration · quotation PDF now shows the per-person price +
+"What's included". **Two new columns → `db:push` needed locally (§0).**
 
 **22 July 2026 — Quotes** (`c08a9f9`…`8d640b5`)
 Quote model with versions and named options; enquiry references spanning
