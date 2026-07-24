@@ -295,6 +295,11 @@ first (mock Prisma / local Postgres / inject a `db` argument).
 
 ## 7. Known open items
 
+> 📋 **The living backlog is now `BACKLOG.md` at the repo root** — the single source
+> of truth for pending work, priority-ordered with stable IDs. The list below is a
+> snapshot; check `BACKLOG.md` for the current state.
+
+
 - **🔴 Email pipeline is broken** — forgot-password and lead emails don't send. It's
   config, not code: `RESEND_API_KEY` + verifying `vmfholidays.com` as a Resend
   domain. **You own this.** `npm run test:email` diagnoses it. Worse, enquiry emails
