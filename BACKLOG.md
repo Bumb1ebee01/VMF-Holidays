@@ -25,7 +25,7 @@ file is **open items only**.
 
 ## P1 — Daily ops & revenue lift
 
-- [ ] **#4 · Departures + payment-due dashboard** — no due-date field exists; nothing surfaces "₹X still due, departs in 6 days." All inputs exist (`travelStart`, payments, travellers). Highest daily-ops lift. — M
+- [x] **#4 · Departures + payment-due dashboard** *(shipped `965b923`)* — `/admin/departures`: upcoming trips + "balance to collect" (travel start = implicit due date), plus a "Departures Due" card on the dashboard. No explicit per-booking due-date field yet (uses travel start) — add one only if wanted. — M
 - [ ] **#5 · Customer trip page** — private tokenised link showing itinerary, payments, balance, travellers. Cuts status-chasing messages. Needs unguessable tokens. — M
 - [ ] **#6 · Activate GA4** — code-complete, consent-gated, but off (`NEXT_PUBLIC_GA_ID` empty) pending the final domain. Domain is now live, so this is a quick win — set the ID. — S
 - [ ] **#7 · Group / MICE / college enquiry forms** — landing pages exist but have no group-specific fields (group size, date flexibility, budget per head, organiser vs decision-maker) or routing to whoever handles bulk quotes. — M

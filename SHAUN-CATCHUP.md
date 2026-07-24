@@ -3,7 +3,7 @@
 **For:** Shaun (original developer, returning after a break)
 **Purpose:** get your machine, database and mental model in sync with `main`.
 **Repo:** `github.com/Bumb1ebee01/VMF-Holidays` · **Branch:** `main` · **Deploy:** Vercel (auto-deploys on every push to `main`).
-**Reflects `main` @ `1c1db40`** · last updated 24 July 2026.
+**Reflects `main` @ `965b923`** · last updated 24 July 2026.
 
 > Read **§0** (what's new), **§1** (sync) and **§3** (⚠️ database) first. The database
 > is what silently breaks things if it's stale. Everything else is context.
@@ -351,6 +351,13 @@ first (mock Prisma / local Postgres / inject a `db` argument).
 ---
 
 ## Appendix — recent changelog
+
+**24 July 2026 — Departures dashboard** (`965b923`) — *BACKLOG #4*
+New `/admin/departures`: upcoming trips + the balance still to collect, using
+travel start as the implicit payment deadline (**no schema change**). Summary
+tiles, a "balance to collect" chase list (owed + imminent/overdue) and an
+"upcoming departures" list; a "Departures Due" card on the admin dashboard; new
+sidebar item. `lib/departures.ts` is pure + unit-tested (6 tests → 240 total).
 
 **24 July 2026 — PDF fixes + CRM depth** (`781f724`…`1c1db40`)
 PDF renderer rewrite — blank second page (cover overflow), stranded section
